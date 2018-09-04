@@ -21,5 +21,5 @@ java -jar testrun.jar -submission=player111 -evaluation=SphereEvaluation -seed=1
 
 Test your code on one of the contest functions by typing:
 ```
-java -jar testrun.jar -submission=player1 -evaluation=BentCigarFunction -seed=1
+java -jar testrun.jar -submission=player111 -evaluation=BentCigarFunction -seed=1
 ```

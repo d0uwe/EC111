@@ -23,3 +23,10 @@ Test your code on one of the contest functions by typing:
 ```
 java -jar testrun.jar -submission=player111 -evaluation=BentCigarFunction -seed=1
 ```
+
+To investigate the effect of parameters, you can run:
+```
+java –Dvar1=0.5 -jar testrun.jar -submission=player111 - evaluation=BentCigarFunction -seed=1
+```
+
+

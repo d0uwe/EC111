@@ -6,25 +6,21 @@ import java.util.Properties;
 import java.util.ArrayList;
 
 
-public class player111 implements ContestSubmission
-{
+public class player111 implements ContestSubmission {
     Random rnd_;
     ContestEvaluation evaluation_;
     private int evaluations_limit_;
 
-    public player111()
-    {
+    public player111() {
         rnd_ = new Random();
     }
 
-    public void setSeed(long seed)
-    {
+    public void setSeed(long seed) {
         // Set seed of algortihms random process
         rnd_.setSeed(seed);
     }
 
-    public void setEvaluation(ContestEvaluation evaluation)
-    {
+    public void setEvaluation(ContestEvaluation evaluation) {
         // Set evaluation problem used in the run
         evaluation_ = evaluation;
 
@@ -46,7 +42,7 @@ public class player111 implements ContestSubmission
         }
     }
 
-    public ArrayList<ArrayList<Double>> init_population (int pop_size, Random rand) {
+    private ArrayList<ArrayList<Double>> init_population (int pop_size, Random rand) {
         ArrayList<ArrayList<Double>> population = new ArrayList<ArrayList<Double>>();
         for (int i = 0; i < pop_size; i++) {
             ArrayList<Double> child = new ArrayList<Double>();
@@ -58,8 +54,7 @@ public class player111 implements ContestSubmission
         return population;
     }
 
-    public void run()
-    {
+    public void run() {
         // Run your algorithm here
 
         Random rand = new Random();
@@ -78,6 +73,5 @@ public class player111 implements ContestSubmission
             evals++;
             // Select survivors
         }
-
     }
 }

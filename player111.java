@@ -50,6 +50,7 @@ public class player111 implements ContestSubmission
     {
         // Run your algorithm here
 
+        Random rand = new Random();
         int evals = 0;
         int pop_size = 150;
         // init po1pulation
@@ -57,11 +58,15 @@ public class player111 implements ContestSubmission
         for (int i = 0; i < pop_size; i++) {
             ArrayList<Double> child = new ArrayList<Double>();
             for (int j = 0; j < 10; j++) {
-                child.at()
+                child.add((rand.nextDouble() - 0.5) * 10);
             }
+            population.add(child);
+        }
+        for (Double num : population.get(6)) {
+            System.out.println(num);
         }
         // calculate fitness
-        while(evals<evaluations_limit_){
+        while(evals<evaluations_limit_) {
             // Select parents
             // Apply crossover / mutation operators
             double child[] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};

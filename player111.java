@@ -35,9 +35,9 @@ public class player111 implements ContestSubmission {
         boolean isSeparable = Boolean.parseBoolean(props.getProperty("Separable"));
 
         // Do sth with property values, e.g. specify relevant settings of your algorithm
-        if(isMultimodal){
+        if (isMultimodal) {
             // Do sth
-        }else{
+        } else {
             // Do sth else
         }
     }
@@ -64,7 +64,7 @@ public class player111 implements ContestSubmission {
         ArrayList<ArrayList<Double>> population = init_population(pop_size, rand);
 
         // calculate fitness
-        while(evals<evaluations_limit_) {
+        while (evals<evaluations_limit_) {
             // Select parents
             // Apply crossover / mutation operators
             double child[] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};

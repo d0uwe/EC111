@@ -46,14 +46,7 @@ public class player111 implements ContestSubmission
         }
     }
 
-    public void run()
-    {
-        // Run your algorithm here
-
-        Random rand = new Random();
-        int evals = 0;
-        int pop_size = 150;
-        // init po1pulation
+    public ArrayList<ArrayList<Double>> init_population (int pop_size, Random rand) {
         ArrayList<ArrayList<Double>> population = new ArrayList<ArrayList<Double>>();
         for (int i = 0; i < pop_size; i++) {
             ArrayList<Double> child = new ArrayList<Double>();
@@ -62,9 +55,19 @@ public class player111 implements ContestSubmission
             }
             population.add(child);
         }
-        for (Double num : population.get(6)) {
-            System.out.println(num);
-        }
+        return population;
+    }
+
+    public void run()
+    {
+        // Run your algorithm here
+
+        Random rand = new Random();
+        int evals = 0;
+        int pop_size = 150;
+        // init population
+        ArrayList<ArrayList<Double>> population = init_population(pop_size, rand);
+
         // calculate fitness
         while(evals<evaluations_limit_) {
             // Select parents

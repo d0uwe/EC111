@@ -4,6 +4,7 @@ import org.vu.contest.ContestEvaluation;
 import java.util.Random;
 import java.util.Properties;
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class player111 implements ContestSubmission {
@@ -54,6 +55,63 @@ public class player111 implements ContestSubmission {
         return population;
     }
 
+    private ArrayList<ArrayList<Double>> cross_over (ArrayList<ArrayList<Double>> population, int min_split, int max_split, Random rand, int pop_size) {
+        int curr_pop_size = population.size();
+        for (int i = 0; i < pop_size - population.size(); i++) {
+            int split = rand.nextInt(max_split - min_split) + min_split;
+            int p1 = rand.nextInt(curr_pop_size);
+            int p2 = rand.nextInt(curr_pop_size);
+
+            ArrayList<Double> child = new ArrayList<Double>();
+
+            for (int j = 0; j < population.get(0).size(); j++) {
+                if (j < split) {
+                    child.add(population.get(p1).get(j));
+                } else {
+                    child.add(population.get(p2).get(j));
+                }
+            }
+            population.add(child);
+        }
+        return population;
+    }
+
+    /**
+     * Mutates parents with a certain amount of mutations.
+     * @param population population to mutate on
+     * @param min_muts minimum amount of mutations, inclusive
+     * @param max_muts maximum amount of mutations, exclusive
+     * @param rand random generator
+     * @param pop_size desired population size
+     * @return new population
+     */
+    private ArrayList<ArrayList<Double>> mutate (ArrayList<ArrayList<Double>> population, int min_muts, int max_muts, Random rand, int pop_size) {
+        int curr_pop_size = population.size();
+        ArrayList<Integer> indexes = new ArrayList<>();
+        for (int i = 0; i < population.get(0).size(); i++) {
+            indexes.add(i);
+        }
+        for (int i = 0; i < pop_size - population.size(); i++) {
+            Collections.shuffle(indexes);
+            int amnt_muts = rand.nextInt(max_muts - min_muts) + min_muts;
+            int parent = rand.nextInt(curr_pop_size);
+            ArrayList<Double> child = population.get(parent);
+
+            for (int j = 0; j < amnt_muts; j++) {
+                double curr_val = child.get(indexes.get(j));
+                double new_val = curr_val + rand.nextDouble() - 0.5;
+                if (new_val > 5){
+                    new_val = 5;
+                } else if (new_val < -5) {
+                    new_val = -5;
+                }
+                child.set(indexes.get(j), new_val);
+            }
+            population.add(child);
+        }
+        return population;
+    }
+
     public void run() {
         // Run your algorithm here
 
@@ -62,6 +120,9 @@ public class player111 implements ContestSubmission {
         int pop_size = 150;
         // init population
         ArrayList<ArrayList<Double>> population = init_population(pop_size, rand);
+
+//        population = mutate(population, 2, 4, rand, 4);
+//        population = cross_over(population, 2, 8, rand, 4);
 
         // calculate fitness
         while (evals<evaluations_limit_) {

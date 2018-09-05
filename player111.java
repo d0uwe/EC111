@@ -3,6 +3,8 @@ import org.vu.contest.ContestEvaluation;
 
 import java.util.Random;
 import java.util.Properties;
+import java.util.ArrayList;
+
 
 public class player111 implements ContestSubmission
 {
@@ -49,7 +51,15 @@ public class player111 implements ContestSubmission
 		// Run your algorithm here
         
         int evals = 0;
-        // init population
+        int pop_size = 150;
+        // init po1pulation
+        ArrayList<ArrayList<Double>> population = new ArrayList<ArrayList<Double>>();
+        for (int i = 0; i < pop_size; i++) {
+            ArrayList<Double> child = new ArrayList<Double>();
+            for (int j = 0; j < 10; j++) {
+                child.at()
+            }
+        }
         // calculate fitness
         while(evals<evaluations_limit_){
             // Select parents

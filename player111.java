@@ -57,6 +57,12 @@ public class player111 implements ContestSubmission {
         public Unit(int value_size) {
             values = new double[value_size];
         }
+
+        // copy constructor
+        public Unit(Unit unit) {
+            values = unit.values;
+            fitness = unit.fitness;
+        }
     
         // @Override
         public int compareTo(Unit a) {
@@ -93,7 +99,7 @@ public class player111 implements ContestSubmission {
      */
     private ArrayList<Unit> cross_over(ArrayList<Unit> population, int min_split, int max_split, Random rand, int pop_size) {
         int curr_pop_size = population.size();
-        for (int i = 0; i < pop_size - population.size(); i++) {
+        for (int i = 0; i <= pop_size - population.size(); i++) {
             int split = rand.nextInt(max_split - min_split) + min_split;
             int p1 = rand.nextInt(curr_pop_size);
             int p2 = rand.nextInt(curr_pop_size);
@@ -129,11 +135,11 @@ public class player111 implements ContestSubmission {
         for (int i = 0; i < population.get(0).values.length; i++) {
             indexes.add(i);
         }
-        for (int i = 0; i < pop_size - population.size(); i++) {
+        for (int i = 0; i <= pop_size - population.size(); i++) {
             Collections.shuffle(indexes);
             int amnt_muts = rand.nextInt(max_muts - min_muts) + min_muts;
             int parent = rand.nextInt(curr_pop_size);
-            Unit child = population.get(parent);
+            Unit child = new Unit(population.get(parent));
 
             for (int j = 0; j < amnt_muts; j++) {
                 double curr_val = child.values[indexes.get(j)];
@@ -185,9 +191,24 @@ public class player111 implements ContestSubmission {
         //     }
         // }
 
-//        population = mutate(population, 2, 4, rand, 4);
+        for (Unit child : population) {
+            for (double number : child.values) {
+                System.out.print(number);
+            }
+            System.out.println();
+        }
+        System.out.println();
+        System.out.println();
+
+        //population = mutate(population, 2, 4, rand, 4);
 //        population = cross_over(population, 2, 8, rand, 4);
 
+        for (Unit child : population) {
+            for (double number : child.values) {
+                System.out.print(number);
+            }
+            System.out.println();
+        }
         // calculate fitness
 
         int n_survivors = pop_size / 2;

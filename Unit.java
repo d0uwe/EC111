@@ -12,6 +12,12 @@ public class Unit implements Comparable<Unit> {
         values = new double[value_size];
     }
 
+    // copy constructor
+    public Unit(Unit unit) {
+        values = unit.values;
+        fitness = unit.fitness;
+    }
+
     // @Override
     public int compareTo(Unit a) {
         return fitness > a.fitness ? 1 : fitness < a.fitness ? -1 : 0;

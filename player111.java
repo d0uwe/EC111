@@ -77,12 +77,12 @@ public class player111 implements ContestSubmission {
             for (int j = 0; j < 10; j++) {
                 child.values[j] = (rand.nextDouble() - 0.5) * 10;
 
-                child.fitness = (double) evaluation_.evaluate(population.get(i));
-                // evals++;
-                // if (evals >= evaluations_limit_) {
-                //     break;
-                // }
             }
+            child.fitness = (double) evaluation_.evaluate(population.get(i));
+            // evals++;
+            // if (evals >= evaluations_limit_) {
+            //     break;
+            // }
             population.add(child);
         }
         return population;
@@ -222,6 +222,10 @@ public class player111 implements ContestSubmission {
 
             for (int i = n_survivors; i < pop_size; i++) {
                 population.get(i).fitness = (double) evaluation_.evaluate(population.get(i));
+                evals++;
+                if (evals >= evaluations_limit_) {
+                    break;
+                }
             }
 
 

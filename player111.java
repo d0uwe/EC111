@@ -6,6 +6,8 @@ import java.util.Random;
 import java.util.Properties;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+
 
 public class player111 implements ContestSubmission {
     Random rnd_;
@@ -28,7 +30,8 @@ public class player111 implements ContestSubmission {
         // Get evaluation properties
         Properties props = evaluation.getProperties();
         // Get evaluation limit
-        evaluations_limit_ = Integer.parseInt(props.getProperty("Evaluations"));
+        // evaluations_limit_ = Integer.parseInt(props.getProperty("Evaluations"));
+        evaluations_limit_ = 500;
         // Property keys depend on specific evaluation
         // E.g. double param = Double.parseDouble(props.getProperty("property_name"));
         boolean isMultimodal = Boolean.parseBoolean(props.getProperty("Multimodal"));
@@ -43,12 +46,36 @@ public class player111 implements ContestSubmission {
         }
     }
 
-    private ArrayList<ArrayList<Double>> init_population(int pop_size, Random rand) {
-        ArrayList<ArrayList<Double>> population = new ArrayList<ArrayList<Double>>();
+    private class Unit implements Comparable<Unit> {
+        double[] values;
+        double fitness = -1;
+    
+        public Unit() {
+            values = new double[10];
+        }
+    
+        public Unit(int value_size) {
+            values = new double[value_size];
+        }
+    
+        // @Override
+        public int compareTo(Unit a) {
+            return fitness > a.fitness ? 1 : fitness < a.fitness ? -1 : 0;
+        }
+    }
+
+    private ArrayList<Unit> init_population(int pop_size, Random rand) {
+        ArrayList<Unit> population = new ArrayList<Unit>();
         for (int i = 0; i < pop_size; i++) {
-            ArrayList<Double> child = new ArrayList<Double>();
+            Unit child = this.new Unit(10);
             for (int j = 0; j < 10; j++) {
-                child.add((rand.nextDouble() - 0.5) * 10);
+                child.values[j] = (rand.nextDouble() - 0.5) * 10;
+
+                child.fitness = (double) evaluation_.evaluate(population.get(i));
+                // evals++;
+                // if (evals >= evaluations_limit_) {
+                //     break;
+                // }
             }
             population.add(child);
         }
@@ -64,23 +91,23 @@ public class player111 implements ContestSubmission {
      * @param pop_size desired population size
      * @return the new population
      */
-    private ArrayList<ArrayList<Double>> cross_over (ArrayList<ArrayList<Double>> population, int min_split, int max_split, Random rand, int pop_size) {
+    private ArrayList<Unit> cross_over(ArrayList<Unit> population, int min_split, int max_split, Random rand, int pop_size) {
         int curr_pop_size = population.size();
         for (int i = 0; i < pop_size - population.size(); i++) {
             int split = rand.nextInt(max_split - min_split) + min_split;
             int p1 = rand.nextInt(curr_pop_size);
             int p2 = rand.nextInt(curr_pop_size);
 
-            ArrayList<Double> child = new ArrayList<Double>();
+            Unit child = this.new Unit(10);
 
-            for (int j = 0; j < population.get(0).size(); j++) {
+            for (int j = 0; j < population.get(0).values.length; j++) {
                 if (j < split) {
-                    child.add(population.get(p1).get(j));
+                    child.values[j] = population.get(p1).values[j];
                 } else {
-                    child.add(population.get(p2).get(j));
+                    child.values[j] = population.get(p2).values[j];
                 }
             }
-            population.add(child);
+            population.set(i, child);
         }
         return population;
     }
@@ -94,31 +121,38 @@ public class player111 implements ContestSubmission {
      * @param pop_size desired population size
      * @return new population
      */
-    private ArrayList<ArrayList<Double>> mutate(ArrayList<ArrayList<Double>> population, int min_muts, int max_muts, Random rand, int pop_size) {
+    private ArrayList<Unit> mutate(ArrayList<Unit> population, int min_muts, int max_muts, Random rand, int pop_size) {
         int curr_pop_size = population.size();
         ArrayList<Integer> indexes = new ArrayList<>();
-        for (int i = 0; i < population.get(0).size(); i++) {
+
+        // TODO: find some arange() thing for java to replace this
+        for (int i = 0; i < population.get(0).values.length; i++) {
             indexes.add(i);
         }
         for (int i = 0; i < pop_size - population.size(); i++) {
             Collections.shuffle(indexes);
             int amnt_muts = rand.nextInt(max_muts - min_muts) + min_muts;
             int parent = rand.nextInt(curr_pop_size);
-            ArrayList<Double> child = population.get(parent);
+            Unit child = population.get(parent);
 
             for (int j = 0; j < amnt_muts; j++) {
-                double curr_val = child.get(indexes.get(j));
+                double curr_val = child.values[indexes.get(j)];
                 double new_val = curr_val + rand.nextDouble() - 0.5;
                 if (new_val > 5){
                     new_val = 5;
                 } else if (new_val < -5) {
                     new_val = -5;
                 }
-                child.set(indexes.get(j), new_val);
+                child.values[indexes.get(j)] = new_val;
             }
             population.add(child);
         }
         return population;
+    }
+
+    private ArrayList<Unit> select_survivors(ArrayList<Unit> population, int n_survivors) {
+        Collections.sort(population);
+        return new ArrayList<Unit>(population.subList(0, n_survivors));
     }
 
     public void run() {
@@ -130,26 +164,53 @@ public class player111 implements ContestSubmission {
         int min_split = 4;
         int max_split = 6;
         // init population
-        ArrayList<ArrayList<Double>> population = init_population(pop_size, rand);
-        ArrayList<Double> fitnesses = new ArrayList<>();
-        for (int i = 0; i < pop_size; i++) {
-            fitnesses.add((double) evaluation_.evaluate(population.get(i)));
-            evals++;
-            if (evals >= evaluations_limit_) {
-                break;
-            }
-        }
+
+        assert pop_size <= evaluations_limit_;
+
+        ArrayList<Unit> population = init_population(pop_size, rand);
+
+        // Init_population does one evaluate for every unit in the population
+        // There are guaranteed enough evals left for this (see assert)
+        evals += pop_size;
+
+        // System.out.println(population[0].toString());
+        // // System.out.println((double) evaluation_.evaluate());
+        // System.out.println((double) evaluation_.evaluate(population[0]));
+
+        // for (int i = 0; i < population.size(); i++) {
+        //     fitnesses.add((double) evaluation_.evaluate(population.get(i)));
+        //     evals++;
+        //     if (evals >= evaluations_limit_) {
+        //         break;
+        //     }
+        // }
 
 //        population = mutate(population, 2, 4, rand, 4);
 //        population = cross_over(population, 2, 8, rand, 4);
 
         // calculate fitness
-        while (evals < evaluations_limit_) {
-            ArrayList<ArrayList<Double>> children = cross_over(population, min_split, max_split, rnd_, pop_size);
 
-            for (int i = 0; i < pop_size; i++) {
-                fitnesses.set(i, (double) evaluation_.evaluate(children.get(i)));
+        int n_survivors = pop_size / 2;
+        while (evals < evaluations_limit_) {
+            System.out.println(evals);
+
+            population = select_survivors(population, n_survivors);
+
+            // ArrayList<Unit> children = cross_over(population, min_split, max_split, rnd_, pop_size);
+            population = cross_over(population, min_split, max_split, rnd_, pop_size);
+
+            for (int i = n_survivors; i < pop_size; i++) {
+                population.get(i).fitness = (double) evaluation_.evaluate(population.get(i));
             }
+
+
+            // for (int i = population.size(); i < children.size(); i++) {
+            //     fitnesses.add((double) evaluation_.evaluate(children.get(population.size() + i)));
+            //     evals++;
+            //     if (evals >= evaluations_limit_) {
+            //         break;
+            //     }
+            // }
 
             // for (int i = 0; i < pop_size; i++) {
             //     ArrayList<Double> parent = population.get(i);
@@ -169,3 +230,5 @@ public class player111 implements ContestSubmission {
         }
     }
 }
+
+

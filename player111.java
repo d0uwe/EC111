@@ -4,7 +4,6 @@ import org.vu.contest.ContestEvaluation;
 
 import java.util.Random;
 import java.util.Properties;
-import java.awt.geom.Arc2D.Double;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -44,19 +43,19 @@ public class player111 implements ContestSubmission {
         }
     }
 
-    private ArrayList<Pair<ArrayList<Double>, Double>> init_population(int pop_size, Random rand) {
-        ArrayList<Pair<ArrayList<Double>, Double>> population = new ArrayList<ArrayList<Double>>();
+    private ArrayList<ArrayList<Double>> init_population(int pop_size, Random rand) {
+        ArrayList<ArrayList<Double>> population = new ArrayList<ArrayList<Double>>();
         for (int i = 0; i < pop_size; i++) {
             ArrayList<Double> child = new ArrayList<Double>();
             for (int j = 0; j < 10; j++) {
                 child.add((rand.nextDouble() - 0.5) * 10);
             }
-            population.add(Pair(child, 0.0));
+            population.add(child);
         }
         return population;
     }
 
-    private ArrayList<ArrayList<Double>> cross_over (ArrayList<ArrayList<Double>> population, int min_split, int max_split, Random rand, int pop_size) {
+    private ArrayList<ArrayList<Double>> cross_over(ArrayList<ArrayList<Double>> population, int min_split, int max_split, Random rand, int pop_size) {
         int curr_pop_size = population.size();
         for (int i = 0; i < pop_size - population.size(); i++) {
             int split = rand.nextInt(max_split - min_split) + min_split;
@@ -86,7 +85,7 @@ public class player111 implements ContestSubmission {
      * @param pop_size desired population size
      * @return new population
      */
-    private ArrayList<ArrayList<Double>> mutate (ArrayList<ArrayList<Double>> population, int min_muts, int max_muts, Random rand, int pop_size) {
+    private ArrayList<ArrayList<Double>> mutate(ArrayList<ArrayList<Double>> population, int min_muts, int max_muts, Random rand, int pop_size) {
         int curr_pop_size = population.size();
         ArrayList<Integer> indexes = new ArrayList<>();
         for (int i = 0; i < population.get(0).size(); i++) {
@@ -119,30 +118,45 @@ public class player111 implements ContestSubmission {
         Random rand = new Random();
         int evals = 0;
         int pop_size = 150;
+        int min_split = 4;
+        int max_split = 6;
         // init population
-        ArrayList<Pair<ArrayList<Double>, Double>> population = init_population(pop_size, rand);
+        ArrayList<ArrayList<Double>> population = init_population(pop_size, rand);
+        ArrayList<Double> fitnesses = new ArrayList<>();
+        for (int i = 0; i < pop_size; i++) {
+            fitnesses.add((double) evaluation_.evaluate(population.get(i)));
+            evals++;
+            if (evals >= evaluations_limit_) {
+                break;
+            }
+        }
 
 //        population = mutate(population, 2, 4, rand, 4);
 //        population = cross_over(population, 2, 8, rand, 4);
 
         // calculate fitness
         while (evals < evaluations_limit_) {
-            for (ArrayList<Double> parent : population) {
-                // System.out.println(parent);
+            ArrayList<ArrayList<Double>> children = cross_over(population, min_split, max_split, rnd_, pop_size);
 
-                // Check fitness of unknown fuction
-                Double fitness = (double) evaluation_.evaluate(child);
-
-                evals++;
-                if (evals >= evaluations_limit_) {
-                    break;
-                }
-
-                // Select parents
-                // Apply crossover / mutation operators
-                double child[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-                // Select survivors
+            for (int i = 0; i < pop_size; i++) {
+                fitnesses.set(i, (double) evaluation_.evaluate(children.get(i)));
             }
+
+            // for (int i = 0; i < pop_size; i++) {
+            //     ArrayList<Double> parent = population.get(i);
+            //     // System.out.println(parent);
+
+            //     // ArrayList<Double> child = cross_over(population.get(i), min_split, max_split, rand, pop_size);
+
+            //     // Check fitness of unknown fuction
+            //     // fitnesses.set(i, evaluation_.evaluate(child));
+
+
+            //     // Select parents
+            //     // Apply crossover / mutation operators
+            //     double child[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+            //     // Select survivors
+            // }
         }
     }
 }

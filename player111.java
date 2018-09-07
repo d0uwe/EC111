@@ -55,7 +55,16 @@ public class player111 implements ContestSubmission {
         return population;
     }
 
-    private ArrayList<ArrayList<Double>> cross_over(ArrayList<ArrayList<Double>> population, int min_split, int max_split, Random rand, int pop_size) {
+    /**
+     * Do crossover between parents
+     * @param population parent populations
+     * @param min_split minimum amount of elements from one parents
+     * @param max_split maximum amount of elements from one parents
+     * @param rand Random generator
+     * @param pop_size desired population size
+     * @return the new population
+     */
+    private ArrayList<ArrayList<Double>> cross_over (ArrayList<ArrayList<Double>> population, int min_split, int max_split, Random rand, int pop_size) {
         int curr_pop_size = population.size();
         for (int i = 0; i < pop_size - population.size(); i++) {
             int split = rand.nextInt(max_split - min_split) + min_split;

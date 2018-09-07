@@ -1,10 +1,11 @@
 import org.vu.contest.ContestSubmission;
+
 import org.vu.contest.ContestEvaluation;
 
 import java.util.Random;
 import java.util.Properties;
+import java.awt.geom.Arc2D.Double;
 import java.util.ArrayList;
-
 
 public class player111 implements ContestSubmission {
     Random rnd_;
@@ -42,14 +43,14 @@ public class player111 implements ContestSubmission {
         }
     }
 
-    private ArrayList<ArrayList<Double>> init_population (int pop_size, Random rand) {
-        ArrayList<ArrayList<Double>> population = new ArrayList<ArrayList<Double>>();
+    private ArrayList<Pair<ArrayList<Double>, Double>> init_population(int pop_size, Random rand) {
+        ArrayList<Pair<ArrayList<Double>, Double>> population = new ArrayList<ArrayList<Double>>();
         for (int i = 0; i < pop_size; i++) {
             ArrayList<Double> child = new ArrayList<Double>();
             for (int j = 0; j < 10; j++) {
                 child.add((rand.nextDouble() - 0.5) * 10);
             }
-            population.add(child);
+            population.add(Pair(child, 0.0));
         }
         return population;
     }
@@ -61,17 +62,26 @@ public class player111 implements ContestSubmission {
         int evals = 0;
         int pop_size = 150;
         // init population
-        ArrayList<ArrayList<Double>> population = init_population(pop_size, rand);
+        ArrayList<Pair<ArrayList<Double>, Double>> population = init_population(pop_size, rand);
 
         // calculate fitness
-        while (evals<evaluations_limit_) {
-            // Select parents
-            // Apply crossover / mutation operators
-            double child[] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
-            // Check fitness of unknown fuction
-            Double fitness = (double) evaluation_.evaluate(child);
-            evals++;
-            // Select survivors
+        while (evals < evaluations_limit_) {
+            for (ArrayList<Double> parent : population) {
+                // System.out.println(parent);
+
+                // Check fitness of unknown fuction
+                Double fitness = (double) evaluation_.evaluate(child);
+
+                evals++;
+                if (evals >= evaluations_limit_) {
+                    break;
+                }
+
+                // Select parents
+                // Apply crossover / mutation operators
+                double child[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+                // Select survivors
+            }
         }
     }
 }

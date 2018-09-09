@@ -29,4 +29,16 @@ To investigate the effect of parameters, you can run:
 java –Dvar1=0.5 -jar testrun.jar -submission=player111 - evaluation=BentCigarFunction -seed=1
 ```
 
+## To add new classes for compiling:
+Unzip the jar file to contest folder
+```unzip contest.jar -d contest```
 
+copy any class to the appropriate contest subfolder and create the jar again.
+Also overwrite the current contest.jar in main folder
+```
+cd contest
+zip contest.jar -r *
+mv contest.jar ../
+```
+
+It might be good to delete the folder all together afterwards too.

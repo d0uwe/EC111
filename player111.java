@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import structures.Unit;
 
 public class player111 implements ContestSubmission {
     Random rnd_;
@@ -46,39 +47,15 @@ public class player111 implements ContestSubmission {
         }
     }
 
-    private class Unit implements Comparable<Unit> {
-        double[] values;
-        double fitness = -1;
-    
-        public Unit() {
-            values = new double[10];
-        }
-    
-        public Unit(int value_size) {
-            values = new double[value_size];
-        }
-
-        // copy constructor
-        public Unit(Unit unit) {
-            values = unit.values;
-            fitness = unit.fitness;
-        }
-    
-        // @Override
-        public int compareTo(Unit a) {
-            return fitness > a.fitness ? 1 : fitness < a.fitness ? -1 : 0;
-        }
-    }
-
     private ArrayList<Unit> init_population(int pop_size, Random rand) {
         ArrayList<Unit> population = new ArrayList<Unit>();
         for (int i = 0; i < pop_size; i++) {
-            Unit child = this.new Unit(10);
+            Unit child = new Unit(10);
             for (int j = 0; j < 10; j++) {
-                child.values[j] = (rand.nextDouble() - 0.5) * 10;
+                child.setValue(j, ((rand.nextDouble() - 0.5) * 10));
 
             }
-            child.fitness = (double) evaluation_.evaluate(population.get(i));
+            child.setFitness((double) evaluation_.evaluate(population.get(i)));
             // evals++;
             // if (evals >= evaluations_limit_) {
             //     break;
@@ -104,13 +81,14 @@ public class player111 implements ContestSubmission {
             int p1 = rand.nextInt(curr_pop_size);
             int p2 = rand.nextInt(curr_pop_size);
 
-            Unit child = this.new Unit(10);
+            Unit child = new Unit(10);
 
-            for (int j = 0; j < population.get(0).values.length; j++) {
+            // getSize n keer aanroepen, what would tim doolan do
+            for (int j = 0; j < population.get(0).getSize(); j++) {
                 if (j < split) {
-                    child.values[j] = population.get(p1).values[j];
+                    child.setValue(j, population.get(p1).getValues(j));
                 } else {
-                    child.values[j] = population.get(p2).values[j];
+                    child.setValue(j, population.get(p2).getValues(j));
                 }
             }
             population.set(i, child);
@@ -132,7 +110,8 @@ public class player111 implements ContestSubmission {
         ArrayList<Integer> indexes = new ArrayList<>();
 
         // TODO: find some arange() thing for java to replace this
-        for (int i = 0; i < population.get(0).values.length; i++) {
+        // TODO: what owuld tim doolan do?
+        for (int i = 0; i < population.get(0).getSize(); i++) {
             indexes.add(i);
         }
         for (int i = 0; i <= pop_size - population.size(); i++) {
@@ -142,14 +121,14 @@ public class player111 implements ContestSubmission {
             Unit child = new Unit(population.get(parent));
 
             for (int j = 0; j < amnt_muts; j++) {
-                double curr_val = child.values[indexes.get(j)];
+                double curr_val = child.getValues(indexes.get(j));
                 double new_val = curr_val + rand.nextDouble() - 0.5;
                 if (new_val > 5){
                     new_val = 5;
                 } else if (new_val < -5) {
                     new_val = -5;
                 }
-                child.values[indexes.get(j)] = new_val;
+                child.setValue(indexes.get(j), new_val);
             }
             population.add(child);
         }
@@ -191,24 +170,28 @@ public class player111 implements ContestSubmission {
         //     }
         // }
 
-        for (Unit child : population) {
-            for (double number : child.values) {
-                System.out.print(number);
-            }
-            System.out.println();
-        }
-        System.out.println();
-        System.out.println();
+
+        // This for loop does not work atm cause child.values is private
+        // This is true for both for loops commented below
+
+        //for (Unit child : population) {
+        //    for (double number : child.values) {
+        //        System.out.print(number);
+        //    }
+        //    System.out.println();
+        //}
+        //System.out.println();
+        //System.out.println();
 
         //population = mutate(population, 2, 4, rand, 4);
 //        population = cross_over(population, 2, 8, rand, 4);
 
-        for (Unit child : population) {
-            for (double number : child.values) {
-                System.out.print(number);
-            }
-            System.out.println();
-        }
+        //for (Unit child : population) {
+        //    for (double number : child.values) {
+        //        System.out.print(number);
+        //    }
+        //    System.out.println();
+        //}
         // calculate fitness
 
         int n_survivors = pop_size / 2;
@@ -221,7 +204,7 @@ public class player111 implements ContestSubmission {
             population = cross_over(population, min_split, max_split, rnd_, pop_size);
 
             for (int i = n_survivors; i < pop_size; i++) {
-                population.get(i).fitness = (double) evaluation_.evaluate(population.get(i));
+                population.get(i).setFitness((double) evaluation_.evaluate(population.get(i)));
                 evals++;
                 if (evals >= evaluations_limit_) {
                     break;

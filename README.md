@@ -37,8 +37,12 @@ copy any class to the appropriate contest subfolder and create the jar again.
 Also overwrite the current contest.jar in main folder
 ```
 cd contest
-zip contest.jar -r *
-mv contest.jar ../
+zip ../contest.jar -r *
+```
+
+One-liner for Unit.java (assuming you have a `contest` folder with all package structures:
+```
+javac classes/structures/Unit.java && cp classes/structures/Unit.class contest/structures/Unit.class && cd contest/ && zip -r ../contest.jar * && cd ..
 ```
 
 It might be good to delete the folder all together afterwards too.

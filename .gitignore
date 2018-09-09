@@ -2,3 +2,4 @@ tmp
 .DS_Store
 *.class
 ec_vscode_workspace.code-workspace
+META-INF

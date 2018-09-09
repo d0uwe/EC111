@@ -23,7 +23,7 @@ public class Unit implements Comparable<Unit> {
     }
 
     public double[] getValues() { return values; }
-    public double   getValues(int loc) { return values[loc]; }
+    public double   getValue(int loc) { return values[loc]; }
     public double   getFitness() { return fitness; }
     public int      getSize() { return size; }
 

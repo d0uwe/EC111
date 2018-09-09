@@ -31,8 +31,8 @@ public class player111 implements ContestSubmission {
         // Get evaluation properties
         Properties props = evaluation.getProperties();
         // Get evaluation limit
-        // evaluations_limit_ = Integer.parseInt(props.getProperty("Evaluations"));
-        evaluations_limit_ = 500;
+        evaluations_limit_ = Integer.parseInt(props.getProperty("Evaluations"));
+        // evaluations_limit_ = 500;
         // Property keys depend on specific evaluation
         // E.g. double param = Double.parseDouble(props.getProperty("property_name"));
         boolean isMultimodal = Boolean.parseBoolean(props.getProperty("Multimodal"));
@@ -53,9 +53,8 @@ public class player111 implements ContestSubmission {
             Unit child = new Unit(10);
             for (int j = 0; j < 10; j++) {
                 child.setValue(j, ((rand.nextDouble() - 0.5) * 10));
-
             }
-            child.setFitness((double) evaluation_.evaluate(population.get(i)));
+        child.setFitness((double) evaluation_.evaluate(child.getValues()));
             // evals++;
             // if (evals >= evaluations_limit_) {
             //     break;
@@ -74,9 +73,9 @@ public class player111 implements ContestSubmission {
      * @param pop_size desired population size
      * @return the new population
      */
-    private ArrayList<Unit> cross_over(ArrayList<Unit> population, int min_split, int max_split, Random rand, int pop_size) {
+    private ArrayList<Unit> cross_over(ArrayList<Unit> population, int min_split, int max_split, Random rand, int max_pop_size) {
         int curr_pop_size = population.size();
-        for (int i = 0; i <= pop_size - population.size(); i++) {
+        for (int i = 0; i < max_pop_size - curr_pop_size; i++) {
             int split = rand.nextInt(max_split - min_split) + min_split;
             int p1 = rand.nextInt(curr_pop_size);
             int p2 = rand.nextInt(curr_pop_size);
@@ -86,12 +85,12 @@ public class player111 implements ContestSubmission {
             // getSize n keer aanroepen, what would tim doolan do
             for (int j = 0; j < population.get(0).getSize(); j++) {
                 if (j < split) {
-                    child.setValue(j, population.get(p1).getValues(j));
+                    child.setValue(j, population.get(p1).getValue(j));
                 } else {
-                    child.setValue(j, population.get(p2).getValues(j));
+                    child.setValue(j, population.get(p2).getValue(j));
                 }
             }
-            population.set(i, child);
+            population.add(child);
         }
         return population;
     }
@@ -105,7 +104,7 @@ public class player111 implements ContestSubmission {
      * @param pop_size desired population size
      * @return new population
      */
-    private ArrayList<Unit> mutate(ArrayList<Unit> population, int min_muts, int max_muts, Random rand, int pop_size) {
+    private ArrayList<Unit> mutate(ArrayList<Unit> population, int min_muts, int max_muts, Random rand, int max_pop_size) {
         int curr_pop_size = population.size();
         ArrayList<Integer> indexes = new ArrayList<>();
 
@@ -114,14 +113,14 @@ public class player111 implements ContestSubmission {
         for (int i = 0; i < population.get(0).getSize(); i++) {
             indexes.add(i);
         }
-        for (int i = 0; i <= pop_size - population.size(); i++) {
+        for (int i = 0; i < max_pop_size - curr_pop_size; i++) {
             Collections.shuffle(indexes);
             int amnt_muts = rand.nextInt(max_muts - min_muts) + min_muts;
             int parent = rand.nextInt(curr_pop_size);
             Unit child = new Unit(population.get(parent));
 
             for (int j = 0; j < amnt_muts; j++) {
-                double curr_val = child.getValues(indexes.get(j));
+                double curr_val = child.getValue(indexes.get(j));
                 double new_val = curr_val + rand.nextDouble() - 0.5;
                 if (new_val > 5){
                     new_val = 5;
@@ -202,9 +201,18 @@ public class player111 implements ContestSubmission {
 
             // ArrayList<Unit> children = cross_over(population, min_split, max_split, rnd_, pop_size);
             population = cross_over(population, min_split, max_split, rnd_, pop_size);
+            // population = mutate(population, min_split, max_split, rnd_, pop_size);
 
-            for (int i = n_survivors; i < pop_size; i++) {
-                population.get(i).setFitness((double) evaluation_.evaluate(population.get(i)));
+            // System.out.println(pop_size);
+            // System.out.println(population.size());
+            // System.out.println("henk");
+            
+            int curr_pop_size = population.size();
+            for (int i = n_survivors; i < curr_pop_size; i++) {
+                // System.out.println(i);
+                // System.out.println(population.size());
+                // System.out.println(population.get(i));
+                population.get(i).setFitness((double) evaluation_.evaluate(population.get(i).getValues()));
                 evals++;
                 if (evals >= evaluations_limit_) {
                     break;

@@ -24,7 +24,7 @@ public class Recombination {
      * @param pop_size desired population size
      * @return the new population
      */
-    private ArrayList<Unit> cross_over(ArrayList<Unit> population, int min_split, int max_split, Random rand, int max_pop_size) {
+    public ArrayList<Unit> cross_over(ArrayList<Unit> population, int min_split, int max_split, Random rand, int max_pop_size) {
         int curr_pop_size = population.size();
         for (int i = 0; i < max_pop_size - curr_pop_size; i++) {
             int split = rand.nextInt(max_split - min_split) + min_split;

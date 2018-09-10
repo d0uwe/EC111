@@ -1,6 +1,6 @@
 tmp
 .DS_Store
 *.class
-ec_vscode_workspace.code-workspace
+EC_vs_workspace.code-workspace
 META-INF
 docker-compose.yml

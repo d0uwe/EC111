@@ -3,3 +3,4 @@ tmp
 *.class
 ec_vscode_workspace.code-workspace
 META-INF
+docker-compose.yml

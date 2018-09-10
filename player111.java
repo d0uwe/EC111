@@ -11,6 +11,7 @@ import java.util.Comparator;
 import structures.Unit;
 import structures.Recombination;
 import structures.Selection;
+import structures.Mutation;
 
 public class player111 implements ContestSubmission {
     Random rnd_;
@@ -76,32 +77,16 @@ public class player111 implements ContestSubmission {
      * @param pop_size desired population size
      * @return new population
      */
-    private ArrayList<Unit> mutate(ArrayList<Unit> population, int min_muts, int max_muts, Random rand, int max_pop_size) {
-        int curr_pop_size = population.size();
-        ArrayList<Integer> indexes = new ArrayList<>();
+    private ArrayList<Unit> mutate(ArrayList<Unit> population, int pop_size, Mutation mutator, Random rand) {
+        int current_pop_size = population.size();
 
-        // TODO: find some arange() thing for java to replace this
-        // TODO: what owuld tim doolan do?
-        for (int i = 0; i < population.get(0).getSize(); i++) {
-            indexes.add(i);
-        }
-        for (int i = 0; i < max_pop_size - curr_pop_size; i++) {
-            Collections.shuffle(indexes);
-            int amnt_muts = rand.nextInt(max_muts - min_muts) + min_muts;
-            int parent = rand.nextInt(curr_pop_size);
-            Unit child = new Unit(population.get(parent));
+        // Figure out how much you need to fill into the population
+        int mutation_growth = (pop_size - current_pop_size) / 2;
 
-            for (int j = 0; j < amnt_muts; j++) {
-                double curr_val = child.getValue(indexes.get(j));
-                double new_val = curr_val + rand.nextDouble() - 0.5;
-                if (new_val > 5){
-                    new_val = 5;
-                } else if (new_val < -5) {
-                    new_val = -5;
-                }
-                child.setValue(indexes.get(j), new_val);
-            }
-            population.add(child);
+        for (int i = 0; i < mutation_growth; i++) {
+            //generate random number between 0 and current_pop_size
+            Unit mutated_child = mutator.mutate_uniform(population.get(rand.nextInt(current_pop_size)));
+            population.add(mutated_child);
         }
         return population;
     }
@@ -125,95 +110,28 @@ public class player111 implements ContestSubmission {
         // There are guaranteed enough evals left for this (see assert)
         evals += pop_size;
 
-        // System.out.println(population[0].toString());
-        // // System.out.println((double) evaluation_.evaluate());
-        // System.out.println((double) evaluation_.evaluate(population[0]));
-
-        // for (int i = 0; i < population.size(); i++) {
-        //     fitnesses.add((double) evaluation_.evaluate(population.get(i)));
-        //     evals++;
-        //     if (evals >= evaluations_limit_) {
-        //         break;
-        //     }
-        // }
-
-
-        // This for loop does not work atm cause child.values is private
-        // This is true for both for loops commented below
-
-        //for (Unit child : population) {
-        //    for (double number : child.values) {
-        //        System.out.print(number);
-        //    }
-        //    System.out.println();
-        //}
-        //System.out.println();
-        //System.out.println();
-
-        //population = mutate(population, 2, 4, rand, 4);
-//        population = cross_over(population, 2, 8, rand, 4);
-
-        //for (Unit child : population) {
-        //    for (double number : child.values) {
-        //        System.out.print(number);
-        //    }
-        //    System.out.println();
-        //}
-        // calculate fitness
-
         int n_survivors = pop_size / 2;
-        Recombination recombination = new Recombination();
+
         Selection selection = new Selection();
+        Mutation mutate = new Mutation();
+        Recombination recombination = new Recombination();
+
         while (evals < evaluations_limit_) {
             System.out.println(evals);
 
+            population = mutate(population, pop_size, mutate, rnd_);
             population = selection.select_survivors(population, n_survivors);
-
-            // ArrayList<Unit> children = cross_over(population, min_split, max_split, rnd_, pop_size);
-
             population = recombination.cross_over(population, min_split, max_split, rnd_, pop_size);
-            // population = mutate(population, min_split, max_split, rnd_, pop_size);
 
-            // System.out.println(pop_size);
-            // System.out.println(population.size());
-            // System.out.println("henk");
-            
             int curr_pop_size = population.size();
+
             for (int i = n_survivors; i < curr_pop_size; i++) {
-                // System.out.println(i);
-                // System.out.println(population.size());
-                // System.out.println(population.get(i));
                 population.get(i).setFitness((double) evaluation_.evaluate(population.get(i).getValues()));
                 evals++;
                 if (evals >= evaluations_limit_) {
                     break;
                 }
             }
-
-
-            // for (int i = population.size(); i < children.size(); i++) {
-            //     fitnesses.add((double) evaluation_.evaluate(children.get(population.size() + i)));
-            //     evals++;
-            //     if (evals >= evaluations_limit_) {
-            //         break;
-            //     }
-            // }
-
-            // for (int i = 0; i < pop_size; i++) {
-            //     ArrayList<Double> parent = population.get(i);
-            //     // System.out.println(parent);
-
-            //     // ArrayList<Double> child = cross_over(population.get(i), min_split, max_split, rand, pop_size);
-
-            //     // Check fitness of unknown fuction
-            //     // fitnesses.set(i, evaluation_.evaluate(child));
-
-
-            //     // Select parents
-            //     // Apply crossover / mutation operators
-            //     double child[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-            //     // Select survivors
-            // }
         }
     }
 }

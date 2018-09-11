@@ -76,7 +76,6 @@ public class player111 implements ContestSubmission {
      * @param rand random generator
      * @param pop_size desired population size
      * @return new population
-     */
     private ArrayList<Unit> mutate(ArrayList<Unit> population, int pop_size, Mutation mutator, Random rand) {
         int current_pop_size = population.size();
 
@@ -90,6 +89,7 @@ public class player111 implements ContestSubmission {
         }
         return population;
     }
+     */
 
 
     public void run() {
@@ -119,7 +119,7 @@ public class player111 implements ContestSubmission {
         while (evals < evaluations_limit_) {
             System.out.println(evals);
 
-            population = mutate(population, pop_size, mutate, rnd_);
+            population = mutate.mutate_uniform(population, pop_size, mutate, rnd_);
             population = selection.select_survivors(population, n_survivors);
             population = recombination.cross_over(population, min_split, max_split, rnd_, pop_size);
 
@@ -133,7 +133,3 @@ public class player111 implements ContestSubmission {
                 }
             }
         }
-    }
-}
-
-

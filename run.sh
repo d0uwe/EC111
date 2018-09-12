@@ -2,6 +2,7 @@
 if [ "$1" == "compile" ]
 then
     javac classes/structures/*.java && cp classes/structures/*.class contest/structures/ && jar cf contest.jar -C contest/ .
+    javac -cp contest.jar player111.java
 elif [ "$1" == "sphere" ]
 then
     java -jar testrun.jar -submission=player111 -evaluation=SphereEvaluation -seed=1

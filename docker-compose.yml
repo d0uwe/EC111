@@ -1,0 +1,8 @@
+version: '3'
+services:
+  java:
+    image: 'java:8'
+    volumes:
+     - .:/app
+    environment:
+    - LD_LIBRARY_PATH=/app

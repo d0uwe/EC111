@@ -3,4 +3,4 @@ tmp
 *.class
 EC_vs_workspace.code-workspace
 META-INF
-docker-compose.yml
+contest

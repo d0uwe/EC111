@@ -119,7 +119,7 @@ public class player111 implements ContestSubmission {
         while (evals < evaluations_limit_) {
             System.out.println(evals);
 
-            population = mutate.mutate_uniform(population, pop_size, mutate, rnd_);
+            population = mutate.mutate_uniform(population, pop_size, rnd_);
             population = selection.select_survivors(population, n_survivors);
             population = recombination.cross_over(population, min_split, max_split, rnd_, pop_size);
 
@@ -133,3 +133,5 @@ public class player111 implements ContestSubmission {
                 }
             }
         }
+    }
+}

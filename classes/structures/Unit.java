@@ -6,9 +6,12 @@ public class Unit implements Comparable<Unit> {
     double[] values;
     double fitness = -1;
     int size = 10;
+    double[] sigmas;
 
     public Unit() {
         values = new double[size];
+        // sigmas = new double[size]; // can be used fully or just the first element depending on mutation strategy
+        // sigmas = [1.0]; // can be used fully or just the first element depending on mutation strategy
     }
 
     public Unit(int value_size) {
@@ -20,6 +23,8 @@ public class Unit implements Comparable<Unit> {
     public Unit(Unit unit) {
         values = unit.values;
         fitness = unit.fitness;
+        size = unit.size;
+        sigmas = unit.sigmas;
     }
 
     public double[] getValues() { return values; }

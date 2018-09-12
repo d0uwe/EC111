@@ -9,8 +9,8 @@ public class Mutation {
     double lower_bound;
 
     public Mutation(double upper_bound, double lower_bound) {
-        upper_bound = upper_bound;
-        lower_bound = lower_bound;
+        this.upper_bound = upper_bound;
+        this.lower_bound = lower_bound;
     }
 
     public Mutation() {
@@ -45,5 +45,34 @@ public class Mutation {
         return population;
     }
 
+    public Unit mutate_gaussian_single(Unit unit, Random rand) {
+        Unit new_unit = new Unit(unit);
+        int unit_size = new_unit.getSize();
+
+        for (int i = 0; i < unit_size; i++) {
+            new_unit.setValue(i, (rand.nextGaussian() * new_unit.getSigma(0)));
+        }
+
+        // Decay new_unit sigma or unit_size, both or none?
+
+
+        return new_unit;
+    }
+
+
     
+    public ArrayList<Unit> mutate_gaussian_single(ArrayList<Unit> population, int pop_size, Random rand) {
+        
+        int current_pop_size = population.size();
+
+        int mutation_growth = (pop_size - current_pop_size) / 2;
+
+        for (int i = 0; i < mutation_growth; i++) {
+            Unit mutated_child = mutate_gaussian_single(population.get(rand.nextInt(current_pop_size)), rand);
+            population.add(mutated_child);
+        }
+        
+        return population;
+    }
+
 }

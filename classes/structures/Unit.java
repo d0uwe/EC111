@@ -7,16 +7,27 @@ public class Unit implements Comparable<Unit> {
     double fitness = -1;
     int size = 10;
     double[] sigmas;
+    MutateMode mutate_mode;
 
-    public Unit() {
-        values = new double[size];
-        // sigmas = new double[size]; // can be used fully or just the first element depending on mutation strategy
-        // sigmas = [1.0]; // can be used fully or just the first element depending on mutation strategy
+    public enum MutateMode {
+        GAUSS_SINGLE,
+        GAUSS_MULTI,
+        UNIFORM
     }
 
-    public Unit(int value_size) {
+    public Unit(MutateMode mode) {
+        values = new double[size];
+        sigmas = new double[size]; // can be used fully or just the first element depending on mutation strategy
+        for (int i = 0; i < sigmas.length; i++) {
+            sigmas[i] = 1.0;
+        }
+        mutate_mode = mode;
+    }
+
+    public Unit(MutateMode mode, int value_size) {
         values = new double[value_size];
         size = value_size;
+        mutate_mode = mode;
     }
 
     // copy constructor
@@ -31,11 +42,13 @@ public class Unit implements Comparable<Unit> {
     public double   getValue(int loc) { return values[loc]; }
     public double   getFitness() { return fitness; }
     public int      getSize() { return size; }
+    public double   getSigma(int loc) { return sigmas[loc]; }
 
 
     public void setValues(double[] new_values) { values = new_values; }
-    public void setValue(int location, double new_value) { values[location] = new_value; }
+    public void setValue(int loc, double new_value) { values[loc] = new_value; }
     public void setFitness(double new_fitness) { fitness = new_fitness; }
+    public void setSigma(int loc, double new_sigma) { sigmas[loc] = new_sigma; }
 
     // @Override
     public int compareTo(Unit a) {

@@ -13,7 +13,11 @@ import structures.Recombination;
 import structures.Selection;
 import structures.Mutation;
 
+
 public class player111 implements ContestSubmission {
+    // TODO: make params object instead of this
+    Unit.MutateMode MUTATE_MODE = Unit.MutateMode.UNIFORM;
+
     Random rnd_;
     ContestEvaluation evaluation_;
     private int evaluations_limit_;
@@ -53,7 +57,7 @@ public class player111 implements ContestSubmission {
     private ArrayList<Unit> init_population(int pop_size, Random rand) {
         ArrayList<Unit> population = new ArrayList<Unit>();
         for (int i = 0; i < pop_size; i++) {
-            Unit child = new Unit(10);
+            Unit child = new Unit(MUTATE_MODE, 10);
             for (int j = 0; j < 10; j++) {
                 child.setValue(j, ((rand.nextDouble() - 0.5) * 10));
             }

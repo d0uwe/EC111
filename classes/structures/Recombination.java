@@ -31,7 +31,7 @@ public class Recombination {
             int p1 = rand.nextInt(curr_pop_size);
             int p2 = rand.nextInt(curr_pop_size);
 
-            Unit child = new Unit(10);
+            Unit child = new Unit(population.get(p1).mutate_mode, 10);
 
             // getSize n keer aanroepen, what would tim doolan do
             for (int j = 0; j < population.get(0).getSize(); j++) {

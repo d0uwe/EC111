@@ -18,6 +18,40 @@ public class Mutation {
         lower_bound = -5.0;
     }
 
+    public ArrayList<Unit> mutate(ArrayList<Unit> population, int pop_size, Random rand) {
+
+        int current_pop_size = population.size();
+        int mutation_growth = (pop_size - current_pop_size) / 2;
+
+        for (int i = 0; i < mutation_growth; i++) {
+            // Get a random unit
+            Unit unit = population.get(rand.nextInt(current_pop_size));
+            Unit mutated_child;
+
+            // Apply the appropriate mutation function
+            switch (unit.mutate_mode) {
+                case UNIFORM:
+                     mutated_child = mutate_uniform(unit, rand);
+                     break;
+                case GAUSS_SINGLE:
+                     mutated_child = mutate_gaussian_single(unit, rand);
+                     break;
+                case GAUSS_MULTI:
+                     mutated_child = mutate_gaussian_multi(unit, rand);
+                     break;
+                default:
+                     throw new java.lang.Error("ERROR: unit has no mutation type.");
+            }
+
+            // Add to the population
+            population.add(mutated_child);
+        }
+
+        return population;
+    }
+
+
+
     public Unit mutate_uniform(Unit unit, Random rand) {
         Unit new_unit = new Unit(unit);
         int unit_size = new_unit.getSize();
@@ -32,8 +66,6 @@ public class Mutation {
     public ArrayList<Unit> mutate_uniform(ArrayList<Unit> population, int pop_size, Random rand) {
 
         int current_pop_size = population.size();
-
-        // Figure out how much you need to fill into the population
         int mutation_growth = (pop_size - current_pop_size) / 2;
 
         for (int i = 0; i < mutation_growth; i++) {
@@ -53,26 +85,32 @@ public class Mutation {
             new_unit.setValue(i, (rand.nextGaussian() * new_unit.getSigma(0)));
         }
 
-        // Decay new_unit sigma or unit_size, both or none?
-
-
         return new_unit;
     }
 
 
-    
     public ArrayList<Unit> mutate_gaussian_single(ArrayList<Unit> population, int pop_size, Random rand) {
-        
-        int current_pop_size = population.size();
 
+        int current_pop_size = population.size();
         int mutation_growth = (pop_size - current_pop_size) / 2;
 
         for (int i = 0; i < mutation_growth; i++) {
             Unit mutated_child = mutate_gaussian_single(population.get(rand.nextInt(current_pop_size)), rand);
             population.add(mutated_child);
         }
-        
+
         return population;
     }
 
+
+    public Unit mutate_gaussian_multi(Unit unit, Random rand) {
+        // TODO
+        return unit;
+    }
+
+
+    public ArrayList<Unit> mutate_gaussian_multi(ArrayList<Unit> population, int pop_size, Random rand) {
+        // TODO
+        return population;
+    }
 }

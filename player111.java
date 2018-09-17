@@ -98,7 +98,7 @@ public class player111 implements ContestSubmission {
     public void run() {
         // Run your algorithm here
 
-        Random rand = new Random();
+        // Random rand = new Random();
         int evals = 0;
         int pop_size = Params.pop_size;
         int min_split = Params.min_split;
@@ -107,8 +107,8 @@ public class player111 implements ContestSubmission {
 
         assert pop_size <= evaluations_limit_;
 
-        Population population = new Population(pop_size, rand);
-        // ArrayList<Unit> population = init_population(pop_size, rand);
+        Population population = new Population(pop_size, rnd_);
+        // ArrayList<Unit> population = init_population(pop_size, rnd_);
 
         // Init_population does one evaluate for every unit in the population
         // There are guaranteed enough evals left for this (see assert)
@@ -123,8 +123,8 @@ public class player111 implements ContestSubmission {
         while (evals < evaluations_limit_) {
             System.out.println(evals);
 
-            population.setPopulation(mutate.mutate_gaussian_single(population.getPopulation(), pop_size, rnd_));
             population.setPopulation(selection.select_survivors(population.getPopulation(), n_survivors));
+            population.setPopulation(mutate.mutate_gaussian_single(population.getPopulation(), pop_size, rnd_));
             population.setPopulation(recombination.cross_over(population.getPopulation(), min_split, max_split, rnd_, pop_size));
 
             int curr_pop_size = population.getPopulation().size();

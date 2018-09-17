@@ -28,6 +28,10 @@ public class Unit implements Comparable<Unit> {
         values = new double[value_size];
         size = value_size;
         mutate_mode = mode;
+        sigmas = new double[size];
+        for (int i = 0; i < sigmas.length; i++) {
+            sigmas[i] = Params.initial_mutate_sigma;
+        }
     }
 
     // copy constructor

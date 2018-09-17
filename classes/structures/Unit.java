@@ -19,7 +19,7 @@ public class Unit implements Comparable<Unit> {
         values = new double[size];
         sigmas = new double[size]; // can be used fully or just the first element depending on mutation strategy
         for (int i = 0; i < sigmas.length; i++) {
-            sigmas[i] = 1.0;
+            sigmas[i] = 10;
         }
         mutate_mode = mode;
     }

@@ -125,7 +125,7 @@ public class player111 implements ContestSubmission {
         while (evals < evaluations_limit_) {
             System.out.println(evals);
 
-            population.setPopulation(mutate.mutate_uniform(population.getPopulation(), pop_size, rnd_));
+            population.setPopulation(mutate.mutate_gaussian_single(population.getPopulation(), pop_size, rnd_));
             population.setPopulation(selection.select_survivors(population.getPopulation(), n_survivors));
             population.setPopulation(recombination.cross_over(population.getPopulation(), min_split, max_split, rnd_, pop_size));
 

@@ -32,9 +32,10 @@ public class Recombination {
             int p2 = rand.nextInt(curr_pop_size);
 
             Unit child = new Unit(population.get(p1).mutate_mode, 10);
+            int population_size = population.get(0).getSize();
 
             // getSize n keer aanroepen, what would tim doolan do
-            for (int j = 0; j < population.get(0).getSize(); j++) {
+            for (int j = 0; j < population_size; j++) {
                 if (j < split) {
                     child.setValue(j, population.get(p1).getValue(j));
                 } else {

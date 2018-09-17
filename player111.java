@@ -12,12 +12,10 @@ import structures.Unit;
 import structures.Recombination;
 import structures.Selection;
 import structures.Mutation;
+import structures.Params;
 
 
 public class player111 implements ContestSubmission {
-    // TODO: make params object instead of this
-    Unit.MutateMode MUTATE_MODE = Unit.MutateMode.UNIFORM;
-
     Random rnd_;
     ContestEvaluation evaluation_;
     private int evaluations_limit_;
@@ -57,7 +55,7 @@ public class player111 implements ContestSubmission {
     private ArrayList<Unit> init_population(int pop_size, Random rand) {
         ArrayList<Unit> population = new ArrayList<Unit>();
         for (int i = 0; i < pop_size; i++) {
-            Unit child = new Unit(MUTATE_MODE, 10);
+            Unit child = new Unit(Params.mutate_mode, 10);
             for (int j = 0; j < 10; j++) {
                 child.setValue(j, ((rand.nextDouble() - 0.5) * 10));
             }
@@ -101,9 +99,9 @@ public class player111 implements ContestSubmission {
 
         Random rand = new Random();
         int evals = 0;
-        int pop_size = 150;
-        int min_split = 4;
-        int max_split = 6;
+        int pop_size = Params.pop_size;
+        int min_split = Params.min_split;
+        int max_split = Params.max_split;
         // init population
 
         assert pop_size <= evaluations_limit_;
@@ -114,7 +112,7 @@ public class player111 implements ContestSubmission {
         // There are guaranteed enough evals left for this (see assert)
         evals += pop_size;
 
-        int n_survivors = pop_size / 2;
+        int n_survivors = Params.n_survivors;
 
         Selection selection = new Selection();
         Mutation mutate = new Mutation();

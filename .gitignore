@@ -1,6 +1,7 @@
 tmp
 .DS_Store
-*.class
 EC_vs_workspace.code-workspace
 META-INF
 contest.jar
+classes/structures/*.class
+player111.class

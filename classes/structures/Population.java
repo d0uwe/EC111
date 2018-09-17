@@ -2,6 +2,7 @@ package structures;
 
 import java.util.Random;
 import java.util.ArrayList;
+import java.util.Arrays;
 import structures.Unit;
 import structures.Params;
 
@@ -12,8 +13,8 @@ public class Population {
 
     public ArrayList<Unit> getPopulation() { return this.population; }
     public void setPopulation(ArrayList<Unit> population) { this.population = population; }
-    public Population(int pop_size, Random rand) {
-        for (int i = 0; i < pop_size; i++) {
+    public Population(int desired_pop_size, Random rand) {
+        for (int i = 0; i < desired_pop_size; i++) {
             Unit child = new Unit(Params.mutate_mode, 10);
             for (int j = 0; j < 10; j++) {
                 child.setValue(j, ((rand.nextDouble() - 0.5) * 10));
@@ -25,5 +26,15 @@ public class Population {
             // }
             this.population.add(child);
         }
+    }
+
+    public String toString() {
+        String result = "";
+
+        for (Unit unit: this.population) {
+            result += Arrays.toString(unit.values) + ", ";
+        }
+
+        return result;
     }
 }

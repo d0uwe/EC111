@@ -12,6 +12,6 @@ public class Params {
     public static double initial_mutate_sigma = 1;
     public static double mutation_step_size = 0.99;
     public static boolean debug = true;
-
+    public static double recombination_constant = 0.5;
     public Params() {}
 }

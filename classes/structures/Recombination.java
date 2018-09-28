@@ -5,6 +5,8 @@ import java.util.Random;
 import java.util.ArrayList;
 import structures.Params;
 import structures.Unit;
+import java.util.Arrays;
+
 
 public class Recombination {
     // double[] values;
@@ -30,8 +32,8 @@ public class Recombination {
             Unit p1 = population.get(rand.nextInt(curr_pop_size));
             Unit p2 = population.get(rand.nextInt(curr_pop_size));
 
-            Unit child = cross_over(p1, p2, split);
-
+            // Unit child = cross_over(p1, p2, split);
+            Unit child = whole_arithmetic(p1, p2);
 
             // Keep the sigmas simple; just take the better fitness one
             Unit better_fitness;
@@ -59,5 +61,14 @@ public class Recombination {
         }
         return child;
     }
+
+    public Unit whole_arithmetic(Unit p1, Unit p2) {
+        Unit child = new Unit(p1.mutate_mode, Params.gene_length);
+        for (int i = 0; i < Params.gene_length; i++) {
+            child.setValue(i, Params.recombination_constant * p1.getValue(i) + (1.0-Params.recombination_constant) * p2.getValue(i));
+        }
+        return child;
+    }
+
 }
 

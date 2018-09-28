@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import structures.Unit;
 import structures.Params;
+import java.lang.Math;
 
 public class Population {
 
@@ -35,11 +36,24 @@ public class Population {
         double avg_fitness = 0.0;
 
         for (Unit unit: this.population) {
+            if (unit.getFitness() < 0) { System.out.println(unit.getFitness()); }
             avg_fitness += unit.getFitness();
         }
 
         return (avg_fitness / this.population.size());
     }
+
+    public double deviationFitness() {
+        double avg_fitness = averageFitness();
+        double deviation_sum = 0;
+
+        for (Unit unit: this.population) {
+            deviation_sum += (unit.getFitness() - avg_fitness);
+        }
+
+        return Math.sqrt((deviation_sum / this.population.size()));
+    }
+
 
     public String toString() {
         String result = "";

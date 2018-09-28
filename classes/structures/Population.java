@@ -36,7 +36,7 @@ public class Population {
         double avg_fitness = 0.0;
 
         for (Unit unit: this.population) {
-            if (unit.getFitness() < 0) { System.out.println(unit.getFitness()); }
+            if (Params.debug && (unit.getFitness() < 0)) { System.out.println(unit.getFitness()); }
             avg_fitness += unit.getFitness();
         }
 

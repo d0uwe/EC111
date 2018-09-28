@@ -3,6 +3,7 @@ package structures;
 import structures.Unit;
 import java.util.Random;
 import java.util.ArrayList;
+import structures.Params;
 
 public class Mutation {
     double upper_bound;
@@ -18,10 +19,10 @@ public class Mutation {
         lower_bound = -5.0;
     }
 
-    public ArrayList<Unit> mutate(ArrayList<Unit> population, int pop_size, Random rand) {
+    public ArrayList<Unit> mutate(ArrayList<Unit> population, Random rand) {
 
         int current_pop_size = population.size();
-        int mutation_growth = (pop_size - current_pop_size) / 2;
+        int mutation_growth = Params.mutation_amount;
 
         for (int i = 0; i < mutation_growth; i++) {
             // Get a random unit

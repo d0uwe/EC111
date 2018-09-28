@@ -6,17 +6,18 @@ import java.util.Random;
 import java.util.ArrayList;
 
 import structures.Unit;
+import structures.Params;
 
 public class Selection {
 
     public Selection() {
     }
 
-    public ArrayList<Unit> select_survivors(ArrayList<Unit> population, int n_survivors) {
+    public ArrayList<Unit> select_survivors(ArrayList<Unit> population) {
         Collections.sort(population);
         Collections.reverse(population);
 
-        return new ArrayList<Unit>(population.subList(0, n_survivors));
+        return new ArrayList<Unit>(population.subList(0, Params.n_survivors));
     }
 
     public void tournament_selection(ArrayList<Unit> population, int k) {

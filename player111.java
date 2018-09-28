@@ -123,9 +123,9 @@ public class player111 implements ContestSubmission {
 
         // And then we do it for the whole population
         while (evals < evaluations_limit_) {
-            population.setPopulation(selection.select_survivors(population.getPopulation(), n_survivors));
+            population.setPopulation(selection.select_survivors(population.getPopulation()));
+            population.setPopulation(recombination.recombination(population.getPopulation(), min_split, max_split, rnd_));
             population.setPopulation(mutate.mutate_gaussian_single(population.getPopulation(), pop_size, rnd_));
-            population.setPopulation(recombination.recombination(population.getPopulation(), min_split, max_split, rnd_, pop_size));
 
             int curr_pop_size = population.getPopulation().size();
 

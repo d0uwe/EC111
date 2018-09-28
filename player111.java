@@ -120,22 +120,39 @@ public class player111 implements ContestSubmission {
         Mutation mutate = new Mutation();
         Recombination recombination = new Recombination();
 
-        while (evals < evaluations_limit_) {
-            System.out.println(evals);
 
+        int curr_pop_size = population.getPopulation().size();
+        // First we do an initial fitness check for whole population
+        for (int i = 0; i < curr_pop_size; i++) {
+            double new_fitness = (double) evaluation_.evaluate(population.getPopulation().get(i).getValues());
+            population.getPopulation().get(i).setFitness(new_fitness);
+            evals++;
+            if (evals >= evaluations_limit_) {
+                break;
+            }
+        }
+
+        // And then we do it for the whole population
+        while (evals < evaluations_limit_) {
             population.setPopulation(selection.select_survivors(population.getPopulation(), n_survivors));
             population.setPopulation(mutate.mutate_gaussian_single(population.getPopulation(), pop_size, rnd_));
-            population.setPopulation(recombination.cross_over(population.getPopulation(), min_split, max_split, rnd_, pop_size));
+            population.setPopulation(recombination.cross_over_gaussian(population.getPopulation(), min_split, max_split, rnd_, pop_size));
 
-            int curr_pop_size = population.getPopulation().size();
+            curr_pop_size = population.getPopulation().size();
+            if (Params.debug) {
+                String debug_message = "evals: " + evals + ", pop_size: " + curr_pop_size + ", avg_fitness: " + population.averageFitness();
+                System.out.println(debug_message);
+            }
 
             for (int i = n_survivors; i < curr_pop_size; i++) {
-                population.getPopulation().get(i).setFitness((double) evaluation_.evaluate(population.getPopulation().get(i).getValues()));
+                double new_fitness = (double) evaluation_.evaluate(population.getPopulation().get(i).getValues());
+                population.getPopulation().get(i).setFitness(new_fitness);
                 evals++;
                 if (evals >= evaluations_limit_) {
                     break;
                 }
             }
+           // System.out.println(population.averageFitness());
         }
     }
 }

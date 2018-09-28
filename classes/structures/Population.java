@@ -28,6 +28,19 @@ public class Population {
         }
     }
 
+    /**
+     * Return the average fitness of the population.
+     */
+    public double averageFitness() {
+        double avg_fitness = 0.0;
+
+        for (Unit unit: this.population) {
+            avg_fitness += unit.getFitness();
+        }
+
+        return (avg_fitness / this.population.size());
+    }
+
     public String toString() {
         String result = "";
 

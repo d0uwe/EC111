@@ -14,10 +14,12 @@ public class Selection {
 
     public ArrayList<Unit> select_survivors(ArrayList<Unit> population, int n_survivors) {
         Collections.sort(population);
+        Collections.reverse(population);
+
         return new ArrayList<Unit>(population.subList(0, n_survivors));
     }
 
     public void tournament_selection(ArrayList<Unit> population, int k) {
-        
+         
     }
 }

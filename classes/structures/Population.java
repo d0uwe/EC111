@@ -3,9 +3,10 @@ package structures;
 import java.util.Random;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.lang.Math;
 import structures.Unit;
 import structures.Params;
-import java.lang.Math;
 
 public class Population {
 
@@ -14,6 +15,8 @@ public class Population {
 
     public ArrayList<Unit> getPopulation() { return this.population; }
     public void setPopulation(ArrayList<Unit> population) { this.population = population; }
+
+
     public Population(int desired_pop_size, Random rand) {
         for (int i = 0; i < desired_pop_size; i++) {
             Unit child = new Unit(Params.mutate_mode, 10);
@@ -43,17 +46,38 @@ public class Population {
         return (avg_fitness / this.population.size());
     }
 
-    public double deviationFitness() {
-        double avg_fitness = averageFitness();
-        double deviation_sum = 0;
-
-        for (Unit unit: this.population) {
-            deviation_sum += (unit.getFitness() - avg_fitness);
+    /**
+     * From the population, draw from the top 10% with 90% chance and from the bottom 90% from 10%
+     */
+    public Unit sample(Random rand) {
+        if (rand.nextInt(100) < 90) {
+            return this.population.get(rand.nextInt(10));
+        } else {
+            return this.population.get(10 + rand.nextInt(this.population.size() - 10));
         }
-
-        return Math.sqrt((deviation_sum / this.population.size()));
     }
 
+
+    /* ArrayList operators 'overwriting' */
+    public Unit get(int loc) {
+        return this.population.get(loc);
+    }
+
+    public void add(Unit unit) {
+        this.population.add(unit);
+    }
+
+    public void sort() {
+        Collections.sort(this.population);
+    }
+
+    public void reverse() {
+        Collections.reverse(this.population);
+    }
+
+    public int size() {
+        return this.population.size();
+    }
 
     public String toString() {
         String result = "";

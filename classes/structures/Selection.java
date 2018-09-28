@@ -1,6 +1,5 @@
 package structures;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Random;
 import java.util.ArrayList;
@@ -13,14 +12,14 @@ public class Selection {
     public Selection() {
     }
 
-    public ArrayList<Unit> select_survivors(ArrayList<Unit> population) {
-        Collections.sort(population);
-        Collections.reverse(population);
+    public void select_survivors(Population population) {
+        population.sort();
+        population.reverse();
+        ArrayList<Unit> tmp = population.getPopulation();
 
-        return new ArrayList<Unit>(population.subList(0, Params.n_survivors));
+        population.setPopulation(new ArrayList<Unit>(tmp.subList(0, Params.n_survivors)));
     }
 
-    public void tournament_selection(ArrayList<Unit> population, int k) {
-         
+    public void tournament_selection(Population population, int k) {
     }
 }

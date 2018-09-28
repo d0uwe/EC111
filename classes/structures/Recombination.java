@@ -24,9 +24,11 @@ public class Recombination {
      * @param rand Random generator
      *
      */
-     public ArrayList<Unit> recombination(ArrayList<Unit> population, int min_split, int max_split, Random rand) {
+     public void recombination(Population population, int min_split, int max_split, Random rand) {
         int curr_pop_size = population.size();
         for (int i = 0; i < Params.recombination_amount; i++) {
+
+            // No more random selection: use the population sampling.
             int split = rand.nextInt(max_split - min_split) + min_split;
 
             Unit p1 = population.get(rand.nextInt(curr_pop_size));
@@ -47,7 +49,6 @@ public class Recombination {
 
             population.add(child);
         }
-        return population;
     }
 
 

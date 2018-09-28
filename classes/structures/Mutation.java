@@ -19,7 +19,7 @@ public class Mutation {
         lower_bound = -5.0;
     }
 
-    public ArrayList<Unit> mutate(ArrayList<Unit> population, Random rand) {
+    public void mutate(Population population, Random rand) {
 
         int current_pop_size = population.size();
         int mutation_growth = Params.mutation_amount;
@@ -47,8 +47,6 @@ public class Mutation {
             // Add to the population
             population.add(mutated_child);
         }
-
-        return population;
     }
 
 
@@ -64,7 +62,7 @@ public class Mutation {
         return new_unit;
     }
 
-    public ArrayList<Unit> mutate_uniform(ArrayList<Unit> population, int pop_size, Random rand) {
+    public void mutate_uniform(Population population, int pop_size, Random rand) {
 
         int current_pop_size = population.size();
         int mutation_growth = (pop_size - current_pop_size) / 2;
@@ -74,8 +72,6 @@ public class Mutation {
             Unit mutated_child = mutate_uniform(population.get(rand.nextInt(current_pop_size)), rand);
             population.add(mutated_child);
         }
-
-        return population;
     }
 
     public Unit mutate_gaussian_single(Unit unit, Random rand) {
@@ -90,7 +86,7 @@ public class Mutation {
     }
 
 
-    public ArrayList<Unit> mutate_gaussian_single(ArrayList<Unit> population, int pop_size, Random rand) {
+    public void mutate_gaussian_single(Population population, int pop_size, Random rand) {
 
         int current_pop_size = population.size();
         int mutation_growth = (pop_size - current_pop_size) / 2;
@@ -99,8 +95,6 @@ public class Mutation {
             Unit mutated_child = mutate_gaussian_single(population.get(rand.nextInt(current_pop_size)), rand);
             population.add(mutated_child);
         }
-
-        return population;
     }
 
 
@@ -110,8 +104,7 @@ public class Mutation {
     }
 
 
-    public ArrayList<Unit> mutate_gaussian_multi(ArrayList<Unit> population, int pop_size, Random rand) {
+    public void mutate_gaussian_multi(Population population, int pop_size, Random rand) {
         // TODO
-        return population;
     }
 }

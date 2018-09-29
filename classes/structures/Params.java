@@ -11,7 +11,7 @@ public class Params {
     public static int gene_length = 10;
     public static double initial_mutate_sigma = 2;
     public static double mutation_step_size = 0.99;
-    public static boolean debug = true;
+    public static boolean debug = false;
     public static int recombination_amount = n_survivors / 2;
     public static int mutation_amount = n_survivors - recombination_amount;
     public static double recombination_constant = 0.5;

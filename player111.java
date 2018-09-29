@@ -45,6 +45,7 @@ public class player111 implements ContestSubmission {
         boolean hasStructure = Boolean.parseBoolean(props.getProperty("Regular"));
         boolean isSeparable = Boolean.parseBoolean(props.getProperty("Separable"));
 
+
         // Do sth with property values, e.g. specify relevant settings of your algorithm
         if (isMultimodal) {
             // Do sth
@@ -102,6 +103,13 @@ public class player111 implements ContestSubmission {
 
         int evals = 0;
         int pop_size = Params.pop_size;
+        try {
+            pop_size = Integer.parseInt(System.getProperty("pop"));
+
+        } catch (Exception e){
+            throw e;
+        }
+        
         int min_split = Params.min_split;
         int max_split = Params.max_split;
 

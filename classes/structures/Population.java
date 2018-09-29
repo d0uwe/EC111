@@ -57,6 +57,15 @@ public class Population {
         }
     }
 
+    public double getFitnessVariance() {
+        double sum = 0;
+        for (Unit unit : population) {
+            sum += unit.fitness;
+        }
+        double average = sum / population.size();
+        double sumMinAv = sum - average;
+        return sumMinAv * sumMinAv / (population.size() - 1);
+    }
 
     /* ArrayList operators 'overwriting' */
     public Unit get(int loc) {

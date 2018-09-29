@@ -96,14 +96,14 @@ public class player111 implements ContestSubmission {
 
 
     public void run() {
-        // Run your algorithm here
+        if (System.getProperty("debug") != null) {
+            Params.debug = Boolean.parseBoolean(System.getProperty("debug"));
+        }
 
-        // Random rand = new Random();
         int evals = 0;
         int pop_size = Params.pop_size;
         int min_split = Params.min_split;
         int max_split = Params.max_split;
-        // init population
 
         assert pop_size <= evaluations_limit_;
 
@@ -137,8 +137,9 @@ public class player111 implements ContestSubmission {
                     break;
                 }
             }
+
             if (Params.debug) {
-                String debug_message = "evals: " + evals + ", pop_size: " + curr_pop_size + ", avg_fitness: " + population.averageFitness();
+                String debug_message = "\n\n[DEBUG]\n\tevals: " + evals + "\n\tpop_size: " + curr_pop_size + "\n\tavg_fitness: " + population.averageFitness() + "\n\tfitness_variance: " + population.getFitnessVariance() + "\n[DEBUG]\n\n";
                 System.out.println(debug_message);
             }
         }

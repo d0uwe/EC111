@@ -15,5 +15,5 @@ public class Params {
     public static int recombination_amount = n_survivors / 2;
     public static int mutation_amount = n_survivors - recombination_amount;
     public static double recombination_constant = 0.5;
-    public Params() {}
+    private Params() {}
 }

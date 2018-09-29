@@ -79,9 +79,48 @@ public class Population {
         for (Unit unit : population) {
             sum += unit.fitness;
         }
-        double average = sum / population.size();
-        double sumMinAv = sum - average;
-        return sumMinAv * sumMinAv / (population.size() - 1);
+        double mean = sum / population.size();
+        double diffSq = 0;
+        for (Unit unit : population) {
+            double diff = unit.fitness - mean;
+            diffSq += diff * diff;
+        }
+        return diffSq / (population.size() - 1);
+    }
+
+    public double[] getGenomeVariance() {
+        int genSize = population.get(0).size;
+        double[] sum = new double[genSize];
+        // calculate sum of population for every gene
+        for (Unit unit : population) {
+            for (int i = 0; i < unit.size; ++i) {
+                sum[i] += unit.values[i];
+            }
+        }
+
+        int popSize = population.size();
+        double[] average = new double[genSize];
+        // calculate the average value of every gene
+        for (int i = 0; i < genSize; ++i) {
+            average[i] = sum[i] / popSize;
+        }
+
+        double[] diffSq = new double[genSize];
+        // calculate the square of the sum of the difference of the gene and the average, for every gene
+        for (Unit unit : population) {
+            double[] diff = new double[genSize];
+            for (int i = 0; i < genSize; ++i) {
+                diff[i] = unit.values[i] - average[i];
+                diffSq[i] += diff[i] * diff[i];
+            }
+        }
+
+        double[] var = new double[genSize];
+        // divide every value by the size of the population
+        for (int i = 0; i < genSize; ++i) {
+            var[i] = diffSq[i] / popSize;
+        }
+        return var;
     }
 
     public Unit get_ranked_unit(int rank) {

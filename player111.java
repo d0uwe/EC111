@@ -144,5 +144,15 @@ public class player111 implements ContestSubmission {
                 System.out.println(debug_message);
             }
         }
+
+        // print variance for every allele
+        if (Params.debug) {
+            System.out.println("\n\n\nVariance for all alleles:\n");
+            double[] var = population.getGenomeVariance();
+            for (double v : var) {
+                System.out.println(v);
+            }
+            System.out.println("\n\n\n\n");
+        }
     }
 }

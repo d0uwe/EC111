@@ -3,6 +3,8 @@ package structures;
 import structures.Unit;
 
 public class Params {
+    private Params() {}
+    
     public static Unit.MutateMode mutate_mode = Unit.MutateMode.GAUSS_SINGLE;
     public static int pop_size = 100;
     public static int min_split = 4;
@@ -15,5 +17,6 @@ public class Params {
     public static int recombination_amount = n_survivors / 2;
     public static int mutation_amount = n_survivors - recombination_amount;
     public static double recombination_constant = 0.5;
-    private Params() {}
+    public static int tournament_size = n_survivors;
+    public static double tournament_p = 1.0;
 }

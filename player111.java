@@ -83,7 +83,7 @@ public class player111 implements ContestSubmission {
         int current_pop_size = population.size();
 
         // Figure out how much you need to fill into the population
-        int mutation_growth = (pop_size - current_pop_size) / 2; 
+        int mutation_growth = (pop_size - current_pop_size) / 2;
 
         for (int i = 0; i < mutation_growth; i++) {
             //generate random number between 0 and current_pop_size
@@ -123,7 +123,8 @@ public class player111 implements ContestSubmission {
 
         // And then we do it for the whole population
         while (evals < evaluations_limit_) {
-            selection.select_survivors(population);
+            selection.tournament_selection(population, Params.tournament_size, rnd_);
+            //selection.select_survivors(population);
             recombination.recombination(population, min_split, max_split, rnd_);
             mutate.mutate_gaussian_single(population, pop_size, rnd_);
 

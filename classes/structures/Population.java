@@ -49,7 +49,24 @@ public class Population {
     /**
      * From the population, draw from the top 10% with 90% chance and from the bottom 90% from 10%
      */
-    public Unit sample(Random rand) {
+
+     /*
+     TODO
+     public Unit sample(Random rand) {
+        if (rand.nextInt(100) < 90) {
+            return this.population.get_best_p(0.1);
+        }
+        return this.population.get_worst_p(0.9);
+     }
+
+     public Unit get_best_p(double p) {
+        Collections.sort(this.population, Collections.reverseOrder());
+        ArrayList<Unit> tmp = new ArrayList<Unit>(this.population.subList(0, (int)p*this.population.size()));
+     }
+    */
+
+
+     public Unit sample(Random rand) {
         if (rand.nextInt(100) < 90) {
             return this.population.get(rand.nextInt(10));
         } else {
@@ -67,6 +84,12 @@ public class Population {
         return sumMinAv * sumMinAv / (population.size() - 1);
     }
 
+    public Unit get_ranked_unit(int rank) {
+        Collections.sort(this.population, Collections.reverseOrder());
+        return this.population.get(rank);
+    }
+
+
     /* ArrayList operators 'overwriting' */
     public Unit get(int loc) {
         return this.population.get(loc);
@@ -82,6 +105,10 @@ public class Population {
 
     public void reverse() {
         Collections.reverse(this.population);
+    }
+
+    public void shuffle() {
+        Collections.shuffle(this.population);
     }
 
     public int size() {

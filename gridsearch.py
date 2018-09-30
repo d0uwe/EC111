@@ -3,40 +3,84 @@ import itertools
 import collections
 import numpy as np
 import progressbar
+from multiprocessing import Pool, Queue, Manager, Process
 
-pop_max = 200
-pop_min = 50
-pop_step = 20
-pop_list = np.arange(pop_min, pop_max, pop_step)
+# How many results to print:
+print_n_best = 10
+n_jobs = 4
+evaluation = "-evaluation=SphereEvaluation"
 
-var2_max = 20
-var2_min = 2
-var2_step = 10
-var2_list = np.arange(var2_min, var2_max, var2_step)
+# (var_name, min, max, stepsize)
+pop = ("pop", 50, 200, 2)
+var2 = ("var2", 2, 20, 10)
 
-all_var_names = ["pop", "var2"]
-all_lists = [pop_list, var2_list]
+# add above variables to a list.
+var_list = [pop, var2]
+
+
+def chunkIt(seq, num):
+    avg = len(seq) / float(num)
+    out = []
+    last = 0.0
+    while last < len(seq):
+        out.append(seq[int(last):int(last + avg)])
+        last += avg
+    return out
+
+def getScores(all_combinations, all_var_names, progress_q):
+	scores = []
+	for combination in all_combinations:
+		# create commandline command
+		strings = ["java"]
+		for number, name in zip(combination, all_var_names):
+			strings += ["-D" + name + "=" + str(number)]
+		strings += ["-jar", "testrun.jar", "-submission=player111", evaluation, "-seed=1"]
+
+		process = subprocess.Popen(strings, stdout=subprocess.PIPE)
+		out, err = process.communicate()
+		score = float(str(out).split(":")[1].split("\\n")[0])
+		scores += [(combination, score)]
+		progress_q.put(1)
+	progress_q.put(0)
+	return scores
+
+def printScores(scores):
+	scores.sort(key=lambda x: x[1])
+	scores = scores[::-1]
+	print(scores[:10])
+	for score in scores[:print_n_best]:
+		for var, value in zip(all_var_names, score[0]):
+			print(var,":", value, end=" ")
+		print("\tscored:", score[1])
+
+def progressBar(max_value, queue):
+	bar = progressbar.ProgressBar(max_value=len(all_combinations)).start()
+	finished = 0
+	while finished < n_jobs:
+		if queue.get() == 1:
+			bar += 1
+		else:
+			finished += 1
+
+
+# create all combinations possible given the settings
+all_var_names = [x[0] for x in var_list]
+all_lists = [np.arange(x[1], x[2], x[3]) for x in var_list]
 all_combinations = list(itertools.product(*all_lists))
+chuncked_combs = chunkIt(all_combinations, n_jobs)
 
+# multiprocess gridsearch and have a seperate thread for the progress bar.
+pool1 = Pool(processes = n_jobs)
+m = Manager()
+q = m.Queue()
+p = Process(target=progressBar, args=(len(all_combinations), q,))
+p.start()
 
-bar = progressbar.ProgressBar(max_value=len(all_combinations)).start()
-scores = []
-for combination in all_combinations:
-	strings = ["java"]
-	for number, name in zip(combination, all_var_names):
-		strings += ["-D" + name + "=" + str(number)]
-	strings += ["-jar", "testrun.jar", "-submission=player111", "-evaluation=SphereEvaluation", "-seed=1"]
+results = pool1.starmap(getScores, zip(chuncked_combs, n_jobs * [all_var_names], n_jobs*[q]))
 
-	process = subprocess.Popen(strings, stdout=subprocess.PIPE)
-	out, err = process.communicate()
-	score = float(str(out).split(":")[1].split("\\n")[0])
-	scores += [(combination, score)]
-	bar+=1
+p.join()
+pool1.close()
 
-
-scores += [("potato", 6)]
-scores += [("potato2", 7)]
-
-scores.sort(key=lambda x: x[1])
-scores = scores[::-1]
-print(scores[:10])
+# concat all results from the different threads
+scores = [item for sublist in results for item in sublist]
+printScores(scores)

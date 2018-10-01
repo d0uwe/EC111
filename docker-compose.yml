@@ -6,3 +6,4 @@ services:
      - .:/app
     environment:
     - LD_LIBRARY_PATH=/app
+    working_dir: /app

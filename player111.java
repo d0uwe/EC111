@@ -54,47 +54,6 @@ public class player111 implements ContestSubmission {
         }
     }
 
-    // private ArrayList<Unit> init_population(int pop_size, Random rand) {
-    //     ArrayList<Unit> population = new ArrayList<Unit>();
-    //     for (int i = 0; i < pop_size; i++) {
-    //         Unit child = new Unit(Params.mutate_mode, 10);
-    //         for (int j = 0; j < 10; j++) {
-    //             child.setValue(j, ((rand.nextDouble() - 0.5) * 10));
-    //         }
-    //     child.setFitness((double) evaluation_.evaluate(child.getValues()));
-    //         // evals++;
-    //         // if (evals >= evaluations_limit_) {
-    //         //     break;
-    //         // }
-    //         population.add(child);
-    //     }
-    //     return population;
-    // }
-
-
-    /**
-     * Mutates parents with a certain amount of mutations.
-     * @param population population to mutate on
-     * @param min_muts minimum amount of mutations, inclusive
-     * @param max_muts maximum amount of mutations, exclusive
-     * @param rand random generator
-     * @param pop_size desired population size
-     * @return new population
-    private ArrayList<Unit> mutate(ArrayList<Unit> population, int pop_size, Mutation mutator, Random rand) {
-        int current_pop_size = population.size();
-
-        // Figure out how much you need to fill into the population
-        int mutation_growth = (pop_size - current_pop_size) / 2;
-
-        for (int i = 0; i < mutation_growth; i++) {
-            //generate random number between 0 and current_pop_size
-            Unit mutated_child = mutator.mutate_uniform(population.get(rand.nextInt(current_pop_size)));
-            population.add(mutated_child);
-        }
-        return population;
-    }
-     */
-
 
     public void run() {
         if (System.getProperty("debug") != null) {
@@ -107,23 +66,17 @@ public class player111 implements ContestSubmission {
             pop_size = Integer.parseInt(System.getProperty("pop"));
 
         } catch (Exception e){
-            throw e;
+            // throw e;
         }
-        
+
         int min_split = Params.min_split;
         int max_split = Params.max_split;
 
         assert pop_size <= evaluations_limit_;
 
         Population population = new Population(pop_size, rnd_);
-        // ArrayList<Unit> population = init_population(pop_size, rnd_);
-
-        // Init_population does one evaluate for every unit in the population
-        // There are guaranteed enough evals left for this (see assert)
-        //evals += pop_size; // Except that we dont actually do this at all
 
         int n_survivors = Params.n_survivors;
-
         Selection selection = new Selection();
         Mutation mutate = new Mutation();
         Recombination recombination = new Recombination();
@@ -131,8 +84,8 @@ public class player111 implements ContestSubmission {
 
         // And then we do it for the whole population
         while (evals < evaluations_limit_) {
-            selection.tournament_selection(population, Params.tournament_size, rnd_);
-            //selection.select_survivors(population);
+            //selection.tournament_selection(population, Params.tournament_size, rnd_);
+            selection.select_survivors(population);
             recombination.recombination(population, min_split, max_split, rnd_);
             mutate.mutate_gaussian_single(population, pop_size, rnd_);
 

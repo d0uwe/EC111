@@ -22,6 +22,13 @@ else
     D=false
 fi
 
+if [[ "$2" == "csv" ]]
+then
+    C=true
+else
+    C=false
+fi
+
 # execute commands based on specified function
 if [ "$1" == "compile" ]
 then
@@ -29,14 +36,14 @@ then
     javac -cp contest.jar player111.java
 elif [ "$1" == "sphere" ]
 then
-    java -Ddebug=$D -jar testrun.jar -submission=player111 -evaluation=SphereEvaluation -seed=1
+    java -Ddebug=$D -Dcsv=$C -jar testrun.jar -submission=player111 -evaluation=SphereEvaluation -seed=1
 elif [ "$1" == "bent" ]
 then
-    java -Ddebug=$D -jar testrun.jar -submission=player111 -evaluation=BentCigarFunction -seed=1
+    java -Ddebug=$D -Dcsv=$C -jar testrun.jar -submission=player111 -evaluation=BentCigarFunction -seed=1
 elif [ "$1" == "katsuura" ]
 then
-    java -Ddebug=$D -jar testrun.jar -submission=player111 -evaluation=KatsuuraEvaluation -seed=1
+    java -Ddebug=$D -Dcsv=$C -jar testrun.jar -submission=player111 -evaluation=KatsuuraEvaluation -seed=1
 elif [ "$1" == "schaffers" ]
 then
-    java -Ddebug=$D -jar testrun.jar -submission=player111 -evaluation=SchaffersEvaluation -seed=1
+    java -Ddebug=$D -Dcsv=$C -jar testrun.jar -submission=player111 -evaluation=SchaffersEvaluation -seed=1
 fi

@@ -54,14 +54,30 @@ public class Recombination {
     }
 
 
-
+    // TODO(?) setSigma in a crossover.
     public Unit cross_over(Unit p1, Unit p2, int split) {
         Unit child = new Unit(p1.mutate_mode, Params.gene_length);
         for (int i = 0; i < Params.gene_length; i++) {
             if (i < split) {
                 child.setValue(i, p1.getValue(i));
+                child.setSigma(i, p1.getSigma(i));
             } else {
                 child.setValue(i, p2.getValue(i));
+                child.setSigma(i, p2.getSigma(i));
+            }
+        }
+        return child;
+    }
+
+    public Unit uniform_cross_over(Unit p1, Unit p2, Random rand) {
+        Unit child = new Unit(p1.mutate_mode, Params.gene_length);
+        for (int i = 0; i < child.getSize(); i++) {
+            if (rand.nextBoolean()) {
+                child.setValue(i, p1.getValue(i));
+                child.setSigma(i, p1.getSigma(i));
+            } else {
+                child.setValue(i, p2.getValue(i));
+                child.setSigma(i, p2.getSigma(i));
             }
         }
         return child;

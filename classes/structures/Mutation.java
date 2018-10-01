@@ -9,6 +9,16 @@ public class Mutation {
     double upper_bound;
     double lower_bound;
 
+    int pop_size;
+    double evaluations_done;
+    double evaluation_limit;
+
+    public Mutation(int pop_size, int evaluations_done, int evaluation_limit) {
+        this.pop_size = pop_size;
+        this.evaluations_done = evaluations_done;
+        this.evaluation_limit = evaluation_limit;
+    }
+
     public Mutation(double upper_bound, double lower_bound) {
         this.upper_bound = upper_bound;
         this.lower_bound = lower_bound;
@@ -23,6 +33,7 @@ public class Mutation {
 
         int current_pop_size = population.size();
         int mutation_growth = Params.mutation_amount;
+        double mutate_ratio = Params.mutate_ratio;
 
         for (int i = 0; i < mutation_growth; i++) {
             // Get a random unit
@@ -35,7 +46,7 @@ public class Mutation {
                      mutated_child = mutate_uniform(unit, rand);
                      break;
                 case GAUSS_SINGLE:
-                     mutated_child = mutate_gaussian_single(unit, rand);
+                     mutated_child = mutate_gaussian_single(unit, mutate_ratio, rand);
                      break;
                 case GAUSS_MULTI:
                      mutated_child = mutate_gaussian_multi(unit, rand);
@@ -74,26 +85,31 @@ public class Mutation {
         }
     }
 
-    public Unit mutate_gaussian_single(Unit unit, Random rand) {
+    public Unit mutate_gaussian_single(Unit unit, double mutate_ratio, Random rand) {
         Unit new_unit = new Unit(unit);
         int unit_size = new_unit.getSize();
 
         for (int i = 0; i < unit_size; i++) {
-            new_unit.setValue(i, (rand.nextGaussian() * new_unit.getSigma(0)));
+            // System.out.println(mutate_ratio);
+            // TODO: Enabling this gives other scores????!!!!
+            // if (rand.nextDouble() <= mutate_ratio) {
+                new_unit.setValue(i, (rand.nextGaussian() * new_unit.getSigma(0)));
+            // }
         }
-
         return new_unit;
     }
 
 
-    public void mutate_gaussian_single(Population population, int pop_size, Random rand) {
+    public void mutate_gaussian_single(Population population, double mutate_ratio, Random rand) {
 
         int current_pop_size = population.size();
         int mutation_growth = Params.mutation_amount;
 
         for (int i = 0; i < mutation_growth; i++) {
-            Unit mutated_child = mutate_gaussian_single(population.get(rand.nextInt(current_pop_size)), rand);
-            population.add(mutated_child);
+            if (rand.nextDouble() <= mutate_ratio) {
+                Unit mutated_child = mutate_gaussian_single(population.get(rand.nextInt(current_pop_size)), mutate_ratio, rand);
+                population.add(mutated_child);
+            }
         }
     }
 
@@ -106,5 +122,19 @@ public class Mutation {
 
     public void mutate_gaussian_multi(Population population, int pop_size, Random rand) {
         // TODO
+    }
+
+    public Unit uncorrelated(Unit unit, double mutation_ratio, int alpha, Random rand) {
+        for (int i = 0; i < unit.getSize(); i++) {
+            if (rand.nextDouble() <= mutation_ratio) {
+                double sigma;
+                sigma = 1.0 - ((double) evaluations_done / (double) evaluation_limit);
+                sigma = Math.pow(sigma, alpha);
+                unit.setSigma(i, sigma);
+                double value = unit.getValue(i) + unit.ni[i] * unit.getSigma(i);
+                unit.setValue(i, value);
+            }
+        }
+        return unit;
     }
 }

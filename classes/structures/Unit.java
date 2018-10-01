@@ -2,12 +2,15 @@ package structures;
 
 import java.util.Comparator;
 
+// import static structures.Population.rand;
+
 public class Unit implements Comparable<Unit> {
     double[] values;
     double fitness = -1;
     int size = 10;
     double[] sigmas;
     MutateMode mutate_mode;
+    public double[] ni = new double[size];
 
     public enum MutateMode {
         GAUSS_SINGLE,
@@ -15,6 +18,7 @@ public class Unit implements Comparable<Unit> {
         UNIFORM
     }
 
+/*
     public Unit(MutateMode mode) {
         values = new double[size];
         sigmas = new double[size]; // can be used fully or just the first element depending on mutation strategy
@@ -23,6 +27,7 @@ public class Unit implements Comparable<Unit> {
         }
         mutate_mode = mode;
     }
+*/
 
     public Unit(MutateMode mode, int value_size) {
         values = new double[value_size];
@@ -31,6 +36,11 @@ public class Unit implements Comparable<Unit> {
         sigmas = new double[size];
         for (int i = 0; i < sigmas.length; i++) {
             sigmas[i] = Params.initial_mutate_sigma;
+        }
+
+        // TODO: Figure this out.
+        for (int i = 0; i < size; i++) {
+            // ni[i] = rand.nextGaussian();
         }
     }
 
@@ -47,12 +57,14 @@ public class Unit implements Comparable<Unit> {
     public double   getFitness() { return fitness; }
     public int      getSize() { return size; }
     public double   getSigma(int loc) { return sigmas[loc]; }
-
+    public MutateMode getMutateMode() { return mutate_mode; }
 
     public void setValues(double[] new_values) { values = new_values; }
     public void setValue(int loc, double new_value) { values[loc] = new_value; }
     public void setFitness(double new_fitness) { fitness = new_fitness; }
     public void setSigma(int loc, double new_sigma) { sigmas[loc] = new_sigma; }
+    public void setMutateMode(MutateMode mode) { mutate_mode = mode; }
+
 
     // @Override
     public int compareTo(Unit a) {

@@ -2,6 +2,12 @@ import org.vu.contest.ContestSubmission;
 
 import org.vu.contest.ContestEvaluation;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+
+
+
 import java.util.Random;
 import java.util.Properties;
 import java.util.ArrayList;
@@ -21,6 +27,7 @@ public class player111 implements ContestSubmission {
     Random rnd_;
     ContestEvaluation evaluation_;
     private int evaluations_limit_;
+    private int evaluations_done = 0;
 
     public player111() {
         rnd_ = new Random();
@@ -56,55 +63,80 @@ public class player111 implements ContestSubmission {
     }
 
 
-    public static Population evolvePopulation(Population pop, int offspringSize, ContestEvaluation evaluation, Random rand) {
+    public Population evolvePopulation(Population pop, int offspringSize, ContestEvaluation evaluation, Random rand) {
+
+        if (evaluations_done == 0) {
+            evaluations_done += pop.size();
+        }
+        evaluations_done += offspringSize;
+
         int min_split = Params.min_split;
         int max_split = Params.max_split;
-
+        double mutate_ratio = Params.mutate_ratio;
 
         Selection selection = new Selection();
         Recombination recombination = new Recombination();
-        Mutation mutate = new Mutation();
 
         int n_survivors = Params.n_survivors;
         Population offspringPop = new Population(pop.size(), rand);
         Population fittestPop = new Population(pop.size(), rand);
 
         for (int i = 0; i < offspringPop.size(); i++) {
+
             // SELECTION
 
-            Unit p1 = selection.randomSelect(pop, rand);
-            Unit p2 = selection.randomSelect(pop, rand);
+            // Unit p1 = selection.randomSelect(pop, rand);
+            // Unit p2 = selection.randomSelect(pop, rand);
+            Unit p1;
+            Unit p2;
 
-            // System.out.println("P1: " + p1.toString());
-            // System.out.println("P2: " + p2.toString());
-            // Unit p1 = selection.tournamentSelection(pop, Params.tournament_size, rand);
-            // Unit p2 = selection.tournamentSelection(pop, Params.tournament_size, rand);
+            p1 = selection.tournamentSelection(pop, Params.tournament_size, rand);
+            do {
+                p2 = selection.tournamentSelection(pop, Params.tournament_size, rand);
+            } while (p1 == p2);
+
+            Mutation mutate = new Mutation(pop.size(), evaluations_done, evaluations_limit_);
+
 
             // REPRODUCTION
             int split = rand.nextInt(max_split - min_split) + min_split;
-            Unit child = recombination.cross_over(p1, p2, split);
-            
-            // System.out.println("CHILD: " + child.toString());
+            // Unit child = recombination.uniform_cross_over(p1, p2, rand);
+            // Unit child = recombination.cross_over(p1, p2, split);
+            Unit child = recombination.whole_arithmetic(p1, p2);
+
+            /*
+            TODO: No effect
+            Unit better_fitness;
+            if (p1.compareTo(p2) < 0) { better_fitness = p1; } else { better_fitness = p2; }
+            boolean is_single_sigma = better_fitness.getMutateMode() == Params.mutate_mode ? true : false;
+
+            for (int j = 0; j < Params.gene_length; j++) {
+                child.setSigma(j, better_fitness.getSigma(j));
+                if (is_single_sigma) { break; }
+            }
+            */
 
             // MUTATION
-            child = mutate.mutate_uniform(child, rand);
-            
-            System.out.println("CHILD2: " + child.toString());
-
-            // CHILD FITNESS
+            child = mutate.mutate_gaussian_single(child, mutate_ratio, rand);
+            // child = mutate.uncorrelated(child, mutate_ratio, 1, rand);
             Double fitness = (Double) evaluation.evaluate(child.getValues());
-            // System.out.println(child.getValues());
-            // System.out.println(fitness);
-            child.setFitness(fitness); 
+            child.setFitness(fitness);
             offspringPop.getPopulation().set(i, child);
+            break;
         }
+
         return offspringPop;
     }
 
 
     public void run() {
+
         if (System.getProperty("debug") != null) {
             Params.debug = Boolean.parseBoolean(System.getProperty("debug"));
+        }
+
+        if (System.getProperty("csv") != null) {
+            Params.csv = Boolean.parseBoolean(System.getProperty("csv"));
         }
 
         // int evals = 0;
@@ -120,8 +152,12 @@ public class player111 implements ContestSubmission {
 
         Population pop = new Population(pop_size, rnd_);
 
-        int offspringSize = 490; //Params.n_survivors;
-        int evals = pop_size + offspringSize;
+        int offspringSize = Params.n_survivors;
+        int evals = 0; //pop_size + offspringSize;
+
+        if (Params.csv) {
+            System.out.println("eval,pop_size,avg_fitness,fitness_variance,mutation_amount,recombination_amount");
+        }
 
         // And then we do it for the whole population
         while (evals < evaluations_limit_) {
@@ -131,7 +167,11 @@ public class player111 implements ContestSubmission {
             // evals += offspringSize;
             evals++;
 
-            System.out.println(evals + " - " + evaluations_limit_ + " - " + offspringSize + " - " + pop.size());
+            if (Params.csv) {
+                System.out.println(evals + "," + pop.size() + "," + pop.averageFitness() + "," + pop.getFitnessVariance() + "," +
+                Params.mutation_amount + "," + Params.recombination_amount);
+            }
+            // System.out.println(evals + " - " + evaluations_limit_ + " - " + offspringSize + " - " + pop.size());
             /*
             selection.tournament_selection(population, Params.tournament_size, rnd_);
             // selection.select_survivors(population);
@@ -148,19 +188,21 @@ public class player111 implements ContestSubmission {
                     break;
                 }
             }
+            */
 
             if (Params.debug) {
                 String debug_message = "\n\n[DEBUG]\n\tevals: " + evals +
-                "\n\tpop_size: " + curr_pop_size + "\n\tavg_fitness: " +
-                population.averageFitness() + "\n\tfitness_variance: " +
-                population.getFitnessVariance() +
+                "\n\tpop_size: " + pop.size() + "\n\tavg_fitness: " +
+                pop.averageFitness() + "\n\tfitness_variance: " +
+                pop.getFitnessVariance() +
                 "\n\tmut_amnt: " + Params.mutation_amount +
                 "\n\trecomb_amnt " + Params.recombination_amount +
                 "\n[DEBUG]\n\n";
                 System.out.println(debug_message);
             }
-            */
         }
+
+        System.out.println("0x04");
 
         // print variance for every allele
         /*

@@ -16,7 +16,11 @@ public class Population {
     public ArrayList<Unit> getPopulation() { return this.population; }
     public void setPopulation(ArrayList<Unit> population) { this.population = population; }
 
+    // public static Random rand;
+
+
     public Population(int desired_pop_size, Random rand) {
+        // this.rand = rand;
         for (int i = 0; i < desired_pop_size; i++) {
             Unit child = new Unit(Params.mutate_mode, 10);
             for (int j = 0; j < 10; j++) {
@@ -38,7 +42,7 @@ public class Population {
         double avg_fitness = 0.0;
 
         for (Unit unit: this.population) {
-            if (Params.debug && (unit.getFitness() < 0)) { System.out.println(unit.getFitness()); }
+            // if (Params.debug && (unit.getFitness() < 0)) { System.out.println(unit.getFitness()); }
             avg_fitness += unit.getFitness();
         }
 

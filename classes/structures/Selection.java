@@ -27,7 +27,6 @@ public class Selection {
         population.setPopulation(new ArrayList<Unit>(tmp.subList(0, Params.n_survivors)));
     }
 
-
     public Unit tournamentSelection(Population pop, int k, Random rand) {
         /**
         * choose k (the tournament size) individuals from the population at random

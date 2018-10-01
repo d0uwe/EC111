@@ -31,11 +31,10 @@ public class Recombination {
             // No more random selection: use the population sampling.
             int split = rand.nextInt(max_split - min_split) + min_split;
             // Sampling temporarily turned off; until sampling supports dynamic pop sizes (tournament sel).
-            // Unit p1 = population.sample(rand);
-            // Unit p2 = population.sample(rand);
-            System.out.println(curr_pop_size);
-            Unit p1 = population.get(rand.nextInt(curr_pop_size));
-            Unit p2 = population.get(rand.nextInt(curr_pop_size));
+            Unit p1 = population.sample(rand);
+            Unit p2 = population.sample(rand);
+            //Unit p1 = population.get(rand.nextInt(curr_pop_size));
+            //Unit p2 = population.get(rand.nextInt(curr_pop_size));
 
             // Unit child = cross_over(p1, p2, split);
             Unit child = whole_arithmetic(p1, p2);

@@ -101,7 +101,13 @@ public class player111 implements ContestSubmission {
             }
 
             if (Params.debug) {
-                String debug_message = "\n\n[DEBUG]\n\tevals: " + evals + "\n\tpop_size: " + curr_pop_size + "\n\tavg_fitness: " + population.averageFitness() + "\n\tfitness_variance: " + population.getFitnessVariance() + "\n[DEBUG]\n\n";
+                String debug_message = "\n\n[DEBUG]\n\tevals: " + evals +
+                "\n\tpop_size: " + curr_pop_size + "\n\tavg_fitness: " +
+                population.averageFitness() + "\n\tfitness_variance: " +
+                population.getFitnessVariance() +
+                "\n\tmut_amnt: " + Params.mutation_amount +
+                "\n\trecomb_amnt " + Params.recombination_amount +
+                "\n[DEBUG]\n\n";
                 System.out.println(debug_message);
             }
         }

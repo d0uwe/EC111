@@ -113,7 +113,6 @@ public class player111 implements ContestSubmission {
                 "\n[DEBUG]\n\n";
                 System.out.println(debug_message);
             }
-            break;
         }
 
         // print variance for every allele

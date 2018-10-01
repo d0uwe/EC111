@@ -74,17 +74,26 @@ public class player111 implements ContestSubmission {
 
             Unit p1 = selection.randomSelect(pop, rand);
             Unit p2 = selection.randomSelect(pop, rand);
+
+            // System.out.println("P1: " + p1.toString());
+            // System.out.println("P2: " + p2.toString());
             // Unit p1 = selection.tournamentSelection(pop, Params.tournament_size, rand);
             // Unit p2 = selection.tournamentSelection(pop, Params.tournament_size, rand);
 
             // REPRODUCTION
             int split = rand.nextInt(max_split - min_split) + min_split;
             Unit child = recombination.cross_over(p1, p2, split);
+            
+            // System.out.println("CHILD: " + child.toString());
 
             // MUTATION
-            child = mutate.mutate_uniform(child, rand); 
+            child = mutate.mutate_uniform(child, rand);
+            
+            System.out.println("CHILD2: " + child.toString());
+
             // CHILD FITNESS
             Double fitness = (Double) evaluation.evaluate(child.getValues());
+            // System.out.println(child.getValues());
             // System.out.println(fitness);
             child.setFitness(fitness); 
             offspringPop.getPopulation().set(i, child);
@@ -118,11 +127,11 @@ public class player111 implements ContestSubmission {
         while (evals < evaluations_limit_) {
 
             pop = this.evolvePopulation(pop, offspringSize, evaluation_, rnd_);
-            offspringSize = Math.min(offspringSize, evaluations_limit_-evals);
-            evals += offspringSize;
-            // evals++;
+            // offspringSize = Math.min(offspringSize, evaluations_limit_-evals);
+            // evals += offspringSize;
+            evals++;
 
-            System.out.println(evals + " - " + evaluations_limit_);
+            System.out.println(evals + " - " + evaluations_limit_ + " - " + offspringSize + " - " + pop.size());
             /*
             selection.tournament_selection(population, Params.tournament_size, rnd_);
             // selection.select_survivors(population);

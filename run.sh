@@ -33,4 +33,10 @@ then
 elif [ "$1" == "bent" ]
 then
     java -Ddebug=$D -jar testrun.jar -submission=player111 -evaluation=BentCigarFunction -seed=1
+elif [ "$1" == "katsuura" ]
+then
+    java -Ddebug=$D -jar testrun.jar -submission=player111 -evaluation=KatsuuraEvaluation -seed=1
+elif [ "$1" == "schaffers" ]
+then
+    java -Ddebug=$D -jar testrun.jar -submission=player111 -evaluation=SchaffersEvaluation -seed=1
 fi

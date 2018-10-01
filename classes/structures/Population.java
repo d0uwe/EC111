@@ -68,10 +68,18 @@ public class Population {
 
      public Unit sample(Random rand) {
         if (rand.nextInt(100) < 90) {
-            return this.population.get(rand.nextInt(10));
+            // System.out.println("pop_size " + this.population.size());
+            return this.population.get(rand.nextInt((int)(0.1*this.population.size())));
         } else {
-            return this.population.get(10 + rand.nextInt(this.population.size() - 10));
+            return this.population.get(((int)(0.1*this.population.size())) + rand.nextInt((int)(this.population.size()*0.9)));
         }
+    }
+
+    public ArrayList<Unit> uniform_sample(int k) {
+
+        ArrayList<Unit> tmp = new ArrayList<Unit>(this.population);
+        Collections.shuffle(tmp);
+        return new ArrayList<Unit>(tmp.subList(0, k));
     }
 
     public double getFitnessVariance() {
@@ -152,6 +160,10 @@ public class Population {
 
     public int size() {
         return this.population.size();
+    }
+
+    public void remove(Unit unit) {
+        this.population.remove(unit);
     }
 
     public String toString() {

@@ -86,12 +86,11 @@ public class player111 implements ContestSubmission {
         System.out.println(population.size());
         while (evals < evaluations_limit_) {
 
-            //selection.tournament_selection(population, Params.tournament_size, rnd_);
-            selection.select_survivors(population);
-            System.out.println(population.size());
+            selection.tournament_selection(population, Params.tournament_size, rnd_);
+            // selection.select_survivors(population);
             recombination.recombination(population, min_split, max_split, rnd_);
             mutate.mutate_gaussian_single(population, pop_size, rnd_);
-
+            //mutate.mutate_uniform(population, pop_size, rnd_);
             int curr_pop_size = population.size();
 
             for (int i = n_survivors; i < curr_pop_size; i++) {

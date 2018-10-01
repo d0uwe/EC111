@@ -14,6 +14,10 @@ public class Selection {
     public Selection() {
     }
 
+    public Unit randomSelect(Population p, Random rand) {
+       return p.get(rand.nextInt(p.size()));
+    }
+
     public void select_survivors(Population population) {
         population.sort();
         population.reverse();
@@ -24,7 +28,7 @@ public class Selection {
     }
 
 
-    public void tournament_selection(Population population, int k, Random rand) {
+    public Unit tournamentSelection(Population pop, int k, Random rand) {
         /**
         * choose k (the tournament size) individuals from the population at random
         * choose the best individual from the tournament with probability p
@@ -32,20 +36,34 @@ public class Selection {
         * choose the third best individual with probability p*((1-p)^2)
         * and so on
         */
-        ArrayList<Unit> new_units = new ArrayList<Unit>();
+
+        Unit best = null;
+        ArrayList<Unit> selections = new ArrayList<Unit>();
+        int i = 0;
+        while (i < k) {
+            Unit rand_unit = this.randomSelect(pop, rand);
+            if (selections.contains(rand_unit)) continue;
+
+            selections.add(rand_unit);
+            if (best == null) {
+                best = rand_unit;
+            }
+            else if (rand_unit.getFitness() > best.getFitness()) {
+                best = rand_unit;
+            }
+            i++;
+        }
+        return best;
+
+        /*
 
         for (int i = 0; i < Params.n_survivors; i++) {
             ArrayList<Unit> k_units = population.uniform_sample(k);
             // Get the best.
             Collections.sort(k_units, Collections.reverseOrder());
-
-            // System.out.println("FITNESS " + k_units.get(0).getFitness());
-
             Unit best_unit = k_units.get(0);
 
-            new_units.add(best_unit);
-            population.remove(best_unit);
-            
+            best_selections.add(best_unit);
 
 
             //System.out.println(best_unit.i);
@@ -66,7 +84,6 @@ public class Selection {
                     }
                 }
             }
-            */
         }
 
         // System.out.println(new_units.size()); 

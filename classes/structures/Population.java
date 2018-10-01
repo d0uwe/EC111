@@ -16,7 +16,6 @@ public class Population {
     public ArrayList<Unit> getPopulation() { return this.population; }
     public void setPopulation(ArrayList<Unit> population) { this.population = population; }
 
-
     public Population(int desired_pop_size, Random rand) {
         for (int i = 0; i < desired_pop_size; i++) {
             Unit child = new Unit(Params.mutate_mode, 10);
@@ -141,6 +140,12 @@ public class Population {
     public Unit get(int loc) {
         return this.population.get(loc);
     }
+
+    /*
+    public void set(int loc, Unit unit) {
+        this.population.get(loc) = unit;
+    }
+    */
 
     public void add(Unit unit) {
         this.population.add(unit);

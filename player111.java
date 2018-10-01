@@ -16,6 +16,7 @@ import structures.Mutation;
 import structures.Params;
 
 
+
 public class player111 implements ContestSubmission {
     Random rnd_;
     ContestEvaluation evaluation_;
@@ -55,12 +56,49 @@ public class player111 implements ContestSubmission {
     }
 
 
+    public static Population evolvePopulation(Population pop, int offspringSize, ContestEvaluation evaluation, Random rand) {
+        int min_split = Params.min_split;
+        int max_split = Params.max_split;
+
+
+        Selection selection = new Selection();
+        Recombination recombination = new Recombination();
+        Mutation mutate = new Mutation();
+
+        int n_survivors = Params.n_survivors;
+        Population offspringPop = new Population(pop.size(), rand);
+        Population fittestPop = new Population(pop.size(), rand);
+
+        for (int i = 0; i < offspringPop.size(); i++) {
+            // SELECTION
+
+            Unit p1 = selection.randomSelect(pop, rand);
+            Unit p2 = selection.randomSelect(pop, rand);
+            // Unit p1 = selection.tournamentSelection(pop, Params.tournament_size, rand);
+            // Unit p2 = selection.tournamentSelection(pop, Params.tournament_size, rand);
+
+            // REPRODUCTION
+            int split = rand.nextInt(max_split - min_split) + min_split;
+            Unit child = recombination.cross_over(p1, p2, split);
+
+            // MUTATION
+            child = mutate.mutate_uniform(child, rand); 
+            // CHILD FITNESS
+            Double fitness = (Double) evaluation.evaluate(child.getValues());
+            // System.out.println(fitness);
+            child.setFitness(fitness); 
+            offspringPop.getPopulation().set(i, child);
+        }
+        return offspringPop;
+    }
+
+
     public void run() {
         if (System.getProperty("debug") != null) {
             Params.debug = Boolean.parseBoolean(System.getProperty("debug"));
         }
 
-        int evals = 0;
+        // int evals = 0;
         int pop_size = Params.pop_size;
         try {
             pop_size = Integer.parseInt(System.getProperty("pop"));
@@ -69,23 +107,23 @@ public class player111 implements ContestSubmission {
             // throw e;
         }
 
-        int min_split = Params.min_split;
-        int max_split = Params.max_split;
-
         assert pop_size <= evaluations_limit_;
 
-        Population population = new Population(pop_size, rnd_);
+        Population pop = new Population(pop_size, rnd_);
 
-        int n_survivors = Params.n_survivors;
-        Selection selection = new Selection();
-        Mutation mutate = new Mutation();
-        Recombination recombination = new Recombination();
-
+        int offspringSize = 490; //Params.n_survivors;
+        int evals = pop_size + offspringSize;
 
         // And then we do it for the whole population
-        System.out.println(population.size());
         while (evals < evaluations_limit_) {
 
+            pop = this.evolvePopulation(pop, offspringSize, evaluation_, rnd_);
+            offspringSize = Math.min(offspringSize, evaluations_limit_-evals);
+            evals += offspringSize;
+            // evals++;
+
+            System.out.println(evals + " - " + evaluations_limit_);
+            /*
             selection.tournament_selection(population, Params.tournament_size, rnd_);
             // selection.select_survivors(population);
             recombination.recombination(population, min_split, max_split, rnd_);
@@ -112,9 +150,11 @@ public class player111 implements ContestSubmission {
                 "\n[DEBUG]\n\n";
                 System.out.println(debug_message);
             }
+            */
         }
 
         // print variance for every allele
+        /*
         if (Params.debug) {
             System.out.println("\n\n\nVariance for all alleles:\n");
             double[] var = population.getGenomeVariance();
@@ -123,5 +163,6 @@ public class player111 implements ContestSubmission {
             }
             System.out.println("\n\n\n\n");
         }
+        */
     }
 }

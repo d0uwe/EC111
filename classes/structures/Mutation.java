@@ -65,7 +65,7 @@ public class Mutation {
     public void mutate_uniform(Population population, int pop_size, Random rand) {
 
         int current_pop_size = population.size();
-        int mutation_growth = (pop_size - current_pop_size) / 2;
+        int mutation_growth = Params.mutation_amount; // (pop_size - current_pop_size) / 2;
 
         for (int i = 0; i < mutation_growth; i++) {
         //generate random number between 0 and current_pop_size
@@ -89,7 +89,7 @@ public class Mutation {
     public void mutate_gaussian_single(Population population, int pop_size, Random rand) {
 
         int current_pop_size = population.size();
-        int mutation_growth = (pop_size - current_pop_size) / 2;
+        int mutation_growth = Params.mutation_amount;
 
         for (int i = 0; i < mutation_growth; i++) {
             Unit mutated_child = mutate_gaussian_single(population.get(rand.nextInt(current_pop_size)), rand);

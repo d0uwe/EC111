@@ -83,9 +83,12 @@ public class player111 implements ContestSubmission {
 
 
         // And then we do it for the whole population
+        System.out.println(population.size());
         while (evals < evaluations_limit_) {
+
             //selection.tournament_selection(population, Params.tournament_size, rnd_);
             selection.select_survivors(population);
+            System.out.println(population.size());
             recombination.recombination(population, min_split, max_split, rnd_);
             mutate.mutate_gaussian_single(population, pop_size, rnd_);
 
@@ -110,6 +113,7 @@ public class player111 implements ContestSubmission {
                 "\n[DEBUG]\n\n";
                 System.out.println(debug_message);
             }
+            break;
         }
 
         // print variance for every allele

@@ -22,6 +22,13 @@ else
     D=false
 fi
 
+if [[ "$2" == "r" || "$2" == "random" || "$3" == "r" || "$3" == "random" ]]
+then
+    SEED=$RANDOM
+else
+    SEED=1
+fi
+
 # execute commands based on specified function
 if [ "$1" == "compile" ]
 then
@@ -29,14 +36,14 @@ then
     javac -cp contest.jar player111.java
 elif [ "$1" == "sphere" ]
 then
-    java -Ddebug=$D -jar testrun.jar -submission=player111 -evaluation=SphereEvaluation -seed=1
+    java -Ddebug=$D -jar testrun.jar -submission=player111 -evaluation=SphereEvaluation -seed=$SEED
 elif [ "$1" == "bent" ]
 then
-    java -Ddebug=$D -jar testrun.jar -submission=player111 -evaluation=BentCigarFunction -seed=1
+    java -Ddebug=$D -jar testrun.jar -submission=player111 -evaluation=BentCigarFunction -seed=$SEED
 elif [ "$1" == "katsuura" ]
 then
-    java -Ddebug=$D -jar testrun.jar -submission=player111 -evaluation=KatsuuraEvaluation -seed=1
+    java -Ddebug=$D -jar testrun.jar -submission=player111 -evaluation=KatsuuraEvaluation -seed=$SEED
 elif [ "$1" == "schaffers" ]
 then
-    java -Ddebug=$D -jar testrun.jar -submission=player111 -evaluation=SchaffersEvaluation -seed=1
+    java -Ddebug=$D -jar testrun.jar -submission=player111 -evaluation=SchaffersEvaluation -seed=$SEED
 fi

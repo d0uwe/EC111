@@ -79,7 +79,7 @@ public class Mutation {
         int unit_size = new_unit.getSize();
 
         for (int i = 0; i < unit_size; i++) {
-            new_unit.setValue(i, (rand.nextGaussian() * new_unit.getSigma(0)));
+            new_unit.setValue(i, new_unit.getValue(i) + (rand.nextGaussian() * new_unit.getSigma(0)));
         }
 
         return new_unit;

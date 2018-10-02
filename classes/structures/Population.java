@@ -75,10 +75,9 @@ public class Population {
         }
     }
 
-    public ArrayList<Unit> uniform_sample(int k) {
-
+    public ArrayList<Unit> uniform_sample(int k, Random rand) {
         ArrayList<Unit> tmp = new ArrayList<Unit>(this.population);
-        Collections.shuffle(tmp);
+        Collections.shuffle(tmp, rand);
         return new ArrayList<Unit>(tmp.subList(0, k));
     }
 

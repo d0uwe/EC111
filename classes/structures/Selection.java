@@ -35,7 +35,7 @@ public class Selection {
         ArrayList<Unit> new_units = new ArrayList<Unit>();
 
         for (int i = 0; i < Params.n_survivors; i++) {
-            ArrayList<Unit> k_units = population.uniform_sample(k);
+            ArrayList<Unit> k_units = population.uniform_sample(k, rand);
             // Get the best.
             Collections.sort(k_units, Collections.reverseOrder());
 

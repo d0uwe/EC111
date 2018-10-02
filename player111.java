@@ -64,7 +64,6 @@ public class player111 implements ContestSubmission {
         int pop_size = Params.pop_size;
         try {
             pop_size = Integer.parseInt(System.getProperty("pop"));
-
         } catch (Exception e){
             // throw e;
         }

@@ -93,7 +93,7 @@ public class Mutation {
             // System.out.println(mutate_ratio);
             // TODO: Enabling this gives other scores????!!!!
             // if (rand.nextDouble() <= mutate_ratio) {
-                new_unit.setValue(i, (rand.nextGaussian() * new_unit.getSigma(0)));
+                new_unit.setValue(i, new_unit.getValue(i) + (rand.nextGaussian() * 0.5)); // new_unit.getSigma(0)));
             // }
         }
         return new_unit;

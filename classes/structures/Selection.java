@@ -23,6 +23,37 @@ public class Selection {
         population.setPopulation(new ArrayList<Unit>(tmp.subList(0, Params.n_survivors)));
     }
 
+    public Unit randomSelect(Population p, Random rand) {
+        return p.get(rand.nextInt(p.size()));
+    }
+
+    public Unit tournamentSelection(Population pop, int k, Random rand) {
+        /**
+        * choose k (the tournament size) individuals from the population at random
+        * choose the best individual from the tournament with probability p
+        * choose the second best individual with probability p*(1-p)
+        * choose the third best individual with probability p*((1-p)^2)
+        * and so on
+        */
+
+        Unit best = null;
+        ArrayList<Unit> selections = new ArrayList<Unit>();
+        int i = 0;
+        while (i < k) {
+            Unit rand_unit = this.randomSelect(pop, rand);
+            if (selections.contains(rand_unit)) continue;
+
+            selections.add(rand_unit);
+            if (best == null) {
+                best = rand_unit;
+            }
+            else if (rand_unit.getFitness() > best.getFitness()) {
+                best = rand_unit;
+            }
+            i++;
+        }
+        return best;
+    }
 
     public void tournament_selection(Population population, int k, Random rand) {
         /**

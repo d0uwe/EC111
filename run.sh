@@ -26,6 +26,13 @@ else
     D=false
 fi
 
+if [[ "$2" == "csv" ]]
+then
+    CSV=true
+else
+    CSV=false
+fi
+
 if [[ "$2" == "r" || "$2" == "random" || "$3" == "r" || "$3" == "random" ]]
 then
     RND=""
@@ -48,16 +55,16 @@ then
     exit 0
 elif [ "$1" == "sphere" ]
 then
-    QUERY="java -Ddebug=$D -jar testrun.jar -submission=player111 -evaluation=SphereEvaluation -seed="
+    QUERY="java -Ddebug=$D -Dcsv=$CSV -jar testrun.jar -submission=player111 -evaluation=SphereEvaluation -seed="
 elif [ "$1" == "bent" ]
 then
-    QUERY="java -Ddebug=$D -jar testrun.jar -submission=player111 -evaluation=BentCigarFunction -seed="
+    QUERY="java -Ddebug=$D -Dcsv=$CSV  -jar testrun.jar -submission=player111 -evaluation=BentCigarFunction -seed="
 elif [ "$1" == "katsuura" ]
 then
-    QUERY="java -Ddebug=$D -jar testrun.jar -submission=player111 -evaluation=KatsuuraEvaluation -seed="
+    QUERY="java -Ddebug=$D -Dcsv=$CSV -jar testrun.jar -submission=player111 -evaluation=KatsuuraEvaluation -seed="
 elif [ "$1" == "schaffers" ]
 then
-    QUERY="java -Ddebug=$D -jar testrun.jar -submission=player111 -evaluation=SchaffersEvaluation -seed="
+    QUERY="java -Ddebug=$D -Dcsv=$CSV -jar testrun.jar -submission=player111 -evaluation=SchaffersEvaluation -seed="
 fi
 
 # execute query $Q $N times
@@ -67,11 +74,17 @@ do
     # check if seed has to be random, or 1
     if [[ $RND ]] && [[ "$N" -le "1" ]]
     then
+        OUTPUT=$QUERY"1"
+
+        if [[ $CSV ]]
+        then
+            $OUTPUT | tee 'data.csv'
+        fi
         echo "1"
-        SUM=$($QUERY"1" | tee /dev/tty | awk '/^Score:/{print $2}' | (read TMP && echo $TMP+$SUM | bc))
+        SUM=$($OUTPUT | tee /dev/tty | awk '/^Score:/{print $2}' | (read TMP && echo $TMP+$SUM | bc))
         # TMP=$($QUERY"1" | awk '/^Score:/{print $2}') && SUM=$(echo $TMP+$SUM | bc)
     else
-        echo "2"
+        # echo "2"
         SUM=$($QUERY$RANDOM | tee /dev/tty | awk '/^Score:/{print $2}' | (read TMP && echo $TMP+$SUM | bc))
         # TMP=$($QUERY$RANDOM | awk '/^Score:/{print $2}') && SUM=$(echo $TMP+$SUM | bc)
     fi

@@ -56,9 +56,16 @@ public class player111 implements ContestSubmission {
 
 
     public void run() {
+
+        String evaluation_type = null;
         if (System.getProperty("debug") != null) {
             Params.debug = Boolean.parseBoolean(System.getProperty("debug"));
         }
+
+        if (System.getProperty("csv") != null) {
+            Params.csv = Boolean.parseBoolean(System.getProperty("csv"));
+        }
+
 
         int evals = 0;
         int pop_size = Params.pop_size;
@@ -82,12 +89,15 @@ public class player111 implements ContestSubmission {
 
 
         // And then we do it for the whole population
-        System.out.println(population.size());
+        if (Params.csv) {
+            System.out.println("eval,pop_size,avg_fitness,fitness_variance,mutation_amount,recombination_amount");
+        }
+
         while (evals < evaluations_limit_) {
 
             selection.tournament_selection(population, Params.tournament_size, rnd_);
             // selection.select_survivors(population);
-            recombination.recombination(population, min_split, max_split, rnd_);
+            recombination.recombination(population, selection, min_split, max_split, rnd_);
             mutate.mutate_gaussian_single(population, pop_size, rnd_);
             //mutate.mutate_uniform(population, pop_size, rnd_);
             int curr_pop_size = population.size();
@@ -99,6 +109,11 @@ public class player111 implements ContestSubmission {
                 if (evals >= evaluations_limit_) {
                     break;
                 }
+            }
+
+            if (Params.csv) {
+                System.out.println(evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
+                Params.mutation_amount + "," + Params.recombination_amount);
             }
 
             if (Params.debug) {

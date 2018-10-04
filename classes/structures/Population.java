@@ -68,7 +68,6 @@ public class Population {
 
      public Unit sample(Random rand) {
         if (rand.nextInt(100) < 90) {
-            // System.out.println("pop_size " + this.population.size());
             return this.population.get(rand.nextInt((int)(0.1*this.population.size())));
         } else {
             return this.population.get(((int)(0.1*this.population.size())) + rand.nextInt((int)(this.population.size()*0.9)));

@@ -38,7 +38,7 @@ def getScores(all_combinations, all_var_names, progress_q):
 			strings = ["java"]
 			for number, name in zip(combination, all_var_names):
 				strings += ["-D" + name + "=" + str(number)]
-			strings += ["-jar", "testrun.jar", "-submission=player111", evaluation, "-seed=1"]
+			strings += ["-jar", "testrun.jar", "-submission=player111", evaluation, "-seed=" + str(seed)]
 
 			process = subprocess.Popen(strings, stdout=subprocess.PIPE)
 			out, err = process.communicate()
@@ -53,7 +53,7 @@ def getScores(all_combinations, all_var_names, progress_q):
 def printScores(scores):
 	scores.sort(key=lambda x: x[1])
 	scores = scores[::-1]
-	print(scores[:10])
+	print()
 	for score in scores[:print_n_best]:
 		for var, value in zip(all_var_names, score[0]):
 			print(var,":", value, end=" ")

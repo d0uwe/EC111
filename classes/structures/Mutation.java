@@ -97,6 +97,10 @@ public class Mutation {
         }
     }
 
+    public void mutate_correlate(Population population, int pop_size, Random rand) {
+        
+    }
+
 
     public Unit mutate_gaussian_multi(Unit unit, Random rand) {
         // TODO

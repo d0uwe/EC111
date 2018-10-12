@@ -65,6 +65,40 @@ public class Population {
      }
     */
 
+    public double[] getPopulationMean() {
+        double[] means = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+
+        for (Unit unit: this.population) {
+            for (int i = 0; i < 10; i++) {
+                means[i] += unit.getValue(i);
+            }
+        }
+
+        for (int i = 0; i < 10; i++) {
+            means[i] /= (double) population.size();
+        }
+
+        return means;
+    }
+
+    public double[][] covariance() {
+        // covariance is always 10x10
+        double[][] covariance = new double[10][10];
+        double[] means = getPopulationMean();
+
+        for (Unit unit_i: this.population) {
+            for (Unit unit_j: this.population) {
+                for (int i = 0; i < 10; i++) {
+                    for (int j = 0; j < 10; j++) {
+                        covariance[i][j] = (unit_i.getValue(i) - means[i]) * (unit_j.getValue(j) - means[j]);
+                    }
+                }
+            }
+        }
+
+        return covariance;
+    }
+
 
      public Unit sample(Random rand) {
         if (rand.nextInt(100) < 90) {

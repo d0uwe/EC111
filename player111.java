@@ -1,6 +1,7 @@
 import org.vu.contest.ContestSubmission;
 
 import org.vu.contest.ContestEvaluation;
+import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 
 import java.util.Random;
 import java.util.Properties;
@@ -95,6 +96,11 @@ public class player111 implements ContestSubmission {
 
         while (evals < evaluations_limit_) {
 
+            double[] means = {0.0, 1.0};
+            double[][] cov = {{0.0, 1.0}, {1.0, 1.0}};
+
+            MultivariateNormalDistribution N = new MultivariateNormalDistribution(means, cov);
+
             selection.tournament_selection(population, Params.tournament_size, rnd_);
             // selection.select_survivors(population);
             recombination.recombination(population, selection, min_split, max_split, rnd_);
@@ -110,6 +116,9 @@ public class player111 implements ContestSubmission {
                     break;
                 }
             }
+            //double cov[][] = population.covariance();
+            //System.out.println(">>  ");
+            //System.out.println(cov[0][0]);
 
             if (Params.csv) {
                 System.out.println(evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +

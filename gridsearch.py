@@ -8,13 +8,13 @@ from multiprocessing import Pool, Queue, Manager, Process
 # How many results to print:
 np.random.seed(5000)
 print_n_best = 10
-n_jobs = 4
+n_jobs = 1
 n_seeds = 4
-evaluation = "-evaluation=SphereEvaluation"
+evaluation = "-evaluation=SchaffersEvaluation"
 
 # (var_name, min, max, stepsize)
-pop = ("pop", 50, 200, 2)
-var2 = ("var2", 2, 20, 10)
+pop = ("pop", 50, 200, 4)
+var2 = ("survp", 0.5, 0.9, 0.05)
 
 # add above variables to a list.
 var_list = [pop, var2]

@@ -68,12 +68,20 @@ public class player111 implements ContestSubmission {
 
 
         int evals = 0;
-        int pop_size = Params.pop_size;
         try {
-            pop_size = Integer.parseInt(System.getProperty("pop"));
+            Params.pop_size = Integer.parseInt(System.getProperty("pop"));
         } catch (Exception e){
             // throw e;
         }
+        try {
+            Params.survivor_percentage = Float.parseFloat(System.getProperty("survp"));
+        } catch (Exception e){
+            // throw e;
+        }
+
+        Params.update_params();
+        int pop_size = Params.pop_size;
+
 
         int min_split = Params.min_split;
         int max_split = Params.max_split;

@@ -76,12 +76,15 @@ do
     then
         OUTPUT=$QUERY"1"
 
-        if [[ $CSV ]]
+        if [[ $CSV = "true" ]]
         then
-            $OUTPUT | tee 'data.csv'
+            echo csv
+            SUM=$($OUTPUT | tee 'data.csv' | awk '/^Score:/{print $2}' | (read TMP && echo $TMP+$SUM | bc))
+        else
+            echo notcsv
+            SUM=$($OUTPUT | tee /dev/tty | awk '/^Score:/{print $2}' | (read TMP && echo $TMP+$SUM | bc))
         fi
-        echo "1"
-        SUM=$($OUTPUT | tee /dev/tty | awk '/^Score:/{print $2}' | (read TMP && echo $TMP+$SUM | bc))
+        # echo "1"
         # TMP=$($QUERY"1" | awk '/^Score:/{print $2}') && SUM=$(echo $TMP+$SUM | bc)
     else
         # echo "2"

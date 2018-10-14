@@ -8,13 +8,13 @@ from multiprocessing import Pool, Queue, Manager, Process
 # How many results to print:
 np.random.seed(5000)
 print_n_best = 10
-n_jobs = 4
+n_jobs = 1
 n_seeds = 4
-evaluation = "-evaluation=SphereEvaluation"
+evaluation = "-evaluation=SchaffersEvaluation"
 
 # (var_name, min, max, stepsize)
-pop = ("pop", 50, 200, 2)
-var2 = ("var2", 2, 20, 10)
+pop = ("pop", 50, 200, 4)
+var2 = ("survp", 0.5, 0.9, 0.05)
 
 # add above variables to a list.
 var_list = [pop, var2]
@@ -38,7 +38,7 @@ def getScores(all_combinations, all_var_names, progress_q):
 			strings = ["java"]
 			for number, name in zip(combination, all_var_names):
 				strings += ["-D" + name + "=" + str(number)]
-			strings += ["-jar", "testrun.jar", "-submission=player111", evaluation, "-seed=1"]
+			strings += ["-jar", "testrun.jar", "-submission=player111", evaluation, "-seed=" + str(seed)]
 
 			process = subprocess.Popen(strings, stdout=subprocess.PIPE)
 			out, err = process.communicate()
@@ -53,7 +53,7 @@ def getScores(all_combinations, all_var_names, progress_q):
 def printScores(scores):
 	scores.sort(key=lambda x: x[1])
 	scores = scores[::-1]
-	print(scores[:10])
+	print()
 	for score in scores[:print_n_best]:
 		for var, value in zip(all_var_names, score[0]):
 			print(var,":", value, end=" ")

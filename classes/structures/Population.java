@@ -16,6 +16,11 @@ public class Population {
     public ArrayList<Unit> getPopulation() { return this.population; }
     public void setPopulation(ArrayList<Unit> population) { this.population = population; }
 
+    // Copy constructor
+    public Population(Population pop) {
+        this.population = pop.population;
+    }
+
 
     public Population(int desired_pop_size, Random rand) {
         for (int i = 0; i < desired_pop_size; i++) {

@@ -98,6 +98,47 @@ public class Mutation {
     }
 
 
+    public Population mutate_differential(Population population, int pop_size, Random rand) {
+        int current_pop_size = population.size();
+        int mutation_growth = Params.mutation_amount;
+
+        // The mutant population is defined as M
+        // We can copy the original and just edit all units in this.
+        Population M = new Population(population);
+        int pop_size = population.size();
+
+        for (int i = 0; i < pop_size; i++) {
+            Unit x = M.get(i);
+
+            do {
+                Unit y = population.get(rand.nextInt(pop_size));
+            } while (y == x);
+
+            do {
+                Unit z = population.get(rand.nextInt(pop_size));
+            } while ((z == x) || (z == y));
+
+
+            for (int i = 0; i < unit_size; i++) {
+                x.setValue(i, x.getValue(i) + params.F * (y.getValue(i) - z.getValue(i)));
+            }
+
+
+            // Might as well do the crossover in here too
+            if (rand.nextDouble() > Params.Cr) {
+                x.setValue(i, population.get(i).getValue(i));
+            }
+        }
+
+        Population new_pop = new Population();
+        // ELITISMMMM
+        for (int i = 0; i < pop_size; i++) {
+            if
+        }
+
+    }
+
+
     public Unit mutate_gaussian_multi(Unit unit, Random rand) {
         // TODO
         return unit;

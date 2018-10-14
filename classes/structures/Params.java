@@ -22,6 +22,7 @@ public class Params {
     public static double tournament_p = 1.0;
     public static double F = 0.5;
     public static double Cr = 0.5;
+    public static int evals = 0;
 
     public static void update_params(){
         n_survivors = (int)(pop_size * survivor_percentage);

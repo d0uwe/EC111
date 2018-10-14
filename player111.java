@@ -67,7 +67,7 @@ public class player111 implements ContestSubmission {
         }
 
 
-        int evals = 0;
+        // int evals = 0;
         try {
             Params.pop_size = Integer.parseInt(System.getProperty("pop"));
         } catch (Exception e){
@@ -101,7 +101,7 @@ public class player111 implements ContestSubmission {
             System.out.println("eval,pop_size,avg_fitness,fitness_variance,mutation_amount,recombination_amount");
         }
 
-        while (evals < evaluations_limit_) {
+        while (Params.evals < evaluations_limit_) {
 
             selection.tournament_selection(population, Params.tournament_size, rnd_);
             // selection.select_survivors(population);
@@ -113,19 +113,19 @@ public class player111 implements ContestSubmission {
             for (int i = n_survivors; i < curr_pop_size; i++) {
                 double new_fitness = (double) evaluation_.evaluate(population.get(i).getValues());
                 population.getPopulation().get(i).setFitness(new_fitness);
-                evals++;
-                if (evals >= evaluations_limit_) {
+                Params.evals++;
+                if (Params.evals >= evaluations_limit_) {
                     break;
                 }
             }
 
             if (Params.csv) {
-                System.out.println(evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
+                System.out.println(Params.evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
                 Params.mutation_amount + "," + Params.recombination_amount);
             }
 
             if (Params.debug) {
-                String debug_message = "\n\n[DEBUG]\n\tevals: " + evals +
+                String debug_message = "\n\n[DEBUG]\n\tevals: " + Params.evals +
                 "\n\tpop_size: " + curr_pop_size + "\n\tavg_fitness: " +
                 population.averageFitness() + "\n\tfitness_variance: " +
                 population.getFitnessVariance() +

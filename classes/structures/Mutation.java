@@ -142,7 +142,8 @@ public class Mutation {
             for (int j = 0; j < Params.gene_length; j++) {
                 x.setValue(j, x.getValue(j) + Params.F * (y.getValue(j) - z.getValue(j)));
 
-                if (rand.nextDouble() > Params.Cr) {
+                // change back to what it was, which is sort of "crossover"
+                if (rand.nextDouble() < Params.Cr) {
                     x.setValue(j, population.get(i).getValue(j));
                 }
             }

@@ -76,6 +76,10 @@ public class player111 implements ContestSubmission {
             Params.survivor_percentage = Float.parseFloat(System.getProperty("survp"));
         }
 
+        if (System.getProperty("islands") != null) {
+            Params.use_islands = Integer.parseInt(System.getProperty("islands")) != 0;
+        }
+
         Params.update_params();
         int pop_size = Params.pop_size;
 
@@ -118,10 +122,6 @@ public class player111 implements ContestSubmission {
                     }
                 }
 
-                if (Params.csv) {
-                    System.out.println(evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
-                            Params.mutation_amount + "," + Params.recombination_amount);
-                }
                 if (Params.log) {
                     System.out.println(evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
                             population.bestFitness() + "," +
@@ -173,6 +173,13 @@ public class player111 implements ContestSubmission {
             for (Population population : islands) {
                 population.immigrate(exchanges.get(0));
                 exchanges.remove(0);
+            }
+            if (Params.log) {
+                for (Population population : islands) {
+                    System.out.println(evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
+                    population.bestFitness() + "," +
+                    Params.mutation_amount + "," + Params.recombination_amount);
+                }
             }
         }
     }

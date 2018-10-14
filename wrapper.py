@@ -41,6 +41,9 @@ class Program():
         for k, v in arg_dict.items():
             if k == 'log' and v == True:
                 v = 1
+            if k == 'islands' and v == True:
+                v = 1
+
             s += ["-D" + k + "=" + str(v)]
         s += ["-jar", "testrun.jar", "-submission=player111", "-evaluation="+evaluation, "-seed="+str(rand)]
         p = subprocess.Popen(s, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -144,7 +147,8 @@ if __name__ == '__main__':
     parser.add_argument('--r', action='store_true')
     parser.add_argument('--m', type=int, default=0)
     parser.add_argument('--population', type=int, default=100)
-    parser.add_argument('--survp', type=float, default=80)
+    parser.add_argument('--survp', type=float, default=0.8)
+    parser.add_argument('--islands', type=bool, default=True)
 
     args = parser.parse_args()
     program = Program()

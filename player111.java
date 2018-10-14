@@ -100,8 +100,7 @@ public class player111 implements ContestSubmission {
             System.out.println("eval,pop_size,fitness_avg,fitness_variance,fitness_best,mutation_amount,recombination_amount");
         }
 
-        boolean use_islands = false;
-        if (use_islands) {
+        if (Params.use_islands) {
             run_islands();
         } else {
             Population population = new Population(pop_size, rnd_);
@@ -126,10 +125,11 @@ public class player111 implements ContestSubmission {
                     System.out.println(evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
                             Params.mutation_amount + "," + Params.recombination_amount);
                 }
-            if (Params.log) {
-                System.out.println(evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
-                population.bestFitness() + "," +
-                Params.mutation_amount + "," + Params.recombination_amount);
+                if (Params.log) {
+                    System.out.println(evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
+                            population.bestFitness() + "," +
+                            Params.mutation_amount + "," + Params.recombination_amount);
+                }
             }
         }
     }

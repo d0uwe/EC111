@@ -25,6 +25,10 @@ public class Params {
     public static int island_exchange_gens = 5;
     public static int immigrants = 5;
 
+    public static boolean csv = true;
+    public static boolean use_islands = true;
+
+
     public static void update_params(){
         n_survivors = (int)(pop_size * survivor_percentage);
         recombination_amount = (pop_size - n_survivors) / 2;

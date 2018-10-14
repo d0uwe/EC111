@@ -18,7 +18,10 @@ public class Population {
 
     // Copy constructor
     public Population(Population pop) {
-        this.population = pop.population;
+        //this.population = new ArrayList<Unit>(pop.population);
+        for (int i = 0; i < pop.size(); i++) {
+            this.population.add(new Unit(pop.get(i)));
+        }
     }
 
     // construct a new empty population

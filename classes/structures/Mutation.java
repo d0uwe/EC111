@@ -124,7 +124,7 @@ public class Mutation {
                 x.setValue(j, x.getValue(j) + Params.F * (y.getValue(j) - z.getValue(j)));
 
                 if (rand.nextDouble() > Params.Cr) {
-                    x.setValue(j, population.get(j).getValue(j));
+                    x.setValue(j, population.get(i).getValue(j));
                 }
             }
         }

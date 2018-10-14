@@ -67,7 +67,7 @@ public class Selection {
                 System.out.println("YES ITS THE SAME");
             }
 
-            if (population.get(i).compareTo(M.get(i)) == -1) {
+            if (population.get(i).compareTo(M.get(i)) == 1) {
                 new_unit = new Unit(population.get(i));
                 new_pop.add(new_unit);
             } else {

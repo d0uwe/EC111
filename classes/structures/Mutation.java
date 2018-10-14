@@ -1,6 +1,8 @@
 package structures;
 
 import structures.Unit;
+import structures.Unit.MutateMode;
+
 import java.util.Random;
 import java.util.ArrayList;
 import structures.Params;
@@ -105,6 +107,23 @@ public class Mutation {
         // The mutant population is defined as M
         // We can copy the original and just edit all units in this.
         Population M = new Population(population);
+
+        // System.out.println(M.get(0).values[0]);
+        // System.out.println(population.get(0).values[0]);
+        
+        // M.get(0).values[0] = 5.0;
+        // System.out.println(M.get(0).values[0]);
+        // System.out.println(population.get(0).values[0] + "\n\n");
+
+        // Unit a = new Unit(MutateMode.UNIFORM);
+        // Unit b = new Unit(a);
+        // System.out.println(a.values[0]);
+        // System.out.println(b.values[0]);
+        // a.values[0] = 5.0;
+        // System.out.println(a.values[0]);
+        // System.out.println(b.values[0] + "\n\n");
+
+
         //Population new_pop = new Population();
 
         for (int i = 0; i < pop_size; i++) {

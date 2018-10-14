@@ -36,10 +36,10 @@ public class Unit implements Comparable<Unit> {
 
     // copy constructor
     public Unit(Unit unit) {
-        values = unit.values;
+        values = unit.values.clone();
         fitness = unit.fitness;
         size = unit.size;
-        sigmas = unit.sigmas;
+        sigmas = unit.sigmas.clone();
     }
 
     public double[] getValues() { return values; }

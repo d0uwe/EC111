@@ -1,9 +1,11 @@
 package structures;
 
+import org.vu.contest.ContestEvaluation;
 import structures.Unit;
 import java.util.Random;
 import java.util.ArrayList;
 import structures.Params;
+
 
 public class Mutation {
     double upper_bound;
@@ -98,44 +100,51 @@ public class Mutation {
     }
 
 
-    public Population mutate_differential(Population population, int pop_size, Random rand) {
+    public Population mutate_differential(Population population, int pop_size, Random rand, ContestEvaluation eval) {
         int current_pop_size = population.size();
         int mutation_growth = Params.mutation_amount;
 
         // The mutant population is defined as M
         // We can copy the original and just edit all units in this.
         Population M = new Population(population);
-        int pop_size = population.size();
+        Population new_pop = new Population();
 
         for (int i = 0; i < pop_size; i++) {
             Unit x = M.get(i);
 
+            Unit y, z;
             do {
-                Unit y = population.get(rand.nextInt(pop_size));
+                y = population.get(rand.nextInt(pop_size));
             } while (y == x);
 
             do {
-                Unit z = population.get(rand.nextInt(pop_size));
+                z = population.get(rand.nextInt(pop_size));
             } while ((z == x) || (z == y));
 
 
-            for (int i = 0; i < unit_size; i++) {
-                x.setValue(i, x.getValue(i) + params.F * (y.getValue(i) - z.getValue(i)));
+            for (int j = 0; i < pop_size; j++) {
+                x.setValue(j, x.getValue(j) + params.F * (y.getValue(j) - z.getValue(j)));
+
+                if (rand.nextDouble() > Params.Cr) {
+                    x.setValue(j, population.get(j).getValue(j));
+                }
             }
 
+            // set evaluation of x
+            double fitness = (double) evaluation.evaluate(x.getvalues());
+            x.setFitness(fitness);
+            Params.evals++;
 
-            // Might as well do the crossover in here too
-            if (rand.nextDouble() > Params.Cr) {
-                x.setValue(i, population.get(i).getValue(i));
+            // elitism
+            Unit new_unit;
+            if (x.compareTo(population.get(j)) == 1) {
+                new_pop.add(new Unit(x));
+            } else {
+                new_pop.add(new population.get(j));
             }
         }
 
-        Population new_pop = new Population();
-        // ELITISMMMM
-        for (int i = 0; i < pop_size; i++) {
-            if
-        }
-
+        return new_pop;
     }
 
 

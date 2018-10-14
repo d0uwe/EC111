@@ -23,6 +23,8 @@ public class Params {
     public static double F = 0.2;
     public static double Cr = 0.2;
     public static int evals = 0;
+    // public static int mu = 5;
+    // public static int lambda = 10;
 
     public static void update_params(){
         n_survivors = (int)(pop_size * survivor_percentage);

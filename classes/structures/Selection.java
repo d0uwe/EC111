@@ -79,6 +79,13 @@ public class Selection {
         return new_pop;
     }
 
+    public Population selection_mu_comma_lambda(Population children) {
+        children.sort();
+        Population new_pop = new Population();
+        new_pop.setPopulation(new ArrayList<Unit>(children.getPopulation().subList(0, Params.pop_size)));
+        return new_pop;
+    }
+    
     public void tournament_selection(Population population, int k, Random rand) {
         /**
         * choose k (the tournament size) individuals from the population at random

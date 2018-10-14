@@ -21,6 +21,10 @@ public class Params {
     public static int tournament_size = 2; //n_survivors;
     public static double tournament_p = 1.0;
 
+    public static int num_islands = 4;
+    public static int island_exchange_gens = 5;
+    public static int immigrants = 5;
+
     public static void update_params(){
         n_survivors = (int)(pop_size * survivor_percentage);
         recombination_amount = (pop_size - n_survivors) / 2;

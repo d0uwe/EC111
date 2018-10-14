@@ -70,12 +70,12 @@ public class player111 implements ContestSubmission {
         int evals = 0;
         try {
             Params.pop_size = Integer.parseInt(System.getProperty("pop"));
-        } catch (Exception e){
+        } catch (Exception e) {
             // throw e;
         }
         try {
             Params.survivor_percentage = Float.parseFloat(System.getProperty("survp"));
-        } catch (Exception e){
+        } catch (Exception e) {
             // throw e;
         }
 
@@ -88,7 +88,6 @@ public class player111 implements ContestSubmission {
 
         assert pop_size <= evaluations_limit_;
 
-        Population population = new Population(pop_size, rnd_);
 
         int n_survivors = Params.n_survivors;
         Selection selection = new Selection();
@@ -101,50 +100,83 @@ public class player111 implements ContestSubmission {
             System.out.println("eval,pop_size,fitness_avg,fitness_variance,fitness_best,mutation_amount,recombination_amount");
         }
 
-        while (evals < evaluations_limit_) {
+        boolean use_islands = false;
+        if (use_islands) {
+            run_islands();
+        } else {
+            Population population = new Population(pop_size, rnd_);
+            while (evals < evaluations_limit_) {
+                selection.tournament_selection(population, Params.tournament_size, rnd_);
+                // selection.select_survivors(population);
+                recombination.recombination(population, selection, min_split, max_split, rnd_);
+                mutate.mutate_gaussian_single(population, pop_size, rnd_);
+                //mutate.mutate_uniform(population, pop_size, rnd_);
+                int curr_pop_size = population.size();
 
-            selection.tournament_selection(population, Params.tournament_size, rnd_);
-            // selection.select_survivors(population);
-            recombination.recombination(population, selection, min_split, max_split, rnd_);
-            mutate.mutate_gaussian_single(population, pop_size, rnd_);
-            //mutate.mutate_uniform(population, pop_size, rnd_);
-            int curr_pop_size = population.size();
-
-            for (int i = n_survivors; i < curr_pop_size; i++) {
-                double new_fitness = (double) evaluation_.evaluate(population.get(i).getValues());
-                population.getPopulation().get(i).setFitness(new_fitness);
-                evals++;
-                if (evals >= evaluations_limit_) {
-                    break;
+                for (int i = n_survivors; i < curr_pop_size; i++) {
+                    double new_fitness = (double) evaluation_.evaluate(population.get(i).getValues());
+                    population.getPopulation().get(i).setFitness(new_fitness);
+                    evals++;
+                    if (evals >= evaluations_limit_) {
+                        break;
+                    }
                 }
-            }
 
+                if (Params.csv) {
+                    System.out.println(evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
+                            Params.mutation_amount + "," + Params.recombination_amount);
+                }
             if (Params.log) {
                 System.out.println(evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
                 population.bestFitness() + "," +
                 Params.mutation_amount + "," + Params.recombination_amount);
             }
-
-            if (Params.debug) {
-                String debug_message = "\n\n[DEBUG]\n\tevals: " + evals +
-                "\n\tpop_size: " + curr_pop_size + "\n\tavg_fitness: " +
-                population.averageFitness() + "\n\tfitness_variance: " +
-                population.getFitnessVariance() +
-                "\n\tmut_amnt: " + Params.mutation_amount +
-                "\n\trecomb_amnt " + Params.recombination_amount +
-                "\n[DEBUG]\n\n";
-                System.out.println(debug_message);
-            }
         }
+    }
 
-        // print variance for every allele
-        if (Params.debug) {
-            System.out.println("\n\n\nVariance for all alleles:\n");
-            double[] var = population.getGenomeVariance();
-            for (double v : var) {
-                System.out.println(v);
+    private void run_islands() {
+        int evals = 0;
+        int pop_size = Params.pop_size;
+        ArrayList<Population> islands = new ArrayList<>();
+        for(int i = 0; i < Params.num_islands; i++) {
+            islands.add(new Population(pop_size, rnd_));
+        }
+        int n_survivors = Params.n_survivors;
+        Selection selection = new Selection();
+        Mutation mutate = new Mutation();
+        Recombination recombination = new Recombination();
+
+
+        while (evals < evaluations_limit_) {
+            for (int j = 0; j < Params.island_exchange_gens; j++) {
+                for (Population population : islands) {
+                    selection.tournament_selection(population, Params.tournament_size, rnd_);
+                    // selection.select_survivors(population);
+                    recombination.recombination(population, selection, Params.min_split, Params.max_split, rnd_);
+                    mutate.mutate_gaussian_single(population, pop_size, rnd_);
+
+
+                    int curr_pop_size = population.size();
+
+                    for (int i = n_survivors; i < curr_pop_size; i++) {
+                        double new_fitness = (double) evaluation_.evaluate(population.get(i).getValues());
+                        population.getPopulation().get(i).setFitness(new_fitness);
+                        evals++;
+                        if (evals >= evaluations_limit_) {
+                            break;
+                        }
+                    }
+                }
             }
-            System.out.println("\n\n\n\n");
+            ArrayList<ArrayList<Unit>> exchanges = new ArrayList<>();
+            for (Population population : islands) {
+                exchanges.add(population.emigrate(Params.immigrants, rnd_));
+            }
+            Collections.shuffle(exchanges, rnd_);
+            for (Population population : islands) {
+                population.immigrate(exchanges.get(0));
+                exchanges.remove(0);
+            }
         }
     }
 }

@@ -86,6 +86,21 @@ public class Population {
         return new ArrayList<Unit>(tmp.subList(0, k));
     }
 
+    public ArrayList<Unit> emigrate(int k, Random rand) {
+        ArrayList<Unit> tmp = new ArrayList<Unit>();
+        Collections.sort(this.population, Collections.reverseOrder());
+        for(int i = 0; i < k; i++) {
+            int num = rand.nextInt((this.population.size() / 2) - i);
+            tmp.add(this.population.get(num));
+            this.population.remove(num);
+        }
+        return tmp;
+    }
+
+    public void immigrate(ArrayList<Unit> immigrants) {
+        this.population.addAll(immigrants);
+    }
+
     public double getFitnessVariance() {
         double sum = 0;
         for (Unit unit : population) {

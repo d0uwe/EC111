@@ -21,6 +21,8 @@ public class Population {
         this.population = pop.population;
     }
 
+    // construct a new empty population
+    public Population() {}
 
     public Population(int desired_pop_size, Random rand) {
         for (int i = 0; i < desired_pop_size; i++) {

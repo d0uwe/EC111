@@ -14,7 +14,7 @@ public class Params {
     public static double initial_mutate_sigma = 0.1;
     public static double mutation_step_size = 0.99;
     public static boolean debug = false;
-    public static boolean csv = false;
+    public static boolean log = true;
     public static int recombination_amount = (pop_size - n_survivors) / 2;
     public static int mutation_amount = pop_size - n_survivors - recombination_amount;
     public static double recombination_constant = 0.5;

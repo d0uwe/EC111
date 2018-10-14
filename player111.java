@@ -62,8 +62,8 @@ public class player111 implements ContestSubmission {
             Params.debug = Boolean.parseBoolean(System.getProperty("debug"));
         }
 
-        if (System.getProperty("csv") != null) {
-            Params.csv = Boolean.parseBoolean(System.getProperty("csv"));
+        if (System.getProperty("log") != null) {
+            Params.log = Integer.parseInt(System.getProperty("log")) != 0;
         }
 
 
@@ -97,8 +97,8 @@ public class player111 implements ContestSubmission {
 
 
         // And then we do it for the whole population
-        if (Params.csv) {
-            System.out.println("eval,pop_size,avg_fitness,fitness_variance,mutation_amount,recombination_amount");
+        if (Params.log) {
+            System.out.println("eval,pop_size,fitness_avg,fitness_variance,fitness_best,mutation_amount,recombination_amount");
         }
 
         while (evals < evaluations_limit_) {
@@ -119,8 +119,9 @@ public class player111 implements ContestSubmission {
                 }
             }
 
-            if (Params.csv) {
+            if (Params.log) {
                 System.out.println(evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
+                population.bestFitness() + "," +
                 Params.mutation_amount + "," + Params.recombination_amount);
             }
 

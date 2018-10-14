@@ -46,6 +46,12 @@ public class Population {
         return (avg_fitness / this.population.size());
     }
 
+    public double bestFitness() {
+        Unit bestUnit = get_ranked_unit(0);
+        return bestUnit.getFitness();
+
+    }
+
     /**
      * From the population, draw from the top 10% with 90% chance and from the bottom 90% from 10%
      */

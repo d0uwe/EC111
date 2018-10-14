@@ -66,17 +66,14 @@ public class player111 implements ContestSubmission {
             Params.log = Integer.parseInt(System.getProperty("log")) != 0;
         }
 
+        if (System.getProperty("population") != null) {
+            Params.pop_size = Integer.parseInt(System.getProperty("population"));
+        }
+
 
         int evals = 0;
-        try {
-            Params.pop_size = Integer.parseInt(System.getProperty("pop"));
-        } catch (Exception e){
-            // throw e;
-        }
-        try {
+        if (System.getProperty("survp") != null) {
             Params.survivor_percentage = Float.parseFloat(System.getProperty("survp"));
-        } catch (Exception e){
-            // throw e;
         }
 
         Params.update_params();

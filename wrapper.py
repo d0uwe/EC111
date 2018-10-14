@@ -39,7 +39,8 @@ class Program():
     def run(self, arg_dict, evaluation, rand):
         s = ["java"]
         for k, v in arg_dict.items():
-            v = 1 if k == 'log' and v == True else 0
+            if k == 'log' and v == True:
+                v = 1
             s += ["-D" + k + "=" + str(v)]
         s += ["-jar", "testrun.jar", "-submission=player111", "-evaluation="+evaluation, "-seed="+str(rand)]
         p = subprocess.Popen(s, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -70,6 +71,16 @@ class Visualization(Program):
         self.plot_avg()
         self.plot_best()
 
+
+    def make_desc(self):
+        s = ''
+        for k,v in vars(self.args).items():
+            s += '{}: {}\n'.format(k, v)
+        return s
+
+    def make_title(self):
+        return "{}  - Pop: {}".format(self.frames[0]['evaluation'][0], self.frames[0]['pop_size'][0])
+
     def plot_variance(self):
         print("PLOTTING {} FITNESS VARIANCE FRAMES".format(len(self.frames)))
         fig = plt.figure()
@@ -84,7 +95,8 @@ class Visualization(Program):
 
         ax.set_xlabel("Eval")
         ax.set_ylabel("Fitness variance")
-        plt.title("Fitness variance - {}".format(self.frames[0]['evaluation'][0]))
+        plt.title(self.make_title())
+        plt.figtext(0,0, self.make_desc())
         self.save(self.frames[0]['evaluation'][0], 'fitness_variance')
 
     def plot_avg(self):
@@ -100,7 +112,8 @@ class Visualization(Program):
         ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
         ax.set_xlabel("Eval")
         ax.set_ylabel("Fitness average")
-        plt.title("Fitness average - {}".format(self.frames[0]['evaluation'][0]))
+        plt.title(self.make_title())
+        plt.figtext(0,0, self.make_desc())
         self.save(self.frames[0]['evaluation'][0], 'fitness_avg')
 
     def plot_best(self):
@@ -117,7 +130,8 @@ class Visualization(Program):
         ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
         ax.set_xlabel("Eval")
         ax.set_ylabel("Fitness best")
-        plt.title("Fitness best - {}".format(self.frames[0]['evaluation'][0]))
+        plt.title(self.make_title())
+        plt.figtext(0,0, self.make_desc())
         self.save(self.frames[0]['evaluation'][0], 'fitness_best')
 
 
@@ -129,13 +143,17 @@ if __name__ == '__main__':
     parser.add_argument('--plot', action='store_true')
     parser.add_argument('--r', action='store_true')
     parser.add_argument('--m', type=int, default=0)
+    parser.add_argument('--population', type=int, default=100)
+    parser.add_argument('--survp', type=float, default=80)
 
     args = parser.parse_args()
     program = Program()
     if args.compile:
         out, err = program.compile()
+        if err:
+            print(err)
+            exit(1)
         print(out)
-        print(err)
 
     vis = Visualization(args)
     score_sum = 0
@@ -162,7 +180,6 @@ if __name__ == '__main__':
         print("Average runtime: {}".format(runtime_sum/(args.m+1)))
     else:
         print(out)
-
     if args.log:
         program.log()
     if args.plot:

@@ -103,21 +103,24 @@ public class player111 implements ContestSubmission {
 
         while (Params.evals < evaluations_limit_) {
 
-            selection.tournament_selection(population, Params.tournament_size, rnd_);
+            //selection.tournament_selection(population, Params.tournament_size, rnd_);
             // selection.select_survivors(population);
-            recombination.recombination(population, selection, min_split, max_split, rnd_);
-            mutate.mutate_gaussian_single(population, pop_size, rnd_);
+            //recombination.recombination(population, selection, min_split, max_split, rnd_);
+            //mutate.mutate_gaussian_single(population, pop_size, rnd_);
             //mutate.mutate_uniform(population, pop_size, rnd_);
-            int curr_pop_size = population.size();
 
-            for (int i = n_survivors; i < curr_pop_size; i++) {
-                double new_fitness = (double) evaluation_.evaluate(population.get(i).getValues());
-                population.getPopulation().get(i).setFitness(new_fitness);
-                Params.evals++;
+            Population M = mutate.mutate_differential(population, pop_size, rnd_);
+
+            for (Unit unit: M.getPopulation()) {
                 if (Params.evals >= evaluations_limit_) {
                     break;
                 }
+                unit.setFitness((double) evaluation_.evaluate(unit.getValues()));
+                Params.evals++;
             }
+            population = selection.differential_selection(population, M);
+            int curr_pop_size = population.size();
+
 
             if (Params.csv) {
                 System.out.println(Params.evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +

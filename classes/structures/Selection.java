@@ -8,6 +8,7 @@ import java.lang.Math;
 import java.util.Collections;
 import structures.Unit;
 import structures.Params;
+import structures.Population;
 
 public class Selection {
 
@@ -53,6 +54,25 @@ public class Selection {
             i++;
         }
         return best;
+    }
+
+
+    public Population differential_selection(Population population, Population M) {
+        Population new_pop = new Population();
+
+        int pop_length = population.size();
+        for (int i = 0; i < pop_length; i++) {
+            Unit new_unit;
+            if (population.get(i).compareTo(M.get(i)) == 1) {
+                new_unit = new Unit(population.get(i));
+                new_pop.add(new_unit);
+            } else {
+                new_unit = new Unit(M.get(i));
+                new_pop.add(new_unit);
+            }
+        }
+
+        return new_pop;
     }
 
     public void tournament_selection(Population population, int k, Random rand) {

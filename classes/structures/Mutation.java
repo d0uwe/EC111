@@ -1,6 +1,5 @@
 package structures;
 
-import org.vu.contest.ContestEvaluation;
 import structures.Unit;
 import java.util.Random;
 import java.util.ArrayList;
@@ -100,14 +99,13 @@ public class Mutation {
     }
 
 
-    public Population mutate_differential(Population population, int pop_size, Random rand, ContestEvaluation eval) {
+    public Population mutate_differential(Population population, int pop_size, Random rand) {
         int current_pop_size = population.size();
-        int mutation_growth = Params.mutation_amount;
 
         // The mutant population is defined as M
         // We can copy the original and just edit all units in this.
         Population M = new Population(population);
-        Population new_pop = new Population();
+        //Population new_pop = new Population();
 
         for (int i = 0; i < pop_size; i++) {
             Unit x = M.get(i);
@@ -122,29 +120,16 @@ public class Mutation {
             } while ((z == x) || (z == y));
 
 
-            for (int j = 0; i < pop_size; j++) {
-                x.setValue(j, x.getValue(j) + params.F * (y.getValue(j) - z.getValue(j)));
+            for (int j = 0; j < Params.gene_length; j++) {
+                x.setValue(j, x.getValue(j) + Params.F * (y.getValue(j) - z.getValue(j)));
 
                 if (rand.nextDouble() > Params.Cr) {
                     x.setValue(j, population.get(j).getValue(j));
                 }
             }
-
-            // set evaluation of x
-            double fitness = (double) evaluation.evaluate(x.getvalues());
-            x.setFitness(fitness);
-            Params.evals++;
-
-            // elitism
-            Unit new_unit;
-            if (x.compareTo(population.get(j)) == 1) {
-                new_pop.add(new Unit(x));
-            } else {
-                new_pop.add(new population.get(j));
-            }
         }
 
-        return new_pop;
+        return M;
     }
 
 

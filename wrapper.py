@@ -46,6 +46,7 @@ class Program():
 
             s += ["-D" + k + "=" + str(v)]
         s += ["-jar", "testrun.jar", "-submission=player111", "-evaluation="+evaluation, "-seed="+str(rand)]
+        print(' '.join(s))
         p = subprocess.Popen(s, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
         return out.decode("utf-8"), err.decode("utf-8")

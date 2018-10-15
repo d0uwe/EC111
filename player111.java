@@ -137,7 +137,7 @@ public class player111 implements ContestSubmission {
 
                 if (Params.log) {
                     System.out.println(Params.evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
-                    Params.mutation_amount + "," + Params.recombination_amount + "," + "0");
+                    population.bestFitness() + "," + Params.mutation_amount + "," + Params.recombination_amount + "," + "0");
                 }
             }
         }

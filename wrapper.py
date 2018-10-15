@@ -8,6 +8,9 @@ import re
 import matplotlib.pyplot as plt
 from datetime import datetime
 import pickle
+import requests
+
+
 
 plt.switch_backend('agg')
 
@@ -20,6 +23,8 @@ JAVA_COPY = 'javac classes/structures/*.java && cp classes/structures/*.class co
 JAVA_COMPILE = 'javac -cp contest.jar player111.java'
 JAVAC = JAVA_COPY + ' && ' + JAVA_COMPILE
 
+JAVA_SUBMISSION = 'rm submission.jar && cp -r contest/structures . && jar cmf MainClass.txt submission.jar player111.class structures && rm -rf structures'
+
 def generate_timestamp():
     return datetime.now().strftime("%Y%m%d-%H%M%S.%f")
 
@@ -30,6 +35,19 @@ class Program():
     def __init__(self):
         if not os.path.exists(DIR):
             os.makedirs(DIR)
+
+    def submit(self):
+        p = subprocess.Popen(JAVA_SUBMISSION, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate()
+        '''
+        url = 'http://mac360.few.vu.nl:8080/EC_BB_ASSIGNMENT/submit.html'
+        files = {'file': (open('submission.jar','rb'), 'application/java-archive')}
+        values = {'teamcode': '9PcFxEM=', 'contest': '/Users/eccomp/EC_BB_ASSIGNMENT', 'submit': 'Submit'}
+        r = requests.post(url, files=files, data=values)
+        print(r)
+        '''
+        return out.decode('utf-8'), err.decode('utf-8')
+
 
     def compile(self):
         p = subprocess.Popen(JAVAC, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -163,24 +181,35 @@ class Visualization(Program):
 
 if __name__ == '__main__':
     parser.add_argument('--compile', action='store_true')
+    parser.add_argument('--submit', action='store_true')
     parser.add_argument('--debug', type=int, default=0)
     parser.add_argument('--evaluation', type=str, default='SchaffersEvaluation')
     parser.add_argument('--log', type=bool, default=True)
     parser.add_argument('--plot', action='store_true')
     parser.add_argument('--r', action='store_true')
     parser.add_argument('--m', type=int, default=0)
-    parser.add_argument('--population', type=int, default=100)
+    parser.add_argument('--population', type=int, default=200)
     parser.add_argument('--survp', type=float, default=0.8)
     parser.add_argument('--islands', type=int, default=0)
 
     args = parser.parse_args()
     program = Program()
-    if args.compile:
+    if args.compile or args.submit:
+        print("### COMPILING ###")
         out, err = program.compile()
         if err:
             print(err)
             exit(1)
         print(out)
+
+    if args.submit:
+        print("### Creating submission.jar ###")
+        out, err = program.submit()
+        if err:
+            print(err)
+            exit(1)
+        print(out)
+        exit(0)
 
     vis = Visualization(args)
     score_sum = 0
@@ -192,6 +221,9 @@ if __name__ == '__main__':
             rand = 1
 
         out, err = program.run(vars(args), args.evaluation, rand)
+        print("BF")
+        print(out)
+        print("OUT")
         if args.log:
             df = pd.read_csv(StringIO(out))
             df.dropna(inplace=True)

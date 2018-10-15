@@ -31,7 +31,7 @@ public class Params {
     public static int immigrants = 5;
 
     public static boolean csv = true;
-    public static boolean use_islands = true;
+    public static boolean use_islands = false;
 
 
     public static void update_params(){

@@ -96,6 +96,15 @@ public class player111 implements ContestSubmission {
         Recombination recombination = new Recombination();
 
 
+        for (Unit unit: population.getPopulation()) {
+            if (Params.evals >= evaluations_limit_) {
+                break;
+            }
+            unit.setFitness((double) evaluation_.evaluate(unit.getValues()));
+            Params.evals++;
+        }
+
+
         // And then we do it for the whole population
         if (Params.csv) {
             System.out.println("eval,pop_size,avg_fitness,fitness_variance,mutation_amount,recombination_amount");
@@ -118,7 +127,7 @@ public class player111 implements ContestSubmission {
                 unit.setFitness((double) evaluation_.evaluate(unit.getValues()));
                 Params.evals++;
             }
-            population = selection.differential_selection(population, M);
+            population = selection.mu_plus_lambda(population, M);
             int curr_pop_size = population.size();
 
 

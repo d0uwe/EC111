@@ -15,6 +15,7 @@ public class Population {
 
     public ArrayList<Unit> getPopulation() { return this.population; }
     public void setPopulation(ArrayList<Unit> population) { this.population = population; }
+    public void addArray(Population pop) { this.population.addAll(pop.getPopulation()); }
 
     // Copy constructor
     public Population(Population pop) {
@@ -156,6 +157,7 @@ public class Population {
 
     public void sort() {
         Collections.sort(this.population);
+        this.reverse();
     }
 
     public void reverse() {

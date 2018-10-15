@@ -85,7 +85,13 @@ public class Selection {
         new_pop.setPopulation(new ArrayList<Unit>(children.getPopulation().subList(0, Params.pop_size)));
         return new_pop;
     }
-    
+
+    public Population mu_plus_lambda(Population mu, Population lambda) {
+        mu.addArray(lambda);
+        return selection_mu_comma_lambda(mu);
+    }
+
+
     public void tournament_selection(Population population, int k, Random rand) {
         /**
         * choose k (the tournament size) individuals from the population at random
@@ -107,7 +113,6 @@ public class Selection {
 
             new_units.add(best_unit);
             population.remove(best_unit);
-            
 
 
             //System.out.println(best_unit.i);

@@ -5,7 +5,7 @@ import structures.Unit;
 public class Params {
     private Params() {}
     public static Unit.MutateMode mutate_mode = Unit.MutateMode.GAUSS_SINGLE;
-    public static int pop_size = 100;
+    public static int pop_size = 200;
     public static int min_split = 4;
     public static int max_split = 6;
     public static float survivor_percentage = 0.8f;
@@ -20,7 +20,7 @@ public class Params {
     public static double recombination_constant = 0.5;
     public static int tournament_size = 2; //n_survivors;
     public static double tournament_p = 1.0;
-    public static double F = 0.2;
+    public static double F = 0.3;
     public static double Cr = 0.2;
     public static int evals = 0;
     // public static int mu = 5;

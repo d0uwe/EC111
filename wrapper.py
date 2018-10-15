@@ -8,7 +8,7 @@ import re
 import matplotlib.pyplot as plt
 from datetime import datetime
 import pickle
-import requests
+# import requests
 
 
 

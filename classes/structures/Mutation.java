@@ -107,26 +107,14 @@ public class Mutation {
         // The mutant population is defined as M
         // We can copy the original and just edit all units in this.
         Population M = new Population(population);
-
-        // System.out.println(M.get(0).values[0]);
-        // System.out.println(population.get(0).values[0]);
-        
-        // M.get(0).values[0] = 5.0;
-        // System.out.println(M.get(0).values[0]);
-        // System.out.println(population.get(0).values[0] + "\n\n");
-
-        // Unit a = new Unit(MutateMode.UNIFORM);
-        // Unit b = new Unit(a);
-        // System.out.println(a.values[0]);
-        // System.out.println(b.values[0]);
-        // a.values[0] = 5.0;
-        // System.out.println(a.values[0]);
-        // System.out.println(b.values[0] + "\n\n");
-
+        for (int i = 0; i < Params.mutantSize; i++) {
+            M.addArray(population);
+        }
 
         //Population new_pop = new Population();
+        int new_pop_size = M.size();
 
-        for (int i = 0; i < pop_size; i++) {
+        for (int i = 0; i < new_pop_size; i++) {
             Unit x = M.get(i);
 
             Unit y, z;
@@ -141,10 +129,14 @@ public class Mutation {
 
             for (int j = 0; j < Params.gene_length; j++) {
                 x.setValue(j, x.getValue(j) + Params.F * (y.getValue(j) - z.getValue(j)));
+                if ((x.getValue(j) > 5.0) || (x.getValue(j) < -5.0)) {
+                    System.out.println("REEEEEEEE");
+                }
 
                 // change back to what it was, which is sort of "crossover"
                 if (rand.nextDouble() < Params.Cr) {
-                    x.setValue(j, population.get(i).getValue(j));
+                    int new_i = i % pop_size;
+                    x.setValue(j, population.get(new_i).getValue(j));
                 }
             }
         }

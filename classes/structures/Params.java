@@ -23,6 +23,7 @@ public class Params {
     public static double F = 0.4;
     public static double Cr = 0.11;
     public static int evals = 0;
+    public static int mutantSize = 0;
     // public static int mu = 5;
     // public static int lambda = 10;
 

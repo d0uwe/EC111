@@ -7,6 +7,7 @@ import structures.Params;
 import structures.Unit;
 import java.util.Arrays;
 import structures.Selection;
+import structures.Population;
 
 public class Recombination {
     // double[] values;
@@ -59,8 +60,6 @@ public class Recombination {
             population.add(child);
         }
     }
-
-
 
     public Unit cross_over(Unit p1, Unit p2, int split) {
         Unit child = new Unit(p1.mutate_mode, Params.gene_length);

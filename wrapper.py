@@ -171,7 +171,7 @@ if __name__ == '__main__':
     parser.add_argument('--m', type=int, default=0)
     parser.add_argument('--population', type=int, default=100)
     parser.add_argument('--survp', type=float, default=0.8)
-    parser.add_argument('--islands', type=bool, default=True)
+    parser.add_argument('--islands', type=int, default=0)
 
     args = parser.parse_args()
     program = Program()

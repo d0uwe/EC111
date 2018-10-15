@@ -1,9 +1,12 @@
 package structures;
 
 import structures.Unit;
+import structures.Unit.MutateMode;
+
 import java.util.Random;
 import java.util.ArrayList;
 import structures.Params;
+
 
 public class Mutation {
     double upper_bound;
@@ -95,6 +98,58 @@ public class Mutation {
             Unit mutated_child = mutate_gaussian_single(population.get(rand.nextInt(current_pop_size)), rand);
             population.add(mutated_child);
         }
+    }
+
+
+    public Population mutate_differential(Population population, int pop_size, Random rand) {
+        int current_pop_size = population.size();
+
+        // The mutant population is defined as M
+        // We can copy the original and just edit all units in this.
+        Population M = new Population(population);
+
+        // System.out.println(M.get(0).values[0]);
+        // System.out.println(population.get(0).values[0]);
+        
+        // M.get(0).values[0] = 5.0;
+        // System.out.println(M.get(0).values[0]);
+        // System.out.println(population.get(0).values[0] + "\n\n");
+
+        // Unit a = new Unit(MutateMode.UNIFORM);
+        // Unit b = new Unit(a);
+        // System.out.println(a.values[0]);
+        // System.out.println(b.values[0]);
+        // a.values[0] = 5.0;
+        // System.out.println(a.values[0]);
+        // System.out.println(b.values[0] + "\n\n");
+
+
+        //Population new_pop = new Population();
+
+        for (int i = 0; i < pop_size; i++) {
+            Unit x = M.get(i);
+
+            Unit y, z;
+            do {
+                y = population.get(rand.nextInt(pop_size));
+            } while (y == x);
+
+            do {
+                z = population.get(rand.nextInt(pop_size));
+            } while ((z == x) || (z == y));
+
+
+            for (int j = 0; j < Params.gene_length; j++) {
+                x.setValue(j, x.getValue(j) + Params.F * (y.getValue(j) - z.getValue(j)));
+
+                // change back to what it was, which is sort of "crossover"
+                if (rand.nextDouble() < Params.Cr) {
+                    x.setValue(j, population.get(i).getValue(j));
+                }
+            }
+        }
+
+        return M;
     }
 
 

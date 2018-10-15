@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 public class Unit implements Comparable<Unit> {
     double[] values;
-    double fitness = 0; // Or -1?
+    double fitness = -1;
     int size = 10;
     double[] sigmas;
     MutateMode mutate_mode;

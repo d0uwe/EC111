@@ -67,12 +67,15 @@ class Visualization(Program):
         d = os.path.join(self.DIR, evaluation)
         if not os.path.exists(d):
             os.makedirs(d)
-        plt.savefig(os.path.join(d, filename + "-" + generate_timestamp() + '.pdf'))
+        savedir = os.path.join(d, filename + "-" + generate_timestamp() + '.pdf')
+        plt.savefig(savedir)
+        print("SAVED FILE: {}".format(savedir))
 
     def plot(self):
         self.plot_variance()
         self.plot_avg()
         self.plot_best()
+        self.plot_islands()
 
 
     def make_desc(self):
@@ -137,6 +140,25 @@ class Visualization(Program):
         plt.figtext(0,0, self.make_desc())
         self.save(self.frames[0]['evaluation'][0], 'fitness_best')
 
+    def plot_islands(self):
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        for i, f in enumerate(self.frames):
+            gb = f.groupby(['island'])
+            for t, group in gb:
+                # for row, data in group.iterrows():
+                ax.plot(group['eval'], group['fitness_best'], label='Island: {}'.format(t))
+        # Shrink current axis by 20%
+        box = ax.get_position()
+        ax.set_position([box.x0, box.y0, box.width * 0.75, box.height])
+
+        # Put a legend to the right of the current axis
+        ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+        ax.set_xlabel("Eval")
+        ax.set_ylabel("Fitness best")
+        plt.title(self.make_title())
+        plt.figtext(0,0, self.make_desc())
+        self.save(self.frames[0]['evaluation'][0], 'fitness_islands')
 
 if __name__ == '__main__':
     parser.add_argument('--compile', action='store_true')

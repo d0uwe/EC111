@@ -98,7 +98,7 @@ public class player111 implements ContestSubmission {
 
         // And then we do it for the whole population
         if (Params.log) {
-            System.out.println("eval,pop_size,fitness_avg,fitness_variance,fitness_best,mutation_amount,recombination_amount");
+            System.out.println("eval,pop_size,fitness_avg,fitness_variance,fitness_best,mutation_amount,recombination_amount,island");
         }
 
         if (Params.use_islands) {
@@ -125,7 +125,7 @@ public class player111 implements ContestSubmission {
                 if (Params.log) {
                     System.out.println(evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
                             population.bestFitness() + "," +
-                            Params.mutation_amount + "," + Params.recombination_amount);
+                            Params.mutation_amount + "," + Params.recombination_amount + "," + "0");
                 }
             }
         }
@@ -178,7 +178,7 @@ public class player111 implements ContestSubmission {
                 for (Population population : islands) {
                     System.out.println(evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
                     population.bestFitness() + "," +
-                    Params.mutation_amount + "," + Params.recombination_amount);
+                    Params.mutation_amount + "," + Params.recombination_amount + "," + islands.indexOf(population));
                 }
             }
         }

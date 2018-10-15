@@ -76,8 +76,6 @@ public class Selection {
 
             new_units.add(best_unit);
             population.remove(best_unit);
-            
-
 
             //System.out.println(best_unit.i);
             // population.removeIf(t -> t.i == 1);

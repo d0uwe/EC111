@@ -7,9 +7,9 @@ from multiprocessing import Pool, Queue, Manager, Process
 
 # How many results to print:
 np.random.seed(5000)
-print_n_best = 10
+print_n_best = 100
 n_jobs = 1
-n_seeds = 4
+n_seeds = 10
 evaluation = "-evaluation=SchaffersEvaluation"
 
 # (var_name, min, max, stepsize)

@@ -71,11 +71,11 @@ public class player111 implements ContestSubmission {
         }
 
         if (System.getProperty("F") != null) {
-            Params.F = Integer.parseInt(System.getProperty("F"));
+            Params.F = Double.parseDouble(System.getProperty("F"));
         }
 
         if (System.getProperty("Cr") != null) {
-            Params.Cr = Integer.parseInt(System.getProperty("Cr"));
+            Params.Cr = Double.parseDouble(System.getProperty("Cr"));
         }
 
         int evals = 0;

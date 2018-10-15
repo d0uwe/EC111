@@ -9,18 +9,18 @@ from multiprocessing import Pool, Queue, Manager, Process
 np.random.seed(5000)
 print_n_best = 100
 n_jobs = 1
-n_seeds = 10
+n_seeds = 50
 evaluation = "-evaluation=SchaffersEvaluation"
 
 # (var_name, min, max, stepsize)
 pop = ("pop", 100, 1000, 100)
-F = ("F", 0.1, 0.9, 0.1)
-Cr = ("Cr", 0.1, 0.9, 0.1)
+#F = ("F", 0.1, 0.9, 0.1)
+Cr = ("Cr", 0.1, 0.2, 0.01)
 #var2 = ("survp", 0.5, 0.9, 0.05)
 
 
 # add above variables to a list.
-var_list = [pop, F, Cr]
+var_list = [pop, Cr]
 
 
 def chunkIt(seq, num):

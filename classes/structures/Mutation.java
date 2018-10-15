@@ -129,6 +129,9 @@ public class Mutation {
 
             for (int j = 0; j < Params.gene_length; j++) {
                 x.setValue(j, x.getValue(j) + Params.F * (y.getValue(j) - z.getValue(j)));
+                if ((x.getValue(j) > 5.0) || (x.getValue(j) < -5.0)) {
+                    System.out.println("REEEEEEEE");
+                }
 
                 // change back to what it was, which is sort of "crossover"
                 if (rand.nextDouble() < Params.Cr) {

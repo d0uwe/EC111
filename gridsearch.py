@@ -13,11 +13,14 @@ n_seeds = 4
 evaluation = "-evaluation=SchaffersEvaluation"
 
 # (var_name, min, max, stepsize)
-pop = ("pop", 50, 200, 4)
-var2 = ("survp", 0.5, 0.9, 0.05)
+pop = ("pop", 100, 1000, 100)
+F = ("F", 0.1, 0.9, 0.1)
+Cr = ("Cr", 0.1, 0.9, 0.1)
+#var2 = ("survp", 0.5, 0.9, 0.05)
+
 
 # add above variables to a list.
-var_list = [pop, var2]
+var_list = [pop, F, Cr]
 
 
 def chunkIt(seq, num):

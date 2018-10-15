@@ -70,6 +70,13 @@ public class player111 implements ContestSubmission {
             Params.pop_size = Integer.parseInt(System.getProperty("population"));
         }
 
+        if (System.getProperty("F") != null) {
+            Params.F = Integer.parseInt(System.getProperty("F"));
+        }
+
+        if (System.getProperty("Cr") != null) {
+            Params.Cr = Integer.parseInt(System.getProperty("Cr"));
+        }
 
         int evals = 0;
         if (System.getProperty("survp") != null) {
@@ -83,7 +90,7 @@ public class player111 implements ContestSubmission {
         Params.update_params();
         int pop_size = Params.pop_size;
 
-
+        Population population = new Population(pop_size, rnd_);
         int min_split = Params.min_split;
         int max_split = Params.max_split;
 
@@ -110,6 +117,7 @@ public class player111 implements ContestSubmission {
             System.out.println("eval,pop_size,fitness_avg,fitness_variance,fitness_best,mutation_amount,recombination_amount,island");
         }
 
+        Params.use_islands = false;
         if (Params.use_islands) {
             run_islands();
         } else {

@@ -8,6 +8,7 @@ import java.lang.Math;
 import java.util.Collections;
 import structures.Unit;
 import structures.Params;
+import structures.Population;
 
 public class Selection {
 
@@ -55,6 +56,42 @@ public class Selection {
         return best;
     }
 
+
+    public Population differential_selection(Population population, Population M) {
+        Population new_pop = new Population();
+
+        int pop_length = population.size();
+        for (int i = 0; i < pop_length; i++) {
+            Unit new_unit;
+            if (population.get(i) == M.get(i)) {
+                System.out.println("YES ITS THE SAME");
+            }
+
+            if (population.get(i).compareTo(M.get(i)) == 1) {
+                new_unit = new Unit(population.get(i));
+                new_pop.add(new_unit);
+            } else {
+                new_unit = new Unit(M.get(i));
+                new_pop.add(new_unit);
+            }
+        }
+
+        return new_pop;
+    }
+
+    public Population selection_mu_comma_lambda(Population children) {
+        children.sort();
+        Population new_pop = new Population();
+        new_pop.setPopulation(new ArrayList<Unit>(children.getPopulation().subList(0, Params.pop_size)));
+        return new_pop;
+    }
+
+    public Population mu_plus_lambda(Population mu, Population lambda) {
+        mu.addArray(lambda);
+        return selection_mu_comma_lambda(mu);
+    }
+
+
     public void tournament_selection(Population population, int k, Random rand) {
         /**
         * choose k (the tournament size) individuals from the population at random
@@ -76,6 +113,7 @@ public class Selection {
 
             new_units.add(best_unit);
             population.remove(best_unit);
+
 
             //System.out.println(best_unit.i);
             // population.removeIf(t -> t.i == 1);
@@ -118,3 +156,4 @@ public class Selection {
         */
     }
 }
+>>>>>>> diffEvo

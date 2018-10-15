@@ -15,7 +15,18 @@ public class Population {
 
     public ArrayList<Unit> getPopulation() { return this.population; }
     public void setPopulation(ArrayList<Unit> population) { this.population = population; }
+    public void addArray(Population pop) { this.population.addAll(pop.getPopulation()); }
 
+    // Copy constructor
+    public Population(Population pop) {
+        //this.population = new ArrayList<Unit>(pop.population);
+        for (int i = 0; i < pop.size(); i++) {
+            this.population.add(new Unit(pop.get(i)));
+        }
+    }
+
+    // construct a new empty population
+    public Population() {}
 
     public Population(int desired_pop_size, Random rand) {
         for (int i = 0; i < desired_pop_size; i++) {
@@ -167,6 +178,7 @@ public class Population {
 
     public void sort() {
         Collections.sort(this.population);
+        this.reverse();
     }
 
     public void reverse() {

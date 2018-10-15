@@ -96,6 +96,15 @@ public class player111 implements ContestSubmission {
         Recombination recombination = new Recombination();
 
 
+        for (Unit unit: population.getPopulation()) {
+            if (Params.evals >= evaluations_limit_) {
+                break;
+            }
+            unit.setFitness((double) evaluation_.evaluate(unit.getValues()));
+            Params.evals++;
+        }
+
+
         // And then we do it for the whole population
         if (Params.log) {
             System.out.println("eval,pop_size,fitness_avg,fitness_variance,fitness_best,mutation_amount,recombination_amount,island");
@@ -104,28 +113,23 @@ public class player111 implements ContestSubmission {
         if (Params.use_islands) {
             run_islands();
         } else {
-            Population population = new Population(pop_size, rnd_);
-            while (evals < evaluations_limit_) {
-                selection.tournament_selection(population, Params.tournament_size, rnd_);
-                // selection.select_survivors(population);
-                recombination.recombination(population, selection, min_split, max_split, rnd_);
-                mutate.mutate_gaussian_single(population, pop_size, rnd_);
-                //mutate.mutate_uniform(population, pop_size, rnd_);
-                int curr_pop_size = population.size();
+            while (Params.evals < evaluations_limit_) {
 
-                for (int i = n_survivors; i < curr_pop_size; i++) {
-                    double new_fitness = (double) evaluation_.evaluate(population.get(i).getValues());
-                    population.getPopulation().get(i).setFitness(new_fitness);
-                    evals++;
-                    if (evals >= evaluations_limit_) {
+                Population M = mutate.mutate_differential(population, pop_size, rnd_);
+                for (Unit unit: M.getPopulation()) {
+                    if (Params.evals >= evaluations_limit_) {
                         break;
                     }
+                    unit.setFitness((double) evaluation_.evaluate(unit.getValues()));
+                    Params.evals++;
                 }
+                population = selection.mu_plus_lambda(population, M);
+                int curr_pop_size = population.size();
+
 
                 if (Params.log) {
-                    System.out.println(evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
-                            population.bestFitness() + "," +
-                            Params.mutation_amount + "," + Params.recombination_amount + "," + "0");
+                    System.out.println(Params.evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
+                    Params.mutation_amount + "," + Params.recombination_amount + "," + "0");
                 }
             }
         }

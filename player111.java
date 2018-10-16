@@ -150,10 +150,8 @@ public class player111 implements ContestSubmission {
         }
 
 
-        Params.update_params();
         assert Params.pop_size <= evaluations_limit_;
 
-        int n_survivors = Params.n_survivors;
         int epoch = 0;
         Params.pop_size = (int)Params.pop_size / Params.num_islands;
         ArrayList<Population> islands = new ArrayList<>();
@@ -172,6 +170,8 @@ public class player111 implements ContestSubmission {
         Selection selection = new Selection();
         Mutation mutation = new Mutation();
         Recombination recombination = new Recombination();
+        Params.update_params();
+
         while (Params.evals < evaluations_limit_) {
 
             for (int i = 0; i < islands.size(); i++) {

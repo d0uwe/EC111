@@ -121,16 +121,17 @@ public class Mutation {
             do {
                 y = population.get(rand.nextInt(pop_size));
             } while (y == x);
-
+            int bullshit = 0;
             do {
+                bullshit++;
                 z = population.get(rand.nextInt(pop_size));
-            } while ((z == x) || (z == y));
+            } while (((z == x) || (z == y)) && bullshit < 5);
 
 
             for (int j = 0; j < Params.gene_length; j++) {
                 x.setValue(j, x.getValue(j) + Params.F * (y.getValue(j) - z.getValue(j)));
                 if ((x.getValue(j) > 5.0) || (x.getValue(j) < -5.0)) {
-                    System.out.println("REEEEEEEE");
+                    x.setValue(j, (rand.nextDouble() - 0.5) * 10);
                 }
 
                 // change back to what it was, which is sort of "crossover"

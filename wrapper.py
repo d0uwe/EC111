@@ -209,7 +209,7 @@ if __name__ == '__main__':
     parser.add_argument('--submit', action='store_true')
     parser.add_argument('--debug', type=int, default=0)
     parser.add_argument('--evaluation', type=str, default='SchaffersEvaluation')
-    parser.add_argument('--log', type=int, default=1)
+    parser.add_argument('--log', type=int, default=0)
     parser.add_argument('--plot', action='store_true')
     parser.add_argument('--r', action='store_true')
     parser.add_argument('--m', type=int, default=0)

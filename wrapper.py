@@ -39,13 +39,6 @@ class Program():
     def submit(self):
         p = subprocess.Popen(JAVA_SUBMISSION, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
-        '''
-        url = 'http://mac360.few.vu.nl:8080/EC_BB_ASSIGNMENT/submit.html'
-        files = {'file': (open('submission.jar','rb'), 'application/java-archive')}
-        values = {'teamcode': '9PcFxEM=', 'contest': '/Users/eccomp/EC_BB_ASSIGNMENT', 'submit': 'Submit'}
-        r = requests.post(url, files=files, data=values)
-        print(r)
-        '''
         return out.decode('utf-8'), err.decode('utf-8')
 
 

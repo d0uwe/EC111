@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import structures.Population;
 import structures.Unit;
 import structures.Recombination;
@@ -57,6 +60,22 @@ public class player111 implements ContestSubmission {
 
     public void run() {
 
+        // optimal values per evaluation
+        String evaluationName = System.getProperty("evaluation");
+        if (evaluationName == "BentCigarFunction") {
+            Params.Cr = 0.005;
+            Params.F = 0.35;
+            Params.num_islands = 2;
+            Params.pop_size = 200;
+            Params.epochs = 40;
+        }
+        if (evaluationName == "KatsuuraEvaluation") {
+            Params.Cr = 0.11;
+            Params.F = 0.35;
+            Params.pop_size = 400;
+            Params.num_islands = 4;
+        }
+
         String evaluation_type = null;
         if (System.getProperty("debug") != null) {
             Params.debug = Boolean.parseBoolean(System.getProperty("debug"));
@@ -84,8 +103,17 @@ public class player111 implements ContestSubmission {
         }
 
         if (System.getProperty("islands") != null) {
-            Params.use_islands = Integer.parseInt(System.getProperty("islands")) != 0;
+            Params.num_islands = Integer.parseInt(System.getProperty("islands"));
         }
+
+        if (System.getProperty("island_migrants") != null) {
+            Params.immigrants = Integer.parseInt(System.getProperty("island_migrants"));
+        }
+
+        if (System.getProperty("epochs") != null) {
+            Params.epochs = Integer.parseInt(System.getProperty("epochs"));
+        }
+
 
         Params.update_params();
         int pop_size = Params.pop_size;
@@ -111,19 +139,17 @@ public class player111 implements ContestSubmission {
             Params.evals++;
         }
 
-
         // And then we do it for the whole population
         if (Params.log) {
             System.out.println("eval,pop_size,fitness_avg,fitness_variance,fitness_best,mutation_amount,recombination_amount,island");
         }
 
-        Params.use_islands = false;
+        Params.use_islands = true;
         if (Params.use_islands) {
             run_islands();
         } else {
             while (Params.evals < evaluations_limit_) {
-
-                Population M = mutate.mutate_differential(population, pop_size, rnd_);
+                Population M = mutate.mutate_differential(population, selection, pop_size, rnd_);
                 for (Unit unit: M.getPopulation()) {
                     if (Params.evals >= evaluations_limit_) {
                         break;
@@ -134,7 +160,6 @@ public class player111 implements ContestSubmission {
                 population = selection.mu_plus_lambda(population, M);
                 int curr_pop_size = population.size();
 
-
                 if (Params.log) {
                     System.out.println(Params.evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
                     population.bestFitness() + "," + Params.mutation_amount + "," + Params.recombination_amount + "," + "0");
@@ -144,55 +169,91 @@ public class player111 implements ContestSubmission {
     }
 
     private void run_islands() {
-        int evals = 0;
-        int pop_size = Params.pop_size;
+        int epoch = 0;
+        int pop_size = (int)Params.pop_size / Params.num_islands;
+        Params.pop_size = pop_size;
         ArrayList<Population> islands = new ArrayList<>();
         for(int i = 0; i < Params.num_islands; i++) {
-            islands.add(new Population(pop_size, rnd_));
+            Population population = new Population(pop_size, rnd_);
+            islands.add(population);
         }
         int n_survivors = Params.n_survivors;
         Selection selection = new Selection();
         Mutation mutate = new Mutation();
         Recombination recombination = new Recombination();
+        while (Params.evals < evaluations_limit_) {
 
-
-        while (evals < evaluations_limit_) {
-            for (int j = 0; j < Params.island_exchange_gens; j++) {
-                for (Population population : islands) {
-                    selection.tournament_selection(population, Params.tournament_size, rnd_);
-                    // selection.select_survivors(population);
-                    recombination.recombination(population, selection, Params.min_split, Params.max_split, rnd_);
-                    mutate.mutate_gaussian_single(population, pop_size, rnd_);
-
-
-                    int curr_pop_size = population.size();
-
-                    for (int i = n_survivors; i < curr_pop_size; i++) {
-                        double new_fitness = (double) evaluation_.evaluate(population.get(i).getValues());
-                        population.getPopulation().get(i).setFitness(new_fitness);
-                        evals++;
-                        if (evals >= evaluations_limit_) {
-                            break;
-                        }
+            for (int i = 0; i < islands.size(); i++) {
+                Population population = islands.get(i);
+                Population M = mutate.mutate_differential(population, selection, pop_size, rnd_);
+                for (Unit unit: M.getPopulation()) {
+                    if (Params.evals >= evaluations_limit_) {
+                        break;
                     }
+                    unit.setFitness((double) evaluation_.evaluate(unit.getValues()));
+                    Params.evals++;
+                }
+                islands.set(i, selection.mu_plus_lambda(population, M));
+                int curr_pop_size = population.size();
+                if (Params.log) {
+                    System.out.println(Params.evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
+                    population.bestFitness() + "," + Params.mutation_amount + "," + Params.recombination_amount + "," + i);
                 }
             }
-            ArrayList<ArrayList<Unit>> exchanges = new ArrayList<>();
-            for (Population population : islands) {
-                exchanges.add(population.emigrate(Params.immigrants, rnd_));
-            }
-            Collections.shuffle(exchanges, rnd_);
-            for (Population population : islands) {
-                population.immigrate(exchanges.get(0));
-                exchanges.remove(0);
-            }
-            if (Params.log) {
+            // Most authors have used epoch lengths of the range 25–150 generations
+            // migration on epoch
+            if ((epoch % Params.epochs) == 0) {
+                ArrayList<ArrayList<Unit>> fittest_exchanges = new ArrayList<>();
                 for (Population population : islands) {
-                    System.out.println(evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
-                    population.bestFitness() + "," +
-                    Params.mutation_amount + "," + Params.recombination_amount + "," + islands.indexOf(population));
+                    fittest_exchanges.add(population.emigrate_fittest(Params.immigrants));
+                }
+
+                fittest_exchanges = derange(fittest_exchanges);
+                // Collections.shuffle(fittest_exchanges, rnd_);
+                for (Population population : islands) {
+                    int idx = islands.indexOf(population);
+                    population.immigrate(fittest_exchanges.get(idx));
                 }
             }
+            epoch++;
         }
+    }
+
+
+
+    public ArrayList<ArrayList<Unit>> derange(ArrayList<ArrayList<Unit>> exchanges) {
+
+        if (exchanges.size() == 1) {
+            return exchanges;
+        }
+
+        ArrayList<ArrayList<Unit>> result = new ArrayList<ArrayList<Unit>>();
+        Map<Integer,ArrayList<Unit>> indexUnitMap = new HashMap<Integer,ArrayList<Unit>>();
+        int i = 0;
+        for (ArrayList<Unit> exchange : exchanges) {
+            indexUnitMap.put(i, exchange);
+            i++;
+        }
+
+        ArrayList<Integer> keys = new ArrayList<>(indexUnitMap.keySet());
+        ArrayList<Integer> new_keys = new ArrayList<>(indexUnitMap.keySet());
+        int is_done = 0;
+        do {
+            int count = 0;
+            Collections.shuffle(new_keys, rnd_);
+            for (int k = 0; k < new_keys.size(); k++) {
+                if (new_keys.get(k) == keys.get(k)) {
+                    count++;
+                }
+            }
+            if (count == 0) {
+                is_done = 1;
+            }
+        } while (is_done == 0);
+
+        for (Integer k : new_keys) {
+            result.add(indexUnitMap.get(k));
+        }
+        return result;
     }
 }

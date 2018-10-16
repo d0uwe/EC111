@@ -4,11 +4,12 @@ import collections
 import numpy as np
 import progressbar
 from multiprocessing import Pool, Queue, Manager, Process
+import os
 
 # How many results to print:
 np.random.seed(5000)
 print_n_best = 100
-n_jobs = 1
+n_jobs = 8
 n_seeds = 50
 evaluation = "-evaluation=SchaffersEvaluation"
 
@@ -32,44 +33,47 @@ def chunkIt(seq, num):
         last += avg
     return out
 
-def getScores(all_combinations, all_var_names, progress_q):
-	scores = []
-	for combination in all_combinations:
-		total_score = 0
-		for seed in seeds:
-			# create commandline command
-			strings = ["java"]
-			for number, name in zip(combination, all_var_names):
-				strings += ["-D" + name + "=" + str(number)]
-			strings += ["-jar", "testrun.jar", "-submission=player111", evaluation, "-seed=" + str(seed)]
+def getScores(all_combinations, all_var_names, progress_q, process):
+    scores = []
+    DIR = './process-' + str(process)
+    if not os.path.exists(DIR):
+        os.makedirs(DIR)
+    for combination in all_combinations:
+        total_score = 0
+        for seed in seeds:
+            # create commandline command
+            strings = ["java"]
+            for number, name in zip(combination, all_var_names):
+                strings += ["-D" + name + "=" + str(number)]
+            strings += ["-jar", "../testrun.jar", "-submission=player111", evaluation, "-seed=" + str(seed)]
 
-			process = subprocess.Popen(strings, stdout=subprocess.PIPE)
-			out, err = process.communicate()
-			score = float(str(out).split(":")[1].split("\\n")[0])
-			total_score += score
-			progress_q.put(1)
+            process = subprocess.Popen(strings, stdout=subprocess.PIPE, cwd=DIR)
+            out, err = process.communicate()
+            score = float(str(out).split(":")[1].split("\\n")[0])
+            total_score += score
+            progress_q.put(1)
 
-		scores += [(combination, total_score / n_seeds)]
-	progress_q.put(0)
-	return scores
+        scores += [(combination, total_score / n_seeds)]
+    progress_q.put(0)
+    return scores
 
 def printScores(scores):
-	scores.sort(key=lambda x: x[1])
-	scores = scores[::-1]
-	print()
-	for score in scores[:print_n_best]:
-		for var, value in zip(all_var_names, score[0]):
-			print(var,":", value, end=" ")
-		print("\tscored:", score[1])
+    scores.sort(key=lambda x: x[1])
+    scores = scores[::-1]
+    print()
+    for score in scores[:print_n_best]:
+        for var, value in zip(all_var_names, score[0]):
+            print(var,":", value, end=" ")
+        print("\tscored:", score[1])
 
 def progressBar(max_value, queue):
-	bar = progressbar.ProgressBar(max_value=max_value).start()
-	finished = 0
-	while finished < n_jobs:
-		if queue.get() == 1:
-			bar += 1
-		else:
-			finished += 1
+    bar = progressbar.ProgressBar(max_value=max_value).start()
+    finished = 0
+    while finished < n_jobs:
+        if queue.get() == 1:
+            bar += 1
+        else:
+            finished += 1
 
 
 # create all combinations possible given the settings
@@ -86,7 +90,8 @@ q = m.Queue()
 p = Process(target=progressBar, args=(len(all_combinations) * n_seeds, q,))
 p.start()
 
-results = pool1.starmap(getScores, zip(chuncked_combs, n_jobs * [all_var_names], n_jobs * [q]))
+process_list = np.arange(n_jobs)
+results = pool1.starmap(getScores, zip(chuncked_combs, n_jobs * [all_var_names], n_jobs * [q], process_list))
 
 p.join()
 pool1.close()

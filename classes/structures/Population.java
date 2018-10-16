@@ -97,6 +97,16 @@ public class Population {
         return new ArrayList<Unit>(tmp.subList(0, k));
     }
 
+    public ArrayList<Unit> emigrate_fittest(int k) {
+        ArrayList<Unit> tmp = new ArrayList<Unit>();
+        Collections.sort(this.population, Collections.reverseOrder());
+        for (int i = 0; i < k; i++) {
+            tmp.add(this.population.get(i));
+            this.population.remove(i);
+        }
+        return tmp;
+    }
+
     public ArrayList<Unit> emigrate(int k, Random rand) {
         ArrayList<Unit> tmp = new ArrayList<Unit>();
         Collections.sort(this.population, Collections.reverseOrder());

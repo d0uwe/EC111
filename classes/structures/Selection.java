@@ -17,7 +17,6 @@ public class Selection {
 
     public void select_survivors(Population population) {
         population.sort();
-        population.reverse();
         ArrayList<Unit> tmp = population.getPopulation();
 
         Population tmp_population = population;

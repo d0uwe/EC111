@@ -195,6 +195,8 @@ class Visualization(Program):
         self.save(self.frames[0]['evaluation'][0], 'fitness_islands_variance')
 
 if __name__ == '__main__':
+    parser.add_argument('--islands', type=int, default=1)
+    parser.add_argument('--diffevo', type=int, default=0)
     parser.add_argument('--defaults', action='store_true')
     parser.add_argument('--compile', action='store_true')
     parser.add_argument('--submit', action='store_true')
@@ -206,7 +208,6 @@ if __name__ == '__main__':
     parser.add_argument('--m', type=int, default=0)
     parser.add_argument('--population', type=int, default=200)
     parser.add_argument('--survp', type=float, default=0.8)
-    parser.add_argument('--islands', type=int, default=2)
     parser.add_argument('--immigrants', type=int, default=5)
     parser.add_argument('--epochs', type=int, default=70)
     parser.add_argument('--Cr', type=float, default=0.11)

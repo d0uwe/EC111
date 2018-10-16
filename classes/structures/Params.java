@@ -6,8 +6,6 @@ public class Params {
     private Params() {}
     public static Unit.MutateMode mutate_mode = Unit.MutateMode.GAUSS_SINGLE;
     public static int pop_size = 200;
-    public static int min_split = 4;
-    public static int max_split = 6;
     public static float survivor_percentage = 0.8f;
     public static int n_survivors = (int)(pop_size * survivor_percentage);
     public static int gene_length = 10;
@@ -33,8 +31,7 @@ public class Params {
     public static int epochs = 70;
 
     public static boolean csv = true;
-    public static boolean use_islands = false;
-
+    public static boolean diffevo = false;
 
     public static void update_params(){
         n_survivors = (int)(pop_size * survivor_percentage);

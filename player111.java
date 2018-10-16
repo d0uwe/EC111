@@ -23,6 +23,7 @@ public class player111 implements ContestSubmission {
     Random rnd_;
     ContestEvaluation evaluation_;
     private int evaluations_limit_;
+    private String evaluationName;
 
     public player111() {
         rnd_ = new Random();
@@ -48,7 +49,6 @@ public class player111 implements ContestSubmission {
         boolean hasStructure = Boolean.parseBoolean(props.getProperty("Regular"));
         boolean isSeparable = Boolean.parseBoolean(props.getProperty("Separable"));
 
-
         // Do sth with property values, e.g. specify relevant settings of your algorithm
         if (isMultimodal) {
             // Do sth
@@ -59,8 +59,8 @@ public class player111 implements ContestSubmission {
 
 
     public Population baseLineEvo(Population population, Selection selection, Recombination recombination, Mutation mutation) {
-        selection.tournament_selection(population, Params.tournament_size, rnd_);
-        // selection.select_survivors(population);
+        // selection.tournament_selection(population, Params.tournament_size, rnd_);
+        selection.select_survivors(population);
         recombination.recombination(population, selection, rnd_);
         mutation.mutate_gaussian_single(population, Params.pop_size, rnd_);
         int curr_pop_size = population.size();
@@ -90,17 +90,36 @@ public class player111 implements ContestSubmission {
     }
 
     public void run() {
-
         // optimal values per evaluation
-        String evaluationName = System.getProperty("evaluation");
-        if (evaluationName == "BentCigarFunction") {
-            Params.Cr = 0.005;
-            Params.F = 0.35;
-            Params.num_islands = 2;
-            Params.pop_size = 200;
-            Params.epochs = 40;
+        Params.total_evals = evaluations_limit_;
+
+        // Bent Cigar
+        if (Params.total_evals == 10000) {
+            Params.initial_mutate_sigma = 0.2;
+            if (System.getProperty("diffevo") != null) {
+                Params.Cr = 0.005;
+                Params.F = 0.35;
+                Params.num_islands = 2;
+                Params.pop_size = 200;
+                Params.epochs = 40;
+            } else {
+                Params.pop_size = 15;
+                Params.survivor_percentage = 0.2f;
+            }
         }
-        if (evaluationName == "KatsuuraEvaluation") {
+
+        // Schaffers
+        if (Params.total_evals == 100000) {
+            Params.diffevo = true;
+            Params.initial_mutate_sigma = 0.1;
+            Params.pop_size = 200;
+            Params.survivor_percentage = 0.8f;
+            Params.Cr = 0.11;
+            Params.F = 0.4;
+        }
+
+        // Katsuura
+        if (Params.total_evals == 1000000) {
             Params.Cr = 0.11;
             Params.F = 0.35;
             Params.pop_size = 400;
@@ -128,7 +147,6 @@ public class player111 implements ContestSubmission {
             Params.Cr = Double.parseDouble(System.getProperty("Cr"));
         }
 
-        int evals = 0;
         if (System.getProperty("survp") != null) {
             Params.survivor_percentage = Float.parseFloat(System.getProperty("survp"));
         }
@@ -166,12 +184,13 @@ public class player111 implements ContestSubmission {
             }
             islands.add(population);
         }
-
         Selection selection = new Selection();
         Mutation mutation = new Mutation();
         Recombination recombination = new Recombination();
         Params.update_params();
-
+        if (Params.log) {
+            System.out.println("eval,pop_size,fitness_avg,fitness_variance,fitness_best,mutation_amount,recombination_amount,island");
+        }
         while (Params.evals < evaluations_limit_) {
 
             for (int i = 0; i < islands.size(); i++) {
@@ -185,7 +204,7 @@ public class player111 implements ContestSubmission {
                 islands.set(i, population);
                 if (Params.log) {
                     System.out.println(Params.evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
-                     population.bestFitness() + "," + Params.mutation_amount + "," + Params.recombination_amount + "," + i);
+                            population.bestFitness() + "," + Params.mutation_amount + "," + Params.recombination_amount + "," + i);
                 }
             }
 

@@ -5,6 +5,7 @@ import structures.Unit.MutateMode;
 
 import java.util.Random;
 import java.util.ArrayList;
+import java.lang.Math;
 import structures.Params;
 
 
@@ -79,12 +80,12 @@ public class Mutation {
 
     public Unit mutate_gaussian_single(Unit unit, Random rand) {
         Unit new_unit = new Unit(unit);
+        double new_sigma = Params.initial_mutate_sigma - ((Params.initial_mutate_sigma - Params.final_min_sigma)/Params.total_evals * Params.evals);
+        new_unit.setSigma(0, new_sigma);
         int unit_size = new_unit.getSize();
-
         for (int i = 0; i < unit_size; i++) {
             new_unit.setValue(i, new_unit.getValue(i) + (rand.nextGaussian() * new_unit.getSigma(0)));
         }
-
         return new_unit;
     }
 
@@ -92,9 +93,7 @@ public class Mutation {
     public void mutate_gaussian_single(Population population, int pop_size, Random rand) {
 
         int current_pop_size = population.size();
-        int mutation_growth = Params.mutation_amount;
-
-        for (int i = 0; i < mutation_growth; i++) {
+        for (int i = 0; i < Params.mutation_amount; i++) {
             Unit mutated_child = mutate_gaussian_single(population.get(rand.nextInt(current_pop_size)), rand);
             population.add(mutated_child);
         }

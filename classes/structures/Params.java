@@ -9,10 +9,12 @@ public class Params {
     public static float survivor_percentage = 0.8f;
     public static int n_survivors = (int)(pop_size * survivor_percentage);
     public static int gene_length = 10;
+    public static int total_evals = 10000;
     public static double initial_mutate_sigma = 0.1;
+    public static double final_min_sigma = 0; // 0.00001;
     public static double mutation_step_size = 0.99;
     public static boolean debug = false;
-    public static boolean log = true;
+    public static boolean log = false;
     public static int recombination_amount = (pop_size - n_survivors) / 2;
     public static int mutation_amount = pop_size - n_survivors - recombination_amount;
     public static double recombination_constant = 0.5;
@@ -25,7 +27,7 @@ public class Params {
     // public static int mu = 5;
     // public static int lambda = 10;
 
-    public static int num_islands = 2;
+    public static int num_islands = 1;
     public static int island_exchange_gens = 5;
     public static int immigrants = 5;
     public static int epochs = 70;

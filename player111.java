@@ -18,6 +18,7 @@ import structures.Selection;
 import structures.Mutation;
 import structures.Params;
 
+import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 
 public class player111 implements ContestSubmission {
     Random rnd_;
@@ -92,6 +93,16 @@ public class player111 implements ContestSubmission {
     public void run() {
         // optimal values per evaluation
         Params.total_evals = evaluations_limit_;
+        /*
+        MultiVariateNormalDistribution
+        double[] means = new double[]{10, 10};
+        double[][] covariances = new double[][]{{3, 2}, {2, 3}};
+        System.out.println("### Multivariate Normal Distribution ###");
+        for (int i = 0; i < 10; i++) {
+            MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(means, covariances);
+            System.out.println(String.valueOf(distribution.sample()[0]) + ", " + String.valueOf(distribution.sample()[1]));
+        }
+        */
 
         // Bent Cigar
         if (Params.total_evals == 10000) {

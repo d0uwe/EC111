@@ -20,10 +20,14 @@ DIR = 'log'
 
 # APACHE = 'unzip commons-math3-3.6.1.jar -d commons-math'
 JAVA_COPY = 'javac classes/structures/*.java && cp classes/structures/*.class contest/structures/ && jar cf contest.jar -C contest/ .'
+CONCAT_JARS = 'mkdir -p lib && (cd lib; unzip -uo ../contest.jar) && (cd lib; unzip -uo ../commons-math3-3.6.1.jar)'
+CONCAT_JARS_2 = 'rm contest.jar && jar -cvf contest.jar -C lib .'
+# CONCAT_JARS = 'rm contest.jar && jar -cvf contest.jar -C lib .'
 JAVA_COMPILE = 'javac -cp contest.jar player111.java'
-JAVAC = JAVA_COPY + ' && ' + JAVA_COMPILE
+JAVAC = JAVA_COPY + ' && ' + CONCAT_JARS + ' && ' + CONCAT_JARS_2 + ' && ' + JAVA_COMPILE
 
-JAVA_SUBMISSION = 'rm -f submission.jar && cp -r contest/structures . && jar cmf MainClass.txt submission.jar player111.class structures && rm -rf structures'
+JAVA_SUBMISSION = 'rm -f submission.jar && ' + CONCAT_JARS + ' && ' + 'jar cmf MainClass.txt submission.jar player111.class lib'
+# JAVA_SUBMISSION = 'rm -f submission.jar && cp -r contest/structures . && jar cmf MainClass.txt submission.jar player111.class structures && rm -rf structures'
 
 def generate_timestamp():
     return datetime.now().strftime("%Y%m%d-%H%M%S.%f")
@@ -58,6 +62,9 @@ class Program():
                     v = 1
                 s += ["-D" + k + "=" + str(v)]
         s += ["-jar", "testrun.jar", "-submission=player111", "-evaluation="+evaluation, "-seed="+str(rand)]
+        if arg_dict['nosec'] == True:
+            s += ["-nosec"]
+
         print(' '.join(s))
         p = subprocess.Popen(s, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
@@ -212,6 +219,7 @@ if __name__ == '__main__':
     parser.add_argument('--epochs', type=int, default=70)
     parser.add_argument('--Cr', type=float, default=0.11)
     parser.add_argument('--F', type=float, default=0.4)
+    parser.add_argument('--nosec', action='store_true')
 
     args = parser.parse_args()
     program = Program()

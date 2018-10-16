@@ -110,10 +110,8 @@ public class Mutation {
         for (int i = 0; i < Params.mutantSize; i++) {
             M.addArray(population);
         }
-
         //Population new_pop = new Population();
         int new_pop_size = M.size();
-
         for (int i = 0; i < new_pop_size; i++) {
             Unit x = M.get(i);
 
@@ -130,7 +128,7 @@ public class Mutation {
             for (int j = 0; j < Params.gene_length; j++) {
                 x.setValue(j, x.getValue(j) + Params.F * (y.getValue(j) - z.getValue(j)));
                 if ((x.getValue(j) > 5.0) || (x.getValue(j) < -5.0)) {
-                    System.out.println("REEEEEEEE");
+                    // System.out.println("REEEEEEEE");
                 }
 
                 // change back to what it was, which is sort of "crossover"

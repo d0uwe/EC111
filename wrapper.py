@@ -23,7 +23,7 @@ JAVA_COPY = 'javac classes/structures/*.java && cp classes/structures/*.class co
 JAVA_COMPILE = 'javac -cp contest.jar player111.java'
 JAVAC = JAVA_COPY + ' && ' + JAVA_COMPILE
 
-JAVA_SUBMISSION = 'rm submission.jar && cp -r contest/structures . && jar cmf MainClass.txt submission.jar player111.class structures && rm -rf structures'
+JAVA_SUBMISSION = 'rm -f submission.jar && cp -r contest/structures . && jar cmf MainClass.txt submission.jar player111.class structures && rm -rf structures'
 
 def generate_timestamp():
     return datetime.now().strftime("%Y%m%d-%H%M%S.%f")
@@ -96,6 +96,7 @@ class Visualization(Program):
         self.plot_avg()
         self.plot_best()
         self.plot_islands()
+        self.plot_islands_variance()
 
 
     def make_desc(self):
@@ -179,6 +180,26 @@ class Visualization(Program):
         plt.title(self.make_title())
         plt.figtext(0,0, self.make_desc())
         self.save(self.frames[0]['evaluation'][0], 'fitness_islands')
+
+    def plot_islands_variance(self):
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        for i, f in enumerate(self.frames):
+            gb = f.groupby(['island'])
+            for t, group in gb:
+                # for row, data in group.iterrows():
+                ax.plot(group['eval'], group['fitness_variance'], label='Island: {}'.format(t))
+        # Shrink current axis by 20%
+        box = ax.get_position()
+        ax.set_position([box.x0, box.y0, box.width * 0.75, box.height])
+
+        # Put a legend to the right of the current axis
+        ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+        ax.set_xlabel("Eval")
+        ax.set_ylabel("Fitness variance")
+        plt.title(self.make_title())
+        plt.figtext(0,0, self.make_desc())
+        self.save(self.frames[0]['evaluation'][0], 'fitness_islands_variance')
 
 if __name__ == '__main__':
     parser.add_argument('--defaults', action='store_true')

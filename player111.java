@@ -139,7 +139,6 @@ public class player111 implements ContestSubmission {
             Params.evals++;
         }
 
-        System.out.println("EVAL LIMIT: " + evaluations_limit_);
         // And then we do it for the whole population
         if (Params.log) {
             System.out.println("eval,pop_size,fitness_avg,fitness_variance,fitness_best,mutation_amount,recombination_amount,island");
@@ -198,7 +197,7 @@ public class player111 implements ContestSubmission {
                 int curr_pop_size = population.size();
                 if (Params.log) {
                     System.out.println(Params.evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
-                    population.bestFitness() + "," + Params.mutation_amount + "," + Params.recombination_amount + "," + "0");
+                    population.bestFitness() + "," + Params.mutation_amount + "," + Params.recombination_amount + "," + i);
                 }
             }
             // Most authors have used epoch lengths of the range 25–150 generations

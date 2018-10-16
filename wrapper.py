@@ -190,7 +190,8 @@ if __name__ == '__main__':
     parser.add_argument('--m', type=int, default=0)
     parser.add_argument('--population', type=int, default=200)
     parser.add_argument('--survp', type=float, default=0.8)
-    parser.add_argument('--islands', type=int, default=0)
+    parser.add_argument('--islands', type=int, default=2)
+    parser.add_argument('--immigrants', type=int, default=5)
 
     args = parser.parse_args()
     program = Program()
@@ -221,9 +222,7 @@ if __name__ == '__main__':
             rand = 1
 
         out, err = program.run(vars(args), args.evaluation, rand)
-        print("BF")
         print(out)
-        print("OUT")
         if args.log:
             df = pd.read_csv(StringIO(out))
             df.dropna(inplace=True)

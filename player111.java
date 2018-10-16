@@ -87,7 +87,11 @@ public class player111 implements ContestSubmission {
         }
 
         if (System.getProperty("islands") != null) {
-            Params.use_islands = Integer.parseInt(System.getProperty("islands")) != 0;
+            Params.num_islands = Integer.parseInt(System.getProperty("islands"));
+        }
+
+        if (System.getProperty("island_migrants") != null) {
+            Params.immigrants = Integer.parseInt(System.getProperty("island_migrants"));
         }
 
         Params.update_params();
@@ -125,7 +129,7 @@ public class player111 implements ContestSubmission {
             run_islands();
         } else {
             while (Params.evals < evaluations_limit_) {
-                Population M = mutate.mutate_differential(population, pop_size, rnd_);
+                Population M = mutate.mutate_differential(population, selection, pop_size, rnd_);
                 for (Unit unit: M.getPopulation()) {
                     if (Params.evals >= evaluations_limit_) {
                         break;
@@ -161,7 +165,7 @@ public class player111 implements ContestSubmission {
 
             for (int i = 0; i < islands.size(); i++) {
                 Population population = islands.get(i);
-                Population M = mutate.mutate_differential(population, pop_size, rnd_);
+                Population M = mutate.mutate_differential(population, selection, pop_size, rnd_);
                 for (Unit unit: M.getPopulation()) {
                     if (Params.evals >= evaluations_limit_) {
                         break;
@@ -184,7 +188,8 @@ public class player111 implements ContestSubmission {
                     fittest_exchanges.add(population.emigrate_fittest(Params.immigrants));
                 }
 
-                fittest_exchanges = derange(fittest_exchanges);
+                // fittest_exchanges = derange(fittest_exchanges);
+                Collections.shuffle(fittest_exchanges, rnd_);
                 for (Population population : islands) {
                     int idx = islands.indexOf(population);
                     population.immigrate(fittest_exchanges.get(idx));
@@ -197,6 +202,11 @@ public class player111 implements ContestSubmission {
 
 
     public ArrayList<ArrayList<Unit>> derange(ArrayList<ArrayList<Unit>> exchanges) {
+
+        if (exchanges.size() == 1) {
+            return exchanges;
+        }
+
         ArrayList<ArrayList<Unit>> result = new ArrayList<ArrayList<Unit>>();
         Map<Integer,ArrayList<Unit>> indexUnitMap = new HashMap<Integer,ArrayList<Unit>>();
         int i = 0;

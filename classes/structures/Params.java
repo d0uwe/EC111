@@ -29,7 +29,7 @@ public class Params {
 
     public static int num_islands = 4;
     public static int island_exchange_gens = 5;
-    public static int immigrants = 5;
+    public static int immigrants = 4;
 
     public static boolean csv = true;
     public static boolean use_islands = false;

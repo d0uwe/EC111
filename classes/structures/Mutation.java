@@ -101,7 +101,7 @@ public class Mutation {
     }
 
 
-    public Population mutate_differential(Population population, int pop_size, Random rand) {
+    public Population mutate_differential(Population population, Selection selection, int pop_size, Random rand) {
         int current_pop_size = population.size();
 
         // The mutant population is defined as M
@@ -113,6 +113,19 @@ public class Mutation {
         //Population new_pop = new Population();
         int new_pop_size = M.size();
         for (int i = 0; i < new_pop_size; i++) {
+            /*
+            Unit x, y, z;
+
+            x = selection.tournamentSelection(M, Params.tournament_size, rand);
+            do {
+                y = selection.tournamentSelection(M, Params.tournament_size, rand);
+            } while (y == x);
+
+            do {
+                z = selection.tournamentSelection(M, Params.tournament_size, rand);
+            } while ((z == x) || (z == y));
+            */
+
             Unit x = M.get(i);
 
             Unit y, z;
@@ -123,7 +136,6 @@ public class Mutation {
             do {
                 z = population.get(rand.nextInt(pop_size));
             } while ((z == x) || (z == y));
-
 
             for (int j = 0; j < Params.gene_length; j++) {
                 x.setValue(j, x.getValue(j) + Params.F * (y.getValue(j) - z.getValue(j)));

@@ -56,13 +56,14 @@ class Program():
 
     def run(self, arg_dict, evaluation, rand):
         s = ["java"]
-        for k, v in arg_dict.items():
-            if k == 'log' and v == True:
-                v = 1
-            if k == 'islands' and v == True:
-                v = 1
 
-            s += ["-D" + k + "=" + str(v)]
+        if arg_dict['defaults'] == False:
+            for k, v in arg_dict.items():
+                if k == 'log' and v == True:
+                    v = 1
+                if k == 'islands' and v == True:
+                    v = 1
+                s += ["-D" + k + "=" + str(v)]
         s += ["-jar", "testrun.jar", "-submission=player111", "-evaluation="+evaluation, "-seed="+str(rand)]
         print(' '.join(s))
         p = subprocess.Popen(s, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -180,6 +181,7 @@ class Visualization(Program):
         self.save(self.frames[0]['evaluation'][0], 'fitness_islands')
 
 if __name__ == '__main__':
+    parser.add_argument('--defaults', action='store_true')
     parser.add_argument('--compile', action='store_true')
     parser.add_argument('--submit', action='store_true')
     parser.add_argument('--debug', type=int, default=0)
@@ -192,6 +194,9 @@ if __name__ == '__main__':
     parser.add_argument('--survp', type=float, default=0.8)
     parser.add_argument('--islands', type=int, default=2)
     parser.add_argument('--immigrants', type=int, default=5)
+    parser.add_argument('--epochs', type=int, default=70)
+    parser.add_argument('--Cr', type=float, default=0.11)
+    parser.add_argument('--F', type=float, default=0.4)
 
     args = parser.parse_args()
     program = Program()

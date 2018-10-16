@@ -60,6 +60,22 @@ public class player111 implements ContestSubmission {
 
     public void run() {
 
+        // optimal values per evaluation
+        String evaluationName = System.getProperty("evaluation");
+        if (evaluationName == "BentCigarFunction") {
+            Params.Cr = 0.005;
+            Params.F = 0.35;
+            Params.num_islands = 2;
+            Params.pop_size = 200;
+            Params.epochs = 40;
+        }
+        if (evaluationName == "KatsuuraEvaluation") {
+            Params.Cr = 0.11;
+            Params.F = 0.35;
+            Params.pop_size = 400;
+            Params.num_islands = 4;
+        }
+
         String evaluation_type = null;
         if (System.getProperty("debug") != null) {
             Params.debug = Boolean.parseBoolean(System.getProperty("debug"));
@@ -93,6 +109,11 @@ public class player111 implements ContestSubmission {
         if (System.getProperty("island_migrants") != null) {
             Params.immigrants = Integer.parseInt(System.getProperty("island_migrants"));
         }
+
+        if (System.getProperty("epochs") != null) {
+            Params.epochs = Integer.parseInt(System.getProperty("epochs"));
+        }
+
 
         Params.update_params();
         int pop_size = Params.pop_size;
@@ -182,14 +203,14 @@ public class player111 implements ContestSubmission {
             }
             // Most authors have used epoch lengths of the range 25–150 generations
             // migration on epoch
-            if ((epoch % 75) == 0) {
+            if ((epoch % Params.epochs) == 0) {
                 ArrayList<ArrayList<Unit>> fittest_exchanges = new ArrayList<>();
                 for (Population population : islands) {
                     fittest_exchanges.add(population.emigrate_fittest(Params.immigrants));
                 }
 
-                // fittest_exchanges = derange(fittest_exchanges);
-                Collections.shuffle(fittest_exchanges, rnd_);
+                fittest_exchanges = derange(fittest_exchanges);
+                // Collections.shuffle(fittest_exchanges, rnd_);
                 for (Population population : islands) {
                     int idx = islands.indexOf(population);
                     population.immigrate(fittest_exchanges.get(idx));

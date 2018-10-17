@@ -7,7 +7,7 @@ import java.util.Random;
 import java.util.ArrayList;
 import java.lang.Math;
 import structures.Params;
-
+import java.util.Arrays;
 
 public class Mutation {
     double upper_bound;
@@ -53,8 +53,6 @@ public class Mutation {
         }
     }
 
-
-
     public Unit mutate_uniform(Unit unit, Random rand) {
         Unit new_unit = new Unit(unit);
         int unit_size = new_unit.getSize();
@@ -82,6 +80,8 @@ public class Mutation {
         Unit new_unit = new Unit(unit);
         double new_sigma = Params.initial_mutate_sigma - ((Params.initial_mutate_sigma - Params.final_min_sigma)/Params.total_evals * Params.evals);
         new_unit.setSigma(0, new_sigma);
+
+        // System.out.println(Arrays.toString(new_unit.getSigmas()));
         int unit_size = new_unit.getSize();
         for (int i = 0; i < unit_size; i++) {
             new_unit.setValue(i, new_unit.getValue(i) + (rand.nextGaussian() * new_unit.getSigma(0)));

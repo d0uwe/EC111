@@ -53,14 +53,20 @@ public class Population {
             if (Params.debug && (unit.getFitness() < 0)) { System.out.println(unit.getFitness()); }
             avg_fitness += unit.getFitness();
         }
-
         return (avg_fitness / this.population.size());
     }
 
     public double bestFitness() {
         Unit bestUnit = get_ranked_unit(0);
         return bestUnit.getFitness();
+    }
 
+    public double getSigmaAverage() {
+        double avgSigma = 0.0;
+        for (Unit unit : this.population) {
+            avgSigma += unit.getSigma(0);
+        }
+        return (avgSigma / this.population.size());
     }
 
     /**
@@ -103,6 +109,24 @@ public class Population {
         for (int i = 0; i < k; i++) {
             tmp.add(this.population.get(i));
             this.population.remove(i);
+        }
+        return tmp;
+    }
+
+    public ArrayList<Unit> emigrate_random(int k, Random rand) {
+        ArrayList<Unit> tmp = new ArrayList<Unit>();
+        for (int i = 0; i < k; i++) {
+            tmp.add(this.population.get(rand.nextInt(this.population.size()-1)));
+        }
+        return tmp;
+    }
+
+    public ArrayList<Unit> emigrate_fittest_half(int k, Random rand) {
+        ArrayList<Unit> tmp = new ArrayList<Unit>();
+        Collections.sort(this.population, Collections.reverseOrder());
+        ArrayList<Unit> fittest_half = new ArrayList<Unit>(this.population.subList(0, (int)this.population.size()/2));
+        for (int i = 0; i < k; i++) {
+            tmp.add(fittest_half.get(rand.nextInt(fittest_half.size()-1)));
         }
         return tmp;
     }

@@ -22,12 +22,13 @@ DIR = 'log'
 JAVA_COPY = 'javac classes/structures/*.java && cp classes/structures/*.class contest/structures/ && jar cf contest.jar -C contest/ .'
 CONCAT_JARS = 'mkdir -p lib && (cd lib; unzip -uo ../contest.jar) && (cd lib; unzip -uo ../commons-math3-3.6.1.jar)'
 CONCAT_JARS_2 = 'rm contest.jar && jar -cvf contest.jar -C lib .'
-# CONCAT_JARS = 'rm contest.jar && jar -cvf contest.jar -C lib .'
 JAVA_COMPILE = 'javac -cp contest.jar player111.java'
-JAVAC = JAVA_COPY + ' && ' + CONCAT_JARS + ' && ' + CONCAT_JARS_2 + ' && ' + JAVA_COMPILE
+# JAVAC = JAVA_COPY + ' && ' + CONCAT_JARS + ' && ' + CONCAT_JARS_2 + ' && ' + JAVA_COMPILE
+JAVAC = JAVA_COPY + ' && ' + JAVA_COMPILE
 
-JAVA_SUBMISSION = 'rm -f submission.jar && ' + CONCAT_JARS + ' && ' + 'jar cmf MainClass.txt submission.jar player111.class lib'
-# JAVA_SUBMISSION = 'rm -f submission.jar && cp -r contest/structures . && jar cmf MainClass.txt submission.jar player111.class structures && rm -rf structures'
+
+# JAVA_SUBMISSION = 'rm -f submission.jar && ' + CONCAT_JARS + ' && ' + 'jar cmf MainClass.txt submission.jar player111.class lib'
+JAVA_SUBMISSION = 'rm -f submission.jar && cp -r contest/structures . && jar cmf MainClass.txt submission.jar player111.class structures && rm -rf structures'
 
 def generate_timestamp():
     return datetime.now().strftime("%Y%m%d-%H%M%S.%f")
@@ -79,7 +80,7 @@ class Visualization(Program):
     def __init__(self, args):
         self.DIR = 'figures'
         self.args = args
-
+        self.fig = plt.figure(frameon=False)
         if not os.path.exists(DIR):
             os.makedirs(DIR)
 
@@ -88,16 +89,26 @@ class Visualization(Program):
         if not os.path.exists(d):
             os.makedirs(d)
         savedir = os.path.join(d, filename + "-" + generate_timestamp() + '.pdf')
-        plt.savefig(savedir)
+        self.fig.savefig(savedir, frameon=False)
         print("SAVED FILE: {}".format(savedir))
 
     def plot(self):
+        '''
         self.plot_variance()
         self.plot_avg()
         self.plot_best()
+        '''
+        plt.title(self.make_title())
+        plt.xticks([])
+        plt.yticks([])
+        plt.axis('off')
+
         self.plot_islands()
         self.plot_islands_variance()
-
+        self.plot_sigma_avg()
+        self.plot_text()
+        self.save(self.frames[0]['evaluation'][0], 'plots')
+        # self.fig.show()
 
     def make_desc(self):
         s = ''
@@ -110,96 +121,58 @@ class Visualization(Program):
 
     def plot_variance(self):
         print("PLOTTING {} FITNESS VARIANCE FRAMES".format(len(self.frames)))
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
+        ax = self.fig.add_subplot(611)
         for i, f in enumerate(self.frames):
             ax.plot(f['eval'], f['fitness_variance'], label='{}, seed: {}'.format(i, f['seed'][0]))
-        box = ax.get_position()
-        ax.set_position([box.x0, box.y0, box.width * 0.75, box.height])
-
-        # Put a legend to the right of the current axis
-        ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-
-        ax.set_xlabel("Eval")
         ax.set_ylabel("Fitness variance")
-        plt.title(self.make_title())
-        plt.figtext(0,0, self.make_desc())
-        self.save(self.frames[0]['evaluation'][0], 'fitness_variance')
 
     def plot_avg(self):
         print("PLOTTING {} FITNESS AVG FRAMES".format(len(self.frames)))
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
+        ax = self.fig.add_subplot(612)
         for i, f in enumerate(self.frames):
             ax.plot(f['eval'], f['fitness_avg'], label='{}, seed: {}'.format(i, f['seed'][0]))
-        box = ax.get_position()
-        ax.set_position([box.x0, box.y0, box.width * 0.75, box.height])
-
-        # Put a legend to the right of the current axis
-        ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-        ax.set_xlabel("Eval")
         ax.set_ylabel("Fitness average")
-        plt.title(self.make_title())
-        plt.figtext(0,0, self.make_desc())
-        self.save(self.frames[0]['evaluation'][0], 'fitness_avg')
 
     def plot_best(self):
         print("PLOTTING {} FITNESS BEST FRAMES".format(len(self.frames)))
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
+        ax = self.fig.add_subplot(613)
         for i, f in enumerate(self.frames):
             ax.plot(f['eval'], f['fitness_best'], label='{}, seed: {}'.format(i, f['seed'][0]))
-        # Shrink current axis by 20%
-        box = ax.get_position()
-        ax.set_position([box.x0, box.y0, box.width * 0.75, box.height])
-
-        # Put a legend to the right of the current axis
-        ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-        ax.set_xlabel("Eval")
         ax.set_ylabel("Fitness best")
-        plt.title(self.make_title())
-        plt.figtext(0,0, self.make_desc())
-        self.save(self.frames[0]['evaluation'][0], 'fitness_best')
 
     def plot_islands(self):
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
+        ax = self.fig.add_subplot(411)
         for i, f in enumerate(self.frames):
             gb = f.groupby(['island'])
             for t, group in gb:
                 # for row, data in group.iterrows():
                 ax.plot(group['eval'], group['fitness_best'], label='Island: {}'.format(t))
-        # Shrink current axis by 20%
-        box = ax.get_position()
-        ax.set_position([box.x0, box.y0, box.width * 0.75, box.height])
-
-        # Put a legend to the right of the current axis
-        ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-        ax.set_xlabel("Eval")
         ax.set_ylabel("Fitness best")
-        plt.title(self.make_title())
-        plt.figtext(0,0, self.make_desc())
-        self.save(self.frames[0]['evaluation'][0], 'fitness_islands')
 
     def plot_islands_variance(self):
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
+        ax = self.fig.add_subplot(412)
         for i, f in enumerate(self.frames):
             gb = f.groupby(['island'])
             for t, group in gb:
                 # for row, data in group.iterrows():
                 ax.plot(group['eval'], group['fitness_variance'], label='Island: {}'.format(t))
-        # Shrink current axis by 20%
-        box = ax.get_position()
-        ax.set_position([box.x0, box.y0, box.width * 0.75, box.height])
-
-        # Put a legend to the right of the current axis
-        ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-        ax.set_xlabel("Eval")
         ax.set_ylabel("Fitness variance")
-        plt.title(self.make_title())
-        plt.figtext(0,0, self.make_desc())
-        self.save(self.frames[0]['evaluation'][0], 'fitness_islands_variance')
+
+    def plot_sigma_avg(self):
+        ax = self.fig.add_subplot(413)
+        for i, f in enumerate(self.frames):
+            gb = f.groupby(['island'])
+            for t, group in gb:
+                # for row, data in group.iterrows():
+                ax.plot(group['eval'], group['sigma_avg'], label='Island: {}'.format(t))
+        ax.set_ylabel("Sigma avg")
+
+    def plot_text(self):
+        ax = self.fig.add_subplot(414)
+        ax.figure.set_size_inches(10, 30)
+        ax.text(0,0,self.make_desc())
+        ax.set_xticks([])
+        ax.set_yticks([])
 
 if __name__ == '__main__':
     parser.add_argument('--islands', type=int, default=1)
@@ -212,7 +185,7 @@ if __name__ == '__main__':
     parser.add_argument('--log', type=int, default=0)
     parser.add_argument('--plot', action='store_true')
     parser.add_argument('--r', action='store_true')
-    parser.add_argument('--m', type=int, default=0)
+    parser.add_argument('--m', type=int, default=1)
     parser.add_argument('--population', type=int, default=200)
     parser.add_argument('--survp', type=float, default=0.8)
     parser.add_argument('--immigrants', type=int, default=5)
@@ -220,6 +193,8 @@ if __name__ == '__main__':
     parser.add_argument('--Cr', type=float, default=0.11)
     parser.add_argument('--F', type=float, default=0.4)
     parser.add_argument('--nosec', action='store_true')
+    parser.add_argument('--sigma', type=float, default=0.1)
+
 
     args = parser.parse_args()
     program = Program()
@@ -243,7 +218,7 @@ if __name__ == '__main__':
     vis = Visualization(args)
     score_sum = 0
     runtime_sum = 0
-    for i in range(0, args.m+1):
+    for i in range(0, args.m):
         if args.r:
             rand = random.randrange(1, 32767)
         else:
@@ -261,11 +236,10 @@ if __name__ == '__main__':
             out = out.strip().split()
             score_sum += float(out[-3])
             runtime_sum += int(re.sub(r"\D", "", out[-1]))
+
     if args.m:
-        print("Average score: {}".format(score_sum/(args.m+1)))
-        print("Average runtime: {}".format(runtime_sum/(args.m+1)))
-    else:
-        print(out)
+        print("Average score: {}".format(score_sum/(args.m)))
+        print("Average runtime: {}".format(runtime_sum/(args.m)))
     if args.log:
         program.log()
     if args.plot:

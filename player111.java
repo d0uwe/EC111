@@ -10,6 +10,7 @@ import java.util.Comparator;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import structures.Population;
 import structures.Unit;
@@ -18,7 +19,7 @@ import structures.Selection;
 import structures.Mutation;
 import structures.Params;
 
-import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
+// import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 
 public class player111 implements ContestSubmission {
     Random rnd_;
@@ -134,7 +135,8 @@ public class player111 implements ContestSubmission {
             Params.Cr = 0.11;
             Params.F = 0.35;
             Params.pop_size = 400;
-            Params.num_islands = 4;
+            Params.num_islands = 8; // 4
+            Params.epochs = 75;
         }
 
         String evaluation_type = null;
@@ -178,6 +180,10 @@ public class player111 implements ContestSubmission {
             Params.epochs = Integer.parseInt(System.getProperty("epochs"));
         }
 
+        if (System.getProperty("sigma") != null) {
+            Params.initial_mutate_sigma = Float.parseFloat(System.getProperty("sigma"));
+        }
+
 
         assert Params.pop_size <= evaluations_limit_;
 
@@ -199,8 +205,11 @@ public class player111 implements ContestSubmission {
         Mutation mutation = new Mutation();
         Recombination recombination = new Recombination();
         Params.update_params();
+        Map<Integer,Double> varianceMap = new HashMap<Integer,Double>();
+        Map<Integer,Double> averageMap = new HashMap<Integer, Double>();
+
         if (Params.log) {
-            System.out.println("eval,pop_size,fitness_avg,fitness_variance,fitness_best,mutation_amount,recombination_amount,island");
+            System.out.println("eval,epoch,pop_size,fitness_avg,fitness_variance,fitness_best,mutation_amount,recombination_amount,island,sigma_avg");
         }
         while (Params.evals < evaluations_limit_) {
 
@@ -214,8 +223,8 @@ public class player111 implements ContestSubmission {
                 }
                 islands.set(i, population);
                 if (Params.log) {
-                    System.out.println(Params.evals + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
-                            population.bestFitness() + "," + Params.mutation_amount + "," + Params.recombination_amount + "," + i);
+                    System.out.println(Params.evals + "," + epoch + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
+                            population.bestFitness() + "," + Params.mutation_amount + "," + Params.recombination_amount + "," + i + "," + population.getSigmaAverage());
                 }
             }
 
@@ -223,21 +232,48 @@ public class player111 implements ContestSubmission {
                 // Most authors have used epoch lengths of the range 25–150 generations
                 // migration on epoch
                 if ((epoch % Params.epochs) == 0) {
-                    ArrayList<ArrayList<Unit>> fittest_exchanges = new ArrayList<>();
+                    ArrayList<ArrayList<Unit>> exchanges = new ArrayList<>();
                     for (Population population : islands) {
-                        fittest_exchanges.add(population.emigrate_fittest(Params.immigrants));
+                        varianceMap.put(islands.indexOf(population), population.getFitnessVariance());
+                        averageMap.put(islands.indexOf(population), population.averageFitness());
+                        // Every 10 epochs, exchange best k of the fittest half.
+                        /*
+                        if ((epoch % 2000) == 0) {
+                            // exchanges.add(population.emigrate_fittest_half(Params.immigrants, rnd_));
+                            // exchanges.add(population.emigrate_random(Params.immigrants, rnd_));
+                        } else {
+                            exchanges.add(population.emigrate_fittest(Params.immigrants));
+                        }
+                        */
+                        exchanges.add(population.emigrate_fittest(Params.immigrants));
                     }
-
-                    fittest_exchanges = derange(fittest_exchanges);
-                    // Collections.shuffle(fittest_exchanges, rnd_);
+                    exchanges = derange(exchanges);
+                    // Collections.shuffle(exchanges, rnd_);
                     for (Population population : islands) {
                         int idx = islands.indexOf(population);
-                        population.immigrate(fittest_exchanges.get(idx));
+                        population.immigrate(exchanges.get(idx));
+                    }
+                }
+
+                // Every n epochs, delete a non-behaving island.
+                if ((epoch % 1000) == 0) {
+                    // Sort island variances and get rid of the last n ones.
+                    if (Params.debug) {
+                        Stream<Map.Entry<Integer,Double>> sorted = varianceMap.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByValue()));
+                        sorted.forEach(System.out::println);
+                    }
+
+                    Map.Entry<Integer,Double> sorted_var = varianceMap.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).reduce((first, second) -> second).orElse(null);
+                    Map.Entry<Integer,Double> sorted_avg = averageMap.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).reduce((first, second) -> second).orElse(null);
+                    if (sorted_var != null && sorted_avg != null) {
+                        if (sorted_var.getKey() == sorted_avg.getKey()) {
+                            // System.out.println("DELETED ISLAND " + sorted_var.getKey() + " AT EPOCH " + epoch);
+                            islands.set(sorted_var.getKey(), new Population(Params.pop_size, rnd_));
+                        }
                     }
                 }
             }
             epoch++;
-
         }
     }
 

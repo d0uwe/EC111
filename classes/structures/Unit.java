@@ -47,6 +47,7 @@ public class Unit implements Comparable<Unit> {
     public double   getFitness() { return fitness; }
     public int      getSize() { return size; }
     public double   getSigma(int loc) { return sigmas[loc]; }
+    public double[] getSigmas() { return sigmas; }
 
 
     public void setValues(double[] new_values) { values = new_values; }

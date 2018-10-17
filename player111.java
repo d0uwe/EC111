@@ -69,7 +69,7 @@ public class player111 implements ContestSubmission {
         // mutation.mutate_gaussian_single_best(population, Params.pop_size, rnd_);
 
         if (Params.mutatePopulation) {
-         mutation.mutate_gaussian_population(population, Params.pop_size, rnd_);
+            mutation.mutate_gaussian_population(population, Params.pop_size, rnd_);
         }
 
         int curr_pop_size = population.size();
@@ -225,6 +225,11 @@ public class player111 implements ContestSubmission {
         while (Params.evals < evaluations_limit_) {
 
             for (int i = 0; i < islands.size(); i++) {
+
+                if (Params.evals >= evaluations_limit_) {
+                    break;
+                }
+
                 Population population = islands.get(i);
                 if (Params.diffevo) {
                     population = diffEvo(population, selection, mutation);

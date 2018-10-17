@@ -116,11 +116,12 @@ public class player111 implements ContestSubmission {
         if (Params.total_evals == 10000) {
             Params.initial_mutate_sigma = 0.1;
             if (System.getProperty("diffevo") != null) {
-                Params.Cr = 0.005;
-                Params.F = 0.35;
-                Params.num_islands = 2;
-                Params.pop_size = 200;
-                Params.epochs = 40;
+                Params.Cr = 0.05;
+                Params.F = 1.0;
+                Params.num_islands = 1;
+                Params.pop_size = 50;
+                Params.epochs = 75;
+                Params.survivor_percentage = 0.1f;
             } else {
                 Params.pop_size = 20;
                 Params.survivor_percentage = 0.2f;

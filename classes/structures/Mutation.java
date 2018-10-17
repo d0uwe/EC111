@@ -137,6 +137,7 @@ public class Mutation {
         for (int i = 0; i < Params.mutantSize; i++) {
             M.addArray(population);
         }
+
         //Population new_pop = new Population();
         int new_pop_size = M.size();
         for (int i = 0; i < new_pop_size; i++) {
@@ -154,19 +155,22 @@ public class Mutation {
             */
 
             Unit x = M.get(i);
+            Unit xprime = new Unit(x);
 
             Unit y, z;
             do {
                 y = population.get(rand.nextInt(pop_size));
-            } while (y == x);
+            } while (y.equals(x));
             int bullshit = 0;
             do {
                 bullshit++;
                 z = population.get(rand.nextInt(pop_size));
-            } while (((z == x) || (z == y)) && bullshit < 5);
+            } while (((z.equals(x)) || (z.equals(y))) && bullshit < 5);
 
+            // double F = Params.F - ((Params.F - Params.final_min_sigma)/Params.total_evals * Params.evals);
+            double F = (double)Math.exp(-Params.evals/(Params.total_evals/2.0))*Params.F;
             for (int j = 0; j < Params.gene_length; j++) {
-                x.setValue(j, x.getValue(j) + Params.F * (y.getValue(j) - z.getValue(j)));
+                x.setValue(j, x.getValue(j) + F * (y.getValue(j) - z.getValue(j)));
                 if ((x.getValue(j) > 5.0) || (x.getValue(j) < -5.0)) {
                     x.setValue(j, (rand.nextDouble() - 0.5) * 10);
                 }

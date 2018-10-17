@@ -42,7 +42,7 @@ public class Recombination {
             p1 = selection.tournamentSelection(population, Params.tournament_size, rand);
             do {
                 p2 = selection.tournamentSelection(population, Params.tournament_size, rand);
-            } while (p1 == p2);
+            } while (p1.equals(p2));
             /*
             p1 = selection.randomSelect(population, rand);
             do {

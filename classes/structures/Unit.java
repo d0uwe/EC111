@@ -1,6 +1,7 @@
 package structures;
 
 import java.util.Comparator;
+import java.util.Arrays;
 
 public class Unit implements Comparable<Unit> {
     double[] values;
@@ -40,6 +41,10 @@ public class Unit implements Comparable<Unit> {
         fitness = unit.fitness;
         size = unit.size;
         sigmas = unit.sigmas.clone();
+    }
+
+    public boolean equals(Unit unit) {
+        return Arrays.equals(this.getValues(), unit.getValues());
     }
 
     public double euclideanDistance(Unit unit) {

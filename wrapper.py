@@ -10,7 +10,25 @@ from datetime import datetime
 import pickle
 # import requests
 
+# Gridsearch
+import itertools
+import collections
+import numpy as np
+import progressbar
+from multiprocessing import Pool, Queue, Manager, Process
 
+np.random.seed(5000)
+print_n_best = 100
+n_jobs = 8
+n_seeds = 50
+seeds = [np.random.randint(100000) for _ in range(n_seeds)]
+evaluation="-evaluation=BentCigarFunction"
+# (var_name, min, max, stepsize)
+pop = ("pop", 100, 1000, 100)
+#F = ("F", 0.1, 0.9, 0.1)
+Cr = ("Cr", 0.1, 0.2, 0.01)
+#var2 = ("survp", 0.5, 0.9, 0.05)
+var_list = [pop, Cr]
 
 plt.switch_backend('agg')
 
@@ -29,6 +47,85 @@ JAVAC = JAVA_COPY + ' && ' + JAVA_COMPILE
 
 # JAVA_SUBMISSION = 'rm -f submission.jar && ' + CONCAT_JARS + ' && ' + 'jar cmf MainClass.txt submission.jar player111.class lib'
 JAVA_SUBMISSION = 'rm -f submission.jar && cp -r contest/structures . && jar cmf MainClass.txt submission.jar player111.class structures && rm -rf structures'
+
+def chunkIt(seq, num):
+    avg = len(seq) / float(num)
+    out = []
+    last = 0.0
+    while last < len(seq):
+        out.append(seq[int(last):int(last + avg)])
+        last += avg
+    return out
+
+def getScores(all_combinations, all_var_names, progress_q, process):
+    scores = []
+    DIR = './process-' + str(process)
+    if not os.path.exists(DIR):
+        os.makedirs(DIR)
+    for combination in all_combinations:
+        total_score = 0
+        for seed in seeds:
+            # create commandline command
+            strings = ["java"]
+            for number, name in zip(combination, all_var_names):
+                strings += ["-D" + name + "=" + str(number)]
+            strings += ["-jar", "../testrun.jar", "-submission=player111", evaluation, "-seed=" + str(seed)]
+
+            process = subprocess.Popen(strings, stdout=subprocess.PIPE, cwd=DIR)
+            out, err = process.communicate()
+            score = float(str(out).split(":")[1].split("\\n")[0])
+            total_score += score
+            progress_q.put(1)
+
+        scores += [(combination, total_score / n_seeds)]
+    progress_q.put(0)
+    return scores
+
+def printScores(scores):
+    scores.sort(key=lambda x: x[1])
+    scores = scores[::-1]
+    print()
+    for score in scores[:print_n_best]:
+        for var, value in zip(all_var_names, score[0]):
+            print(var,":", value, end=" ")
+        print("\tscored:", score[1])
+
+def progressBar(max_value, queue):
+    bar = progressbar.ProgressBar(max_value=max_value).start()
+    finished = 0
+    while finished < n_jobs:
+        if queue.get() == 1:
+            bar += 1
+        else:
+            finished += 1
+
+def gridsearch():
+    # create all combinations possible given the settings
+    all_var_names = [x[0] for x in var_list]
+    all_lists = [np.arange(x[1], x[2], x[3]) for x in var_list]
+    all_combinations = list(itertools.product(*all_lists))
+    chuncked_combs = chunkIt(all_combinations, n_jobs)
+
+    # multiprocess gridsearch and have a seperate thread for the progress bar.
+    pool1 = Pool(processes = n_jobs)
+    m = Manager()
+    q = m.Queue()
+    p = Process(target=progressBar, args=(len(all_combinations) * n_seeds, q,))
+    p.start()
+
+
+    program = Program()
+    process_list = np.arange(n_jobs)
+    results = pool1.starmap(getScores, zip(chuncked_combs, n_jobs * [all_var_names], n_jobs * [q], process_list))
+
+    p.join()
+    pool1.close()
+
+    # concat all results from the different threads
+    scores = [item for sublist in results for item in sublist]
+    printScores(scores)
+
+
 
 def generate_timestamp():
     return datetime.now().strftime("%Y%m%d-%H%M%S.%f")
@@ -218,11 +315,12 @@ if __name__ == '__main__':
     parser.add_argument('--sigma', type=float, default=0.1)
     parser.add_argument('--t', action='store_true')
 
+    parser.add_argument('--gridsearch', action='store_true')
 
 
     args = parser.parse_args()
     program = Program()
-    if args.compile or args.submit:
+    if args.compile or args.submit or args.gridsearch:
         print("### COMPILING ###")
         out, err = program.compile()
         if err:
@@ -237,6 +335,11 @@ if __name__ == '__main__':
             print(err)
             exit(1)
         print(out)
+        exit(0)
+
+
+    if args.gridsearch:
+        gridsearch()
         exit(0)
 
     vis = Visualization(args)

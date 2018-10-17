@@ -119,7 +119,7 @@ public class Mutation {
     public void mutate_gaussian_population(Population population, int pop_size, Random rand) {
         int current_pop_size = population.size();
         for (int i = 0; i < current_pop_size; i++) {
-            if (rand.nextDouble() >= 0.9999) {
+            if (rand.nextDouble() >= 0.1) {
                 Unit mutant = population.get(i);
                 mutant = mutate_gaussian_single(mutant, rand, population.bestFitness());
                 population.set(i, mutant);
@@ -158,17 +158,18 @@ public class Mutation {
             Unit xprime = new Unit(x);
 
             Unit y, z;
-            do {
-                y = population.get(rand.nextInt(pop_size));
-            } while (y.equals(x));
             int bullshit = 0;
             do {
                 bullshit++;
+                y = population.get(rand.nextInt(pop_size));
+            } while (y.equals(x) && bullshit < 10);
+            do {
+                bullshit++;
                 z = population.get(rand.nextInt(pop_size));
-            } while (((z.equals(x)) || (z.equals(y))) && bullshit < 5);
+            } while (((z.equals(x)) || (z.equals(y))) && bullshit < 10);
 
-            // double F = Params.F - ((Params.F - Params.final_min_sigma)/Params.total_evals * Params.evals);
-            double F = (double)Math.exp(-Params.evals/(Params.total_evals/2.0))*Params.F;
+            double F = Params.F - ((Params.F - Params.final_min_sigma)/Params.total_evals * Params.evals);
+            F = (double)Math.exp(-Params.evals/(Params.total_evals/2.0))*Params.F;
             if (!Params.decayF) {
                 F = Params.F;
             }

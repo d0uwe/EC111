@@ -43,16 +43,16 @@ public class Recombination {
             do {
                 p2 = selection.tournamentSelection(population, Params.tournament_size, rand);
             } while (p1.equals(p2));
-            /*
+
+
             p1 = selection.randomSelect(population, rand);
             do {
                 p2 = selection.randomSelect(population, rand);
-            } while (p1 == p2);
-            */
-            /*
+            } while (p1.equals(p2));
+
             p1 = selection.selectBestUnit(population, 0);
             p2 = selection.selectBestUnit(population, 1);
-            */
+
             Unit child = whole_arithmetic(p1, p2);
 
             // Keep the sigmas simple; just take the better fitness one

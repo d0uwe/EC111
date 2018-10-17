@@ -114,7 +114,6 @@ public class Selection {
         * and so on
         */
         ArrayList<Unit> new_units = new ArrayList<Unit>();
-
         for (int i = 0; i < Params.n_survivors; i++) {
             ArrayList<Unit> k_units = population.uniform_sample(k, rand);
             // Get the best.
@@ -137,7 +136,7 @@ public class Selection {
             for (int j = 0; j < k_units.size(); j++) {
                 if (j == 0) {
                     if (rand.nextDouble() <= Params.tournament_p) {
-                        population.setValue(i, k_units[j]); 
+                        population.setValue(i, k_units[j]);
                     }
                 }i
                 else {

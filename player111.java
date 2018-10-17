@@ -84,8 +84,8 @@ public class player111 implements ContestSubmission {
         return population;
     }
 
-    public Population diffEvo(Population population, Selection selection, Mutation mutate) {
-        Population M = mutate.mutate_differential(population, selection, Params.pop_size, rnd_);
+    public Population diffEvo(Population population, Selection selection, Mutation mutation) {
+        Population M = mutation.mutate_differential(population, selection, Params.pop_size, rnd_);
         for (Unit unit: M.getPopulation()) {
             if (Params.evals >= evaluations_limit_) {
                 break;
@@ -93,7 +93,13 @@ public class player111 implements ContestSubmission {
             unit.setFitness((double) evaluation_.evaluate(unit.getValues()));
             Params.evals++;
         }
+
+        if (Params.evals > 0 || population.averageFitness() > 9.9) {
+            mutation.mutate_gaussian_single(population, Params.pop_size, rnd_);
+            // mutation.mutate_gaussian_population(population, Params.pop_size, rnd_);
+        }
         population = selection.mu_plus_lambda(population, M);
+        // selection.tournament_selection(population, Params.tournament_size, rnd_);
         int curr_pop_size = population.size();
         return population;
     }
@@ -115,13 +121,15 @@ public class player111 implements ContestSubmission {
         // Bent Cigar
         if (Params.total_evals == 10000) {
             Params.initial_mutate_sigma = 0.1;
-            if (System.getProperty("diffevo") != null) {
+            Params.diffevo = true;
+            if (Params.diffevo) {
                 Params.Cr = 0.05;
                 Params.F = 1.0;
                 Params.num_islands = 1;
-                Params.pop_size = 50;
+                Params.pop_size = 40;
                 Params.epochs = 75;
-                Params.survivor_percentage = 0.1f;
+                Params.survivor_percentage = 0.5f;
+                Params.initial_mutate_sigma = 0.05;
             } else {
                 Params.pop_size = 20;
                 Params.survivor_percentage = 0.2f;

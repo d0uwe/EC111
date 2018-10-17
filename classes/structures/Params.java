@@ -1,6 +1,10 @@
 package structures;
 
+import java.lang.reflect.Field;
+
 import structures.Unit;
+
+import java.lang.reflect.*;
 
 public class Params {
     private Params() {}
@@ -45,6 +49,30 @@ public class Params {
         mutation_amount = pop_size - n_survivors - recombination_amount;
     }
 
+    public static void dump() {
+        System.out.println("\n\n\n[START PARAMS]");
+        Field[] params = Params.class.getFields();
+        for (Field param : params) {
+            if (Modifier.isStatic(param.getModifiers())) {
+                Type type = param.getType();
+                try {
+                    if (type == int.class) {
+                        System.out.println(param.getName() + ": " + param.getInt(null));
+                    } else if (type == boolean.class) {
+                        System.out.println(param.getName() + ": " + param.getBoolean(null));
+                    } else if (type == double.class) {
+                        System.out.println(param.getName() + ": " + param.getDouble(null));
+                    } else if (type == float.class) {
+                        System.out.println(param.getName() + ": " + param.getFloat(null));
+                    }
+                } catch(Exception e) {
+                    // ...
+                }
+            }
+        }
+
+        System.out.println("[END PARAMS]\n\n\n");
+    }
 }
 
 

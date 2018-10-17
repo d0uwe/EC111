@@ -194,6 +194,8 @@ if __name__ == '__main__':
     parser.add_argument('--F', type=float, default=0.4)
     parser.add_argument('--nosec', action='store_true')
     parser.add_argument('--sigma', type=float, default=0.1)
+    parser.add_argument('--t', action='store_true')
+
 
 
     args = parser.parse_args()
@@ -218,9 +220,19 @@ if __name__ == '__main__':
     vis = Visualization(args)
     score_sum = 0
     runtime_sum = 0
-    for i in range(0, args.m):
+
+    test_seeds = [1150, 6950, 6756, 2301, 3279, 114, 4089, 61, 6797, 19]
+    if args.t:
+        args.m = 10
+
+    repeats = args.m
+    if args.t:
+        repeats = 10
+    for i in range(0, repeats):
         if args.r:
             rand = random.randrange(1, 32767)
+        elif args.t:
+            rand = test_seeds[i]
         else:
             rand = 1
 
@@ -245,5 +257,3 @@ if __name__ == '__main__':
     if args.plot:
         vis.plot()
     print(err)
-
-

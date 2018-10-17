@@ -184,8 +184,8 @@ public class player111 implements ContestSubmission {
             Params.diffevo = Integer.parseInt(System.getProperty("diffevo")) != 0;
         }
 
-        if (System.getProperty("island_migrants") != null) {
-            Params.immigrants = Integer.parseInt(System.getProperty("island_migrants"));
+        if (System.getProperty("immigrants") != null) {
+            Params.immigrants = Integer.parseInt(System.getProperty("immigrants"));
         }
 
         if (System.getProperty("epochs") != null) {
@@ -221,7 +221,7 @@ public class player111 implements ContestSubmission {
         Map<Integer,Double> averageMap = new HashMap<Integer, Double>();
 
         if (Params.log) {
-            System.out.println("eval,epoch,pop_size,fitness_avg,fitness_variance,fitness_best,mutation_amount,recombination_amount,island,sigma_avg");
+            System.out.println("eval,epoch,pop_size,fitness_avg,fitness_variance,fitness_best,mutation_amount,recombination_amount,island,sigma_avg,euclidean_avg,cosine_avg");
         }
         while (Params.evals < evaluations_limit_) {
 
@@ -241,7 +241,10 @@ public class player111 implements ContestSubmission {
                 islands.set(i, population);
                 if (Params.log) {
                     System.out.println(Params.evals + "," + epoch + "," + population.size() + "," + population.averageFitness() + "," + population.getFitnessVariance() + "," +
-                            population.bestFitness() + "," + Params.mutation_amount + "," + Params.recombination_amount + "," + i + "," + population.getSigmaAverage());
+                            population.bestFitness() + "," + Params.mutation_amount + "," +
+                            Params.recombination_amount + "," + i + "," +
+                            population.getSigmaAverage() + "," + population.averageDistance() + "," +
+                            population.averageCosineSimilarity());
                 }
             }
 

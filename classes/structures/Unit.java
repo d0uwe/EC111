@@ -42,6 +42,26 @@ public class Unit implements Comparable<Unit> {
         sigmas = unit.sigmas.clone();
     }
 
+    public double euclideanDistance(Unit unit) {
+        double sum = 0.0;
+        for(int i = 0; i < this.getValues().length; i++) {
+            sum += Math.pow((this.getValue(i)-unit.getValue(i)), 2.0);
+        }
+        return Math.sqrt(sum);
+    }
+
+    public double cosineSimilarity(Unit unit) {
+        double dotProduct = 0.0;
+        double normA = 0.0;
+        double normB = 0.0;
+        for (int i = 0; i < this.getValues().length; i++) {
+            dotProduct += this.getValue(i) * unit.getValue(i);
+            normA += Math.pow(this.getValue(i), 2);
+            normB += Math.pow(unit.getValue(i), 2);
+        }
+        return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+    }
+
     public double[] getValues() { return values; }
     public double   getValue(int loc) { return values[loc]; }
     public double   getFitness() { return fitness; }

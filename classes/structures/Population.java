@@ -72,6 +72,30 @@ public class Population {
         return this.population.get(0).getSigma(0);
     }
 
+    public double averageDistance() {
+        double avgDistance = 0.0;
+        for (int i = 0; i < this.population.size()-1; i++) {
+            Unit unit1 = population.get(i);
+            Unit unit2 = population.get(i+1);
+            avgDistance += unit1.euclideanDistance(unit2);
+        }
+        return (double)(avgDistance / this.population.size());
+    }
+
+    public double averageCosineSimilarity() {
+        double avgCosinePop = 0.0;
+        for (int i = 0; i < this.population.size(); i++) {
+            double avgCosine = 0.0;
+            Unit unit1 = population.get(i);
+            for (int j = 0; j < this.population.size(); j++) {
+                Unit unit2 = population.get(j);
+                avgCosine += unit1.cosineSimilarity(unit2);
+            }
+            avgCosinePop += (double)(avgCosine / this.population.size());
+        }
+        return (double)(avgCosinePop / this.population.size());
+    }
+
     /**
      * From the population, draw from the top 10% with 90% chance and from the bottom 90% from 10%
      */

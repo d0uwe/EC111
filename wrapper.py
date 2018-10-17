@@ -72,8 +72,9 @@ class Program():
         return out.decode("utf-8"), err.decode("utf-8")
 
     def log(self):
-        with open(os.path.join(DIR, generate_timestamp() + '.p'), 'wb') as f:
-            pickle.dump(self.frames, f)
+        pass
+        #with open(os.path.join(DIR, generate_timestamp() + '.p'), 'wb') as f:
+        #    pickle.dump(self.frames, f)
 
 class Visualization(Program):
 
@@ -106,6 +107,8 @@ class Visualization(Program):
         self.plot_islands()
         self.plot_islands_variance()
         self.plot_sigma_avg()
+        self.plot_euclidean_avg()
+        self.plot_cosine_avg()
         self.plot_text()
         self.save(self.frames[0]['evaluation'][0], 'plots')
         # self.fig.show()
@@ -141,7 +144,7 @@ class Visualization(Program):
         ax.set_ylabel("Fitness best")
 
     def plot_islands(self):
-        ax = self.fig.add_subplot(411)
+        ax = self.fig.add_subplot(611)
         for i, f in enumerate(self.frames):
             gb = f.groupby(['island'])
             for t, group in gb:
@@ -150,7 +153,7 @@ class Visualization(Program):
         ax.set_ylabel("Fitness best")
 
     def plot_islands_variance(self):
-        ax = self.fig.add_subplot(412)
+        ax = self.fig.add_subplot(612)
         for i, f in enumerate(self.frames):
             gb = f.groupby(['island'])
             for t, group in gb:
@@ -159,7 +162,7 @@ class Visualization(Program):
         ax.set_ylabel("Fitness variance")
 
     def plot_sigma_avg(self):
-        ax = self.fig.add_subplot(413)
+        ax = self.fig.add_subplot(613)
         for i, f in enumerate(self.frames):
             gb = f.groupby(['island'])
             for t, group in gb:
@@ -167,8 +170,27 @@ class Visualization(Program):
                 ax.plot(group['eval'], group['sigma_avg'], label='Island: {}'.format(t))
         ax.set_ylabel("Sigma avg")
 
+    def plot_euclidean_avg(self):
+        ax = self.fig.add_subplot(614)
+        for i, f in enumerate(self.frames):
+            gb = f.groupby(['island'])
+            for t, group in gb:
+                # for row, data in group.iterrows():
+                ax.plot(group['eval'], group['euclidean_avg'], label='Island: {}'.format(t))
+        ax.set_ylabel("Euclidean avg")
+
+    def plot_cosine_avg(self):
+        ax = self.fig.add_subplot(615)
+        for i, f in enumerate(self.frames):
+            gb = f.groupby(['island'])
+            for t, group in gb:
+                # for row, data in group.iterrows():
+                ax.plot(group['eval'], group['cosine_avg'], label='Island: {}'.format(t))
+        ax.set_ylabel("Consine Similarity avg")
+
+
     def plot_text(self):
-        ax = self.fig.add_subplot(414)
+        ax = self.fig.add_subplot(616)
         ax.figure.set_size_inches(10, 30)
         ax.text(0,0,self.make_desc())
         ax.set_xticks([])

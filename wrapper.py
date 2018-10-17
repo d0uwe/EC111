@@ -313,6 +313,7 @@ if __name__ == '__main__':
     parser.add_argument('--F', type=float, default=0.4)
     parser.add_argument('--nosec', action='store_true')
     parser.add_argument('--sigma', type=float, default=0.1)
+    parser.add_argument('--expfactor', type=float, default=4.0)
     parser.add_argument('--t', action='store_true')
 
     parser.add_argument('--gridsearch', action='store_true')

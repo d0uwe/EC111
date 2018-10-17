@@ -41,7 +41,7 @@ public class Params {
 
     public static boolean csv = true;
     public static boolean diffevo = false;
-
+    public static double expFactor = 4.0;
     public static boolean mutatePopulation = false;
 
     public static void update_params(){

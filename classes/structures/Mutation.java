@@ -83,7 +83,7 @@ public class Mutation {
         // new_unit.setSigma(0, new_sigma);
 
         // Exponential
-        double new_sigma = (double)Math.exp(-Params.evals/(Params.total_evals/4.0))*Params.initial_mutate_sigma;
+        double new_sigma = (double)Math.exp(-Params.evals/(Params.total_evals/Params.expFactor))*Params.initial_mutate_sigma;
         new_unit.setSigma(0, new_sigma);
 
         // Genome mutation rate

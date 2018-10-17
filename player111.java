@@ -206,6 +206,9 @@ public class player111 implements ContestSubmission {
             Params.initial_mutate_sigma = Float.parseFloat(System.getProperty("sigma"));
         }
 
+        if (System.getProperty("expfactor") != null) {
+            Params.expFactor = Float.parseFloat(System.getProperty("expfactor"));
+        }
 
         assert Params.pop_size <= evaluations_limit_;
 

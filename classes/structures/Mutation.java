@@ -169,6 +169,9 @@ public class Mutation {
 
             // double F = Params.F - ((Params.F - Params.final_min_sigma)/Params.total_evals * Params.evals);
             double F = (double)Math.exp(-Params.evals/(Params.total_evals/2.0))*Params.F;
+            if (!Params.decayF) {
+                F = Params.F;
+            }
             for (int j = 0; j < Params.gene_length; j++) {
                 x.setValue(j, x.getValue(j) + F * (y.getValue(j) - z.getValue(j)));
                 if ((x.getValue(j) > 5.0) || (x.getValue(j) < -5.0)) {

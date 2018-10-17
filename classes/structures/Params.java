@@ -25,6 +25,7 @@ public class Params {
     public static int tournament_size = 2; //n_survivors;
     public static double tournament_p = 1.0;
     public static double F = 0.4;
+    public static boolean decayF = true;
     public static double Cr = 0.11;
     public static int evals = 0;
     public static int mutantSize = 0;

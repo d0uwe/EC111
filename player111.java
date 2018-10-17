@@ -131,6 +131,7 @@ public class player111 implements ContestSubmission {
 
         // Schaffers
         if (Params.total_evals == 100000) {
+            Params.decayF = false;
             Params.diffevo = true;
             Params.initial_mutate_sigma = 0.1;
             Params.pop_size = 200;

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.lang.Math;
 import structures.Params;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class Mutation {
     double upper_bound;
@@ -39,7 +40,7 @@ public class Mutation {
                      mutated_child = mutate_uniform(unit, rand);
                      break;
                 case GAUSS_SINGLE:
-                     mutated_child = mutate_gaussian_single(unit, rand);
+                     mutated_child = mutate_gaussian_single(unit, rand, population.bestFitness());
                      break;
                 case GAUSS_MULTI:
                      mutated_child = mutate_gaussian_multi(unit, rand);
@@ -60,7 +61,6 @@ public class Mutation {
         for (int i = 0; i < unit_size; i++) {
             new_unit.setValue(i, (rand.nextDouble() - 0.5) * 10);
         }
-
         return new_unit;
     }
 
@@ -76,26 +76,54 @@ public class Mutation {
         }
     }
 
-    public Unit mutate_gaussian_single(Unit unit, Random rand) {
+    public Unit mutate_gaussian_single(Unit unit, Random rand, double bestFitness) {
         Unit new_unit = new Unit(unit);
-        double new_sigma = Params.initial_mutate_sigma - ((Params.initial_mutate_sigma - Params.final_min_sigma)/Params.total_evals * Params.evals);
+
+        // double new_sigma = Params.initial_mutate_sigma - ((Params.initial_mutate_sigma - Params.final_min_sigma)/Params.total_evals * Params.evals);
+        // new_unit.setSigma(0, new_sigma);
+
+        // Exponential
+        double new_sigma = (double)Math.exp(-Params.evals/(Params.total_evals/4.0))*Params.initial_mutate_sigma;
         new_unit.setSigma(0, new_sigma);
 
-        // System.out.println(Arrays.toString(new_unit.getSigmas()));
+        // Genome mutation rate
         int unit_size = new_unit.getSize();
         for (int i = 0; i < unit_size; i++) {
-            new_unit.setValue(i, new_unit.getValue(i) + (rand.nextGaussian() * new_unit.getSigma(0)));
+            if (rand.nextDouble() >= 0.5 || bestFitness <= 9.9) {
+                new_unit.setValue(i, new_unit.getValue(i) + (rand.nextGaussian() * new_unit.getSigma(0)));
+            }
         }
         return new_unit;
     }
 
+    public void mutate_gaussian_single_best(Population population, int pop_size, Random rand) {
+
+        int current_pop_size = population.size();
+        ArrayList<Unit> tmp = population.getPopulation();
+        Collections.sort(tmp, Collections.reverseOrder());
+        for (int i = 0; i < Params.mutation_amount; i++) {
+            Unit mutated_child = mutate_gaussian_single(tmp.get(0), rand, population.bestFitness());
+            population.add(mutated_child);
+        }
+    }
 
     public void mutate_gaussian_single(Population population, int pop_size, Random rand) {
 
         int current_pop_size = population.size();
         for (int i = 0; i < Params.mutation_amount; i++) {
-            Unit mutated_child = mutate_gaussian_single(population.get(rand.nextInt(current_pop_size)), rand);
+            Unit mutated_child = mutate_gaussian_single(population.get(rand.nextInt(current_pop_size)), rand, population.bestFitness());
             population.add(mutated_child);
+        }
+    }
+
+    public void mutate_gaussian_population(Population population, int pop_size, Random rand) {
+        int current_pop_size = population.size();
+        for (int i = 0; i < current_pop_size; i++) {
+            if (rand.nextDouble() >= 0.9999) {
+                Unit mutant = population.get(i);
+                mutant = mutate_gaussian_single(mutant, rand, population.bestFitness());
+                population.set(i, mutant);
+            }
         }
     }
 

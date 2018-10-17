@@ -39,10 +39,21 @@ public class Recombination {
             Unit p1;
             Unit p2;
 
+            /*
             p1 = selection.tournamentSelection(population, Params.tournament_size, rand);
             do {
                 p2 = selection.tournamentSelection(population, Params.tournament_size, rand);
             } while (p1 == p2);
+            */
+            p1 = selection.randomSelect(population, rand);
+            do {
+                p2 = selection.randomSelect(population, rand);
+            } while (p1 == p2);
+
+            /*
+            p1 = selection.selectBestUnit(population, 0);
+            p2 = selection.selectBestUnit(population, 1);
+            */
             Unit child = whole_arithmetic(p1, p2);
 
             // Keep the sigmas simple; just take the better fitness one
@@ -73,8 +84,11 @@ public class Recombination {
 
     public Unit whole_arithmetic(Unit p1, Unit p2) {
         Unit child = new Unit(p1.mutate_mode, Params.gene_length);
+
+        // double new_recomb = (double)Math.exp(-Params.evals/(Params.total_evals/2.0))*Params.recombination_constant;
+        double new_recomb = Params.recombination_constant;
         for (int i = 0; i < Params.gene_length; i++) {
-            child.setValue(i, Params.recombination_constant * p1.getValue(i) + (1.0-Params.recombination_constant) * p2.getValue(i));
+            child.setValue(i, new_recomb * p1.getValue(i) + (1.0-new_recomb) * p2.getValue(i));
         }
         return child;
     }

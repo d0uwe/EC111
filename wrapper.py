@@ -186,7 +186,7 @@ if __name__ == '__main__':
     parser.add_argument('--plot', action='store_true')
     parser.add_argument('--r', action='store_true')
     parser.add_argument('--m', type=int, default=1)
-    parser.add_argument('--population', type=int, default=200)
+    parser.add_argument('--population', type=int, default=400)
     parser.add_argument('--survp', type=float, default=0.8)
     parser.add_argument('--immigrants', type=int, default=5)
     parser.add_argument('--epochs', type=int, default=70)

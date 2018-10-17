@@ -15,16 +15,30 @@ public class Selection {
     public Selection() {
     }
 
-    public void select_survivors(Population population) {
-        population.sort();
+    public void select_sample(Population population, Random rand) {
         ArrayList<Unit> tmp = population.getPopulation();
+        population.sort();
+        Collections.sort(population.getPopulation(), Collections.reverseOrder());
+        for (int i = 0; i < Params.n_survivors; i++) {
+            tmp.add(population.sample(rand));
+        }
+        population.setPopulation(tmp);
+    }
 
-        Population tmp_population = population;
+    public void select_best(Population population) {
+        ArrayList<Unit> tmp = population.getPopulation();
+        Collections.sort(tmp, Collections.reverseOrder());
         population.setPopulation(new ArrayList<Unit>(tmp.subList(0, Params.n_survivors)));
     }
 
     public Unit randomSelect(Population p, Random rand) {
         return p.get(rand.nextInt(p.size()));
+    }
+
+    public Unit selectBestUnit(Population p, int k) {
+       ArrayList<Unit> tmp = p.getPopulation();
+       Collections.sort(tmp, Collections.reverseOrder());
+       return tmp.get(k);
     }
 
     public Unit tournamentSelection(Population pop, int k, Random rand) {

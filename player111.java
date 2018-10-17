@@ -62,9 +62,16 @@ public class player111 implements ContestSubmission {
 
     public Population baseLineEvo(Population population, Selection selection, Recombination recombination, Mutation mutation) {
         // selection.tournament_selection(population, Params.tournament_size, rnd_);
-        selection.select_survivors(population);
+        selection.select_best(population);
+        // selection.select_sample(population, rnd_);
         recombination.recombination(population, selection, rnd_);
         mutation.mutate_gaussian_single(population, Params.pop_size, rnd_);
+        // mutation.mutate_gaussian_single_best(population, Params.pop_size, rnd_);
+
+        if (Params.mutatePopulation) {
+         mutation.mutate_gaussian_population(population, Params.pop_size, rnd_);
+        }
+
         int curr_pop_size = population.size();
         for (int i = Params.n_survivors; i < curr_pop_size; i++) {
             double new_fitness = (double) evaluation_.evaluate(population.get(i).getValues());
@@ -107,7 +114,7 @@ public class player111 implements ContestSubmission {
 
         // Bent Cigar
         if (Params.total_evals == 10000) {
-            Params.initial_mutate_sigma = 0.2;
+            Params.initial_mutate_sigma = 0.1;
             if (System.getProperty("diffevo") != null) {
                 Params.Cr = 0.005;
                 Params.F = 0.35;
@@ -115,8 +122,9 @@ public class player111 implements ContestSubmission {
                 Params.pop_size = 200;
                 Params.epochs = 40;
             } else {
-                Params.pop_size = 15;
+                Params.pop_size = 20;
                 Params.survivor_percentage = 0.2f;
+                Params.initial_mutate_sigma = 0.8;
             }
         }
 
@@ -135,8 +143,11 @@ public class player111 implements ContestSubmission {
             Params.Cr = 0.11;
             Params.F = 0.35;
             Params.pop_size = 400;
-            Params.num_islands = 8; // 4
-            Params.epochs = 75;
+            Params.num_islands = 4;
+            Params.epochs = 70;
+            Params.immigrants = 5;
+            Params.initial_mutate_sigma = 0.1;
+            Params.mutatePopulation = true;
         }
 
         String evaluation_type = null;
@@ -228,7 +239,7 @@ public class player111 implements ContestSubmission {
                 }
             }
 
-            if (Params.num_islands > 0) {
+            if (Params.num_islands > 1) {
                 // Most authors have used epoch lengths of the range 25–150 generations
                 // migration on epoch
                 if ((epoch % Params.epochs) == 0) {

@@ -11,13 +11,13 @@ public class Params {
     public static int gene_length = 10;
     public static int total_evals = 10000;
     public static double initial_mutate_sigma = 0.1;
-    public static double final_min_sigma = 0; // 0.00001;
+    public static double final_min_sigma = 0; // 0.1;
     public static double mutation_step_size = 0.99;
     public static boolean debug = false;
     public static boolean log = false;
     public static int recombination_amount = (pop_size - n_survivors) / 2;
     public static int mutation_amount = pop_size - n_survivors - recombination_amount;
-    public static double recombination_constant = 0.5;
+    public static double recombination_constant = 1.0;
     public static int tournament_size = 2; //n_survivors;
     public static double tournament_p = 1.0;
     public static double F = 0.4;
@@ -32,8 +32,12 @@ public class Params {
     public static int immigrants = 5;
     public static int epochs = 70;
 
+    public static double mutationRate = 1.0;
+
     public static boolean csv = true;
     public static boolean diffevo = false;
+
+    public static boolean mutatePopulation = false;
 
     public static void update_params(){
         n_survivors = (int)(pop_size * survivor_percentage);

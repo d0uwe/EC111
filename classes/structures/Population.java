@@ -63,10 +63,13 @@ public class Population {
 
     public double getSigmaAverage() {
         double avgSigma = 0.0;
+        /*
         for (Unit unit : this.population) {
             avgSigma += unit.getSigma(0);
         }
         return (avgSigma / this.population.size());
+        */
+        return this.population.get(0).getSigma(0);
     }
 
     /**
@@ -90,7 +93,7 @@ public class Population {
 
 
      public Unit sample(Random rand) {
-        if (rand.nextInt(100) < 90) {
+        if (rand.nextInt(100) < 95) {
             return this.population.get(rand.nextInt((int)(0.1*this.population.size())));
         } else {
             return this.population.get(((int)(0.1*this.population.size())) + rand.nextInt((int)(this.population.size()*0.9)));
@@ -229,6 +232,10 @@ public class Population {
 
     public void remove(Unit unit) {
         this.population.remove(unit);
+    }
+
+    public void set(int i, Unit unit) {
+        this.population.set(i, unit);
     }
 
     public String toString() {

@@ -275,6 +275,8 @@ public class player111 implements ContestSubmission {
             }
             epoch++;
         }
+
+        Params.dump();
     }
 
     public ArrayList<ArrayList<Unit>> derange(ArrayList<ArrayList<Unit>> exchanges) {

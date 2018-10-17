@@ -142,12 +142,13 @@ public class player111 implements ContestSubmission {
         if (Params.total_evals == 1000000) {
             Params.Cr = 0.11;
             Params.F = 0.35;
-            Params.pop_size = 400;
-            Params.num_islands = 4;
+            Params.pop_size = 4000;
+            Params.num_islands = 100;
             Params.epochs = 70;
             Params.immigrants = 5;
-            Params.initial_mutate_sigma = 0.1;
+            Params.initial_mutate_sigma = 0.005;
             Params.mutatePopulation = true;
+            Params.survivor_percentage = 0.999f;
         }
 
         String evaluation_type = null;

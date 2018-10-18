@@ -119,7 +119,7 @@ public class Mutation {
     public void mutate_gaussian_population(Population population, int pop_size, Random rand) {
         int current_pop_size = population.size();
         for (int i = 0; i < current_pop_size; i++) {
-            if (rand.nextDouble() >= 0.1) {
+            if (rand.nextDouble() >= 0.9999) {
                 Unit mutant = population.get(i);
                 mutant = mutate_gaussian_single(mutant, rand, population.bestFitness());
                 population.set(i, mutant);

@@ -123,13 +123,14 @@ public class player111 implements ContestSubmission {
             Params.initial_mutate_sigma = 0.1;
             Params.diffevo = true;
             if (Params.diffevo) {
-                Params.Cr = 0.05;
+                Params.Cr = 0.11;
                 Params.F = 1.0;
                 Params.num_islands = 1;
                 Params.pop_size = 40;
                 Params.epochs = 75;
-                Params.survivor_percentage = 0.5f;
+                Params.survivor_percentage = 0.75f;
                 Params.initial_mutate_sigma = 0.05;
+                Params.expFactor = 5.0;
             } else {
                 Params.pop_size = 20;
                 Params.survivor_percentage = 0.2f;
@@ -157,7 +158,7 @@ public class player111 implements ContestSubmission {
             Params.epochs = 70;
             Params.immigrants = 5;
             Params.initial_mutate_sigma = 0.005;
-            Params.mutatePopulation = true;
+            Params.mutatePopulation = false;
             Params.survivor_percentage = 0.999f;
         }
 

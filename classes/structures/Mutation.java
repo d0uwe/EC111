@@ -89,7 +89,7 @@ public class Mutation {
         // Genome mutation rate
         int unit_size = new_unit.getSize();
         for (int i = 0; i < unit_size; i++) {
-            if (rand.nextDouble() >= 0.5 || bestFitness <= 9.9) {
+            if (rand.nextDouble() >= 0.001 || bestFitness <= 9.9) {
                 new_unit.setValue(i, new_unit.getValue(i) + (rand.nextGaussian() * new_unit.getSigma(0)));
             }
         }

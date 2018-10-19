@@ -84,7 +84,7 @@ public class player111 implements ContestSubmission {
         return population;
     }
 
-    public Population diffEvo(Population population, Selection selection, Mutation mutation) {
+    public Population diffEvo(Population population, Selection selection, Recombination recombination, Mutation mutation) {
         Population M = mutation.mutate_differential(population, selection, Params.pop_size, rnd_);
         for (Unit unit: M.getPopulation()) {
             if (Params.evals >= evaluations_limit_) {
@@ -93,13 +93,11 @@ public class player111 implements ContestSubmission {
             unit.setFitness((double) evaluation_.evaluate(unit.getValues()));
             Params.evals++;
         }
-
-        if (Params.evals > 0 || population.averageFitness() > 9.9) {
-            mutation.mutate_gaussian_single(population, Params.pop_size, rnd_);
+        if (Params.mutatePopulation && (Params.evals > 0 || population.averageFitness() > 9.9)) {
+            mutation.mutate_gaussian_single_best(population, Params.pop_size, rnd_);
             // mutation.mutate_gaussian_population(population, Params.pop_size, rnd_);
         }
         population = selection.mu_plus_lambda(population, M);
-        // selection.tournament_selection(population, Params.tournament_size, rnd_);
         int curr_pop_size = population.size();
         return population;
     }
@@ -120,8 +118,6 @@ public class player111 implements ContestSubmission {
 
         // Bent Cigar
         if (Params.total_evals == 10000) {
-            Params.initial_mutate_sigma = 0.1;
-            Params.diffevo = true;
             if (Params.diffevo) {
                 Params.Cr = 0.11;
                 Params.F = 1.0;
@@ -131,6 +127,7 @@ public class player111 implements ContestSubmission {
                 Params.survivor_percentage = 0.75f;
                 Params.initial_mutate_sigma = 0.05;
                 Params.expFactor = 5.0;
+                Params.mutatePopulation = true;
             } else {
                 Params.pop_size = 20;
                 Params.survivor_percentage = 0.2f;
@@ -153,8 +150,8 @@ public class player111 implements ContestSubmission {
         if (Params.total_evals == 1000000) {
             Params.Cr = 0.11;
             Params.F = 0.35;
-            Params.pop_size = 4000;
-            Params.num_islands = 100;
+            Params.pop_size = 50;
+            Params.num_islands = 1;
             Params.epochs = 70;
             Params.immigrants = 5;
             Params.initial_mutate_sigma = 0.005;
@@ -247,7 +244,7 @@ public class player111 implements ContestSubmission {
 
                 Population population = islands.get(i);
                 if (Params.diffevo) {
-                    population = diffEvo(population, selection, mutation);
+                    population = diffEvo(population, selection, recombination, mutation);
                 }
                 else {
                     population = baseLineEvo(population, selection, recombination, mutation);

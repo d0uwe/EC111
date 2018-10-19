@@ -345,6 +345,7 @@ if __name__ == '__main__':
 
     vis = Visualization(args)
     score_sum = 0
+    scores = []
     runtime_sum = 0
 
     test_seeds = [1150, 6950, 6756, 2301, 3279, 114, 4089, 61, 6797, 19]
@@ -372,12 +373,16 @@ if __name__ == '__main__':
             program.frames.append(df)
         if args.m:
             out = out.strip().split()
+            scores += [float(out[-3])]
             score_sum += float(out[-3])
             runtime_sum += int(re.sub(r"\D", "", out[-1]))
 
     if args.m:
         print("Average score: {}".format(score_sum/(args.m)))
         print("Average runtime: {}".format(runtime_sum/(args.m)))
+    if args.t or args.m:
+        print("std: {}".format(np.std(scores)))
+
     if args.log:
         program.log()
     if args.plot:

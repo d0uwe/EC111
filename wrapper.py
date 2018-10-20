@@ -163,7 +163,7 @@ class Program():
         if arg_dict['nosec'] == True:
             s += ["-nosec"]
 
-        print(' '.join(s))
+        # print(' '.join(s))
         p = subprocess.Popen(s, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
         return out.decode("utf-8"), err.decode("utf-8")
@@ -283,7 +283,7 @@ class Visualization(Program):
             for t, group in gb:
                 # for row, data in group.iterrows():
                 ax.plot(group['eval'], group['cosine_avg'], label='Island: {}'.format(t))
-        ax.set_ylabel("Consine Similarity avg")
+        ax.set_ylabel("Cosine Similarity avg")
 
 
     def plot_text(self):
@@ -292,6 +292,158 @@ class Visualization(Program):
         ax.text(0,0,self.make_desc())
         ax.set_xticks([])
         ax.set_yticks([])
+
+
+    def plot_all(self, frames):
+        for idx, f in enumerate(frames):
+            fig, ax1 = plt.subplots()
+            color = 'tab:red'
+            ax1.set_xlabel('eval (t)')
+            ax1.set_ylabel('best fitness score', color=color)
+            ax1.set_ylim(0, 10)
+            ax1.tick_params(axis='y', labelcolor=color)
+            ax1.plot(f[3], f[4], color=color)
+
+            ax2 = ax1.twinx()
+            color = 'tab:blue'
+            ax2.set_ylabel('cosine similarity', color=color)
+            ax2.set_ylim(0, 1)
+            ax2.tick_params(axis='y', labelcolor=color)
+            ax2.plot(f[3], f[5], color=color)
+
+            title = '{}\n{}{}'.format(f[0], 'DE / ' if f[1] else 'Baseline / ', 'Island Model / i=' + str(f[2]) if f[2] > 1 else 'Non-parallel')
+            plt.title(title)
+            fig.tight_layout()
+            fig.savefig('name-{}-{}-.pdf'.format(f[0], idx))
+
+
+
+
+def set_args(args):
+    if args.evaluation == 'BentCigarFunction':
+        # Diff evo
+        if args.diffevo:
+            args.Cr = 0.11
+            args.F = 1.0
+            args.population = 40
+            args.survp = 0.75
+            args.sigma = 0.05
+            args.expfactor = 5.0
+        # Baseline
+        else:
+            args.population = 40
+            args.survp = 0.75
+            args.sigma = 0.1
+            args.expfactor = 4.0
+        # Islands
+        if args.islands > 1:
+            args.population = 80
+
+
+    elif args.evaluation == 'SchaffersEvaluation':
+        # Diff evo
+        if args.diffevo:
+            args.Cr = 0.11
+            args.F = 0.4
+            args.population = 200
+            args.survp = 0.8
+            args.sigma = 0.1
+            args.expfactor = 5.0
+        # Baseline
+        else:
+            args.population = 200
+            args.survp = 0.8
+            args.sigma = 0.1
+            args.expfactor = 4.0
+        # Islands
+        if args.islands > 1:
+            args.islands = 2
+            args.population = 200
+
+    elif args.evaluation == 'KatsuuraEvaluation':
+       # Diff evo
+        if args.diffevo:
+            args.Cr = 0.11
+            args.F = 1.0
+            args.population = 50
+            args.survp = 0.999
+            args.sigma = 0.005
+            args.expfactor = 4.0
+        # Baseline
+        else:
+            args.population = 50
+            args.survp = 0.999
+            args.sigma = 0.005
+            args.expfactor = 4.0
+        # Islands
+        if args.islands > 1:
+            args.population = 4000
+            args.islands = 100
+            args.immigrants = 5
+            args.epochs = 70
+    return args
+
+
+def run(args, program, vis_eval):
+    vis = Visualization(args)
+
+    best_fitness = []
+    cosines = []
+    evals = []
+
+    score_sum = 0
+    scores = []
+    runtime_sum = 0
+
+    test_seeds = [1150, 6950, 6756, 2301, 3279, 114, 4089, 61, 6797, 19]
+    if args.t:
+        args.m = 10
+
+    repeats = args.m
+    if args.t:
+        repeats = 10
+    for i in range(0, repeats):
+        if args.r:
+            rand = random.randrange(1, 32767)
+        elif args.t:
+            rand = test_seeds[i]
+        else:
+            rand = 1
+
+        out, err = program.run(vars(args), args.evaluation, rand)
+        if args.log:
+            df = pd.read_csv(StringIO(out))
+            df.dropna(inplace=True)
+            df['seed'] = rand
+            df['evaluation'] = args.evaluation
+            program.frames.append(df)
+            evals.append(df['eval'].tolist())
+            best_fitness.append(df['fitness_best'].tolist())
+            cosines.append(df['cosine_avg'].tolist())
+        if args.m:
+            out = out.strip().split()
+            scores += [float(out[-3])]
+            score_sum += float(out[-3])
+            runtime_sum += int(re.sub(r"\D", "", out[-1]))
+
+    if args.m:
+        print("Average score: {}".format(score_sum/(args.m)))
+        print("Average runtime: {}".format(runtime_sum/(args.m)))
+    if args.t or args.m:
+        print("std: {}".format(np.std(scores)))
+
+    if args.log:
+        program.log()
+    if args.plot:
+        vis.plot()
+    print(err)
+
+    evals_avg = list(np.average(np.array(evals).astype(np.int), axis=0))
+    best_avg = list(np.average(np.array(best_fitness).astype(np.float), axis=0))
+    cosines_avg = list(np.average(np.array(cosines).astype(np.float), axis=0))
+    return [args.evaluation, args.diffevo, args.islands, evals_avg, best_avg, cosines_avg]
+
+
 
 if __name__ == '__main__':
     parser.add_argument('--islands', type=int, default=1)
@@ -315,12 +467,16 @@ if __name__ == '__main__':
     parser.add_argument('--sigma', type=float, default=0.1)
     parser.add_argument('--expfactor', type=float, default=4.0)
     parser.add_argument('--t', action='store_true')
-
     parser.add_argument('--gridsearch', action='store_true')
+    parser.add_argument('--paper', action='store_true')
 
 
-    args = parser.parse_args()
     program = Program()
+    args = parser.parse_args()
+    if args.paper:
+        args.log = 1
+        args.t = 1
+    vis_eval = Visualization(args)
     if args.compile or args.submit or args.gridsearch:
         print("### COMPILING ###")
         out, err = program.compile()
@@ -338,53 +494,65 @@ if __name__ == '__main__':
         print(out)
         exit(0)
 
-
     if args.gridsearch:
         gridsearch()
         exit(0)
 
-    vis = Visualization(args)
-    score_sum = 0
-    scores = []
-    runtime_sum = 0
+    all_frames = []
+    for i in range(12):
+        if i == 0:
+            args.evaluation = 'BentCigarFunction'
+            args.diffevo = 0
+            args.islands = 1
+        if i == 1:
+            args.evaluation = 'BentCigarFunction'
+            args.diffevo = 1
+            args.islands = 1
+        if i == 2:
+            args.evaluation = 'BentCigarFunction'
+            args.diffevo = 0
+            args.islands = 2
+        if i == 3:
+            args.evaluation = 'BentCigarFunction'
+            args.diffevo = 1
+            args.islands = 2
+        if i == 4:
+            args.evaluation = 'SchaffersEvaluation'
+            args.diffevo = 0
+            args.islands = 1
+        if i == 5:
+            args.evaluation = 'SchaffersEvaluation'
+            args.diffevo = 1
+            args.islands = 1
+        if i == 6:
+            args.evaluation = 'SchaffersEvaluation'
+            args.diffevo = 0
+            args.islands = 2
+        if i == 7:
+            args.evaluation = 'SchaffersEvaluation'
+            args.diffevo = 1
+            args.islands = 2
+        if i == 8:
+            args.evaluation = 'KatsuuraEvaluation'
+            args.diffevo = 0
+            args.islands = 1
+        if i == 9:
+            args.evaluation = 'KatsuuraEvaluation'
+            args.diffevo = 1
+            args.islands = 1
+        if i == 10:
+            args.evaluation = 'KatsuuraEvaluation'
+            args.diffevo = 0
+            args.islands = 2
+        if i == 11:
+            args.evaluation = 'KatsuuraEvaluation'
+            args.diffevo = 1
+            args.islands = 2
 
-    test_seeds = [1150, 6950, 6756, 2301, 3279, 114, 4089, 61, 6797, 19]
-    if args.t:
-        args.m = 10
-
-    repeats = args.m
-    if args.t:
-        repeats = 10
-    for i in range(0, repeats):
-        if args.r:
-            rand = random.randrange(1, 32767)
-        elif args.t:
-            rand = test_seeds[i]
-        else:
-            rand = 1
-
-        out, err = program.run(vars(args), args.evaluation, rand)
-        print(out)
-        if args.log:
-            df = pd.read_csv(StringIO(out))
-            df.dropna(inplace=True)
-            df['seed'] = rand
-            df['evaluation'] = args.evaluation
-            program.frames.append(df)
-        if args.m:
-            out = out.strip().split()
-            scores += [float(out[-3])]
-            score_sum += float(out[-3])
-            runtime_sum += int(re.sub(r"\D", "", out[-1]))
-
-    if args.m:
-        print("Average score: {}".format(score_sum/(args.m)))
-        print("Average runtime: {}".format(runtime_sum/(args.m)))
-    if args.t or args.m:
-        print("std: {}".format(np.std(scores)))
-
-    if args.log:
-        program.log()
-    if args.plot:
-        vis.plot()
-    print(err)
+        print('### EVAL: {}, DE: {}, IM: {}'.format(args.evaluation, args.diffevo, args.islands))
+        args = set_args(args)
+        results = run(args, program, vis_eval)
+        all_frames.append(results)
+    vis_eval.plot_all(all_frames)
+    with open('research_dataframes', 'wb') as f:
+        pickle.dump(all_frames, f)

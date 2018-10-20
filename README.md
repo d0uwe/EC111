@@ -1,17 +1,33 @@
 # EC111
 Evolutionary Computing group project
 
+generate results that are shown in the paper:
+```
+python3 wrapper.py --compile --paper
+```
+
 Compile:
 ```
-javac -cp contest.jar player111.java
+python3 wrapper.py --compile
 ```
 
 Create submission file:
 ```
-jar cmf MainClass.txt submission.jar player111.class
+python3 wrapper.py --submit
 ```
 If you created additional java files, just add them after the player111.java file and include the compiled files after player111.class
 
+
+show options of wrapper:
+```
+python3 wrapper.py --help
+```
+
+perform gridsearch:
+Adapt the parameters that have to be tested on top of gridsearch.py and then:
+```
+python3 gridsearch.py
+```
 
 
 Test your code on the dummy function by typing:

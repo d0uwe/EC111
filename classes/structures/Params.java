@@ -21,7 +21,7 @@ public class Params {
     public static boolean log = false;
     public static int recombination_amount = (pop_size - n_survivors) / 2;
     public static int mutation_amount = pop_size - n_survivors - recombination_amount;
-    public static double recombination_constant = 1.0;
+    public static double recombination_constant = 0.5;
     public static int tournament_size = 2; //n_survivors;
     public static double tournament_p = 1.0;
     public static double F = 0.4;

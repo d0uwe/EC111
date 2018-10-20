@@ -297,6 +297,7 @@ class Visualization(Program):
     def plot_all(self, frames):
         for idx, f in enumerate(frames):
             fig, ax1 = plt.subplots()
+            fig.subplots_adjust(top=0.80)
             color = 'tab:red'
             ax1.set_xlabel('eval (t)')
             ax1.set_ylabel('best fitness score', color=color)
@@ -312,9 +313,9 @@ class Visualization(Program):
             ax2.plot(f[3], f[5], color=color)
 
             title = '{}\n{}{}'.format(f[0], 'DE / ' if f[1] else 'Baseline / ', 'Island Model / i=' + str(f[2]) if f[2] > 1 else 'Non-parallel')
-            plt.title(title)
+            fig.suptitle(title, fontsize=14)
             fig.tight_layout()
-            fig.savefig('name-{}-{}-.pdf'.format(f[0], idx))
+            fig.savefig('paper-{}-{}.pdf'.format(f[0], idx))
 
 
 
@@ -326,13 +327,13 @@ def set_args(args):
             args.Cr = 0.11
             args.F = 1.0
             args.population = 40
-            args.survp = 0.75
+            args.survp = 0.2
             args.sigma = 0.05
             args.expfactor = 5.0
         # Baseline
         else:
             args.population = 40
-            args.survp = 0.75
+            args.survp = 0.2
             args.sigma = 0.1
             args.expfactor = 4.0
         # Islands
@@ -533,6 +534,7 @@ if __name__ == '__main__':
             args.diffevo = 1
             args.islands = 2
         if i == 8:
+            break
             args.evaluation = 'KatsuuraEvaluation'
             args.diffevo = 0
             args.islands = 1

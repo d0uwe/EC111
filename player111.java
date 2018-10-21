@@ -286,6 +286,7 @@ public class player111 implements ContestSubmission {
                     }
                 }
 
+                /*
                 // Every n epochs, delete a non-behaving island.
                 if ((epoch % 1000) == 0) {
                     // Sort island variances and get rid of the last n ones.
@@ -303,6 +304,7 @@ public class player111 implements ContestSubmission {
                         }
                     }
                 }
+                */
             }
             epoch++;
         }

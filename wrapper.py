@@ -437,10 +437,12 @@ def run(args, program, vis_eval):
         vis.plot()
     print(err)
 
-    evals_avg = list(np.average(np.array(evals).astype(np.int), axis=0))
-    best_avg = list(np.average(np.array(best_fitness).astype(np.float), axis=0))
-    cosines_avg = list(np.average(np.array(cosines).astype(np.float), axis=0))
-    return [args.evaluation, args.diffevo, args.islands, evals_avg, best_avg, cosines_avg]
+    if args.paper:
+        evals_avg = list(np.average(np.array(evals).astype(np.int), axis=0))
+        best_avg = list(np.average(np.array(best_fitness).astype(np.float), axis=0))
+        cosines_avg = list(np.average(np.array(cosines).astype(np.float), axis=0))
+        return [args.evaluation, args.diffevo, args.islands, evals_avg, best_avg, cosines_avg]
+    return 0
 
 
 
@@ -497,62 +499,65 @@ if __name__ == '__main__':
         gridsearch()
         exit(0)
 
-    all_frames = []
-    for i in range(0,12):
-        if i == 0:
-            args.evaluation = 'BentCigarFunction'
-            args.diffevo = 0
-            args.islands = 1
-        if i == 1:
-            args.evaluation = 'BentCigarFunction'
-            args.diffevo = 1
-            args.islands = 1
-        if i == 2:
-            args.evaluation = 'BentCigarFunction'
-            args.diffevo = 0
-            args.islands = 2
-        if i == 3:
-            args.evaluation = 'BentCigarFunction'
-            args.diffevo = 1
-            args.islands = 2
-        if i == 4:
-            args.evaluation = 'SchaffersEvaluation'
-            args.diffevo = 0
-            args.islands = 1
-        if i == 5:
-            args.evaluation = 'SchaffersEvaluation'
-            args.diffevo = 1
-            args.islands = 1
-        if i == 6:
-            args.evaluation = 'SchaffersEvaluation'
-            args.diffevo = 0
-            args.islands = 2
-        if i == 7:
-            args.evaluation = 'SchaffersEvaluation'
-            args.diffevo = 1
-            args.islands = 2
-        if i == 8:
-            break
-            args.evaluation = 'KatsuuraEvaluation'
-            args.diffevo = 0
-            args.islands = 1
-        if i == 9:
-            args.evaluation = 'KatsuuraEvaluation'
-            args.diffevo = 1
-            args.islands = 1
-        if i == 10:
-            args.evaluation = 'KatsuuraEvaluation'
-            args.diffevo = 0
-            args.islands = 2
-        if i == 11:
-            args.evaluation = 'KatsuuraEvaluation'
-            args.diffevo = 1
-            args.islands = 2
+    if not args.paper:
+        run(args, program, vis_eval)
+        exit(0)
+    else:
+        all_frames = []
+        for i in range(0,12):
+            if i == 0:
+                args.evaluation = 'BentCigarFunction'
+                args.diffevo = 0
+                args.islands = 1
+            if i == 1:
+                args.evaluation = 'BentCigarFunction'
+                args.diffevo = 1
+                args.islands = 1
+            if i == 2:
+                args.evaluation = 'BentCigarFunction'
+                args.diffevo = 0
+                args.islands = 2
+            if i == 3:
+                args.evaluation = 'BentCigarFunction'
+                args.diffevo = 1
+                args.islands = 2
+            if i == 4:
+                args.evaluation = 'SchaffersEvaluation'
+                args.diffevo = 0
+                args.islands = 1
+            if i == 5:
+                args.evaluation = 'SchaffersEvaluation'
+                args.diffevo = 1
+                args.islands = 1
+            if i == 6:
+                args.evaluation = 'SchaffersEvaluation'
+                args.diffevo = 0
+                args.islands = 2
+            if i == 7:
+                args.evaluation = 'SchaffersEvaluation'
+                args.diffevo = 1
+                args.islands = 2
+            if i == 8:
+                args.evaluation = 'KatsuuraEvaluation'
+                args.diffevo = 0
+                args.islands = 1
+            if i == 9:
+                args.evaluation = 'KatsuuraEvaluation'
+                args.diffevo = 1
+                args.islands = 1
+            if i == 10:
+                args.evaluation = 'KatsuuraEvaluation'
+                args.diffevo = 0
+                args.islands = 2
+            if i == 11:
+                args.evaluation = 'KatsuuraEvaluation'
+                args.diffevo = 1
+                args.islands = 2
 
-        print('### EVAL: {}, DE: {}, IM: {}'.format(args.evaluation, args.diffevo, args.islands))
-        args = set_args(args)
-        results = run(args, program, vis_eval)
-        all_frames.append(results)
-    vis_eval.plot_all(all_frames)
-    with open('research_dataframes', 'wb') as f:
-        pickle.dump(all_frames, f)
+            print('### EVAL: {}, DE: {}, IM: {}'.format(args.evaluation, args.diffevo, args.islands))
+            args = set_args(args)
+            results = run(args, program, vis_eval)
+            all_frames.append(results)
+        vis_eval.plot_all(all_frames)
+        # with open('research_dataframes', 'wb') as f:
+        #    pickle.dump(all_frames, f)

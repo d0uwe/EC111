@@ -158,15 +158,16 @@ public class Mutation {
             Unit xprime = new Unit(x);
 
             Unit y, z;
-            int bullshit = 0;
+            int b = 0;
             do {
-                bullshit++;
+                b++;
                 y = population.get(rand.nextInt(pop_size));
-            } while (y.equals(x) && bullshit < 10);
+            } while (y.equals(x) && b < 10);
+            b = 0;
             do {
-                bullshit++;
+                b++;
                 z = population.get(rand.nextInt(pop_size));
-            } while (((z.equals(x)) || (z.equals(y))) && bullshit < 10);
+            } while (((z.equals(x)) || (z.equals(y))) && b < 10);
 
             double F = Params.F - ((Params.F - Params.final_min_sigma)/Params.total_evals * Params.evals);
             F = (double)Math.exp(-Params.evals/(Params.total_evals/2.0))*Params.F;

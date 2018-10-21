@@ -367,7 +367,7 @@ def set_args(args):
             args.population = 50
             args.survp = 0.999
             args.sigma = 0.005
-            args.expfactor = 4.0
+            args.expfactor = 5.0
         # Baseline
         else:
             args.population = 50
